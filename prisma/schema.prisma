@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+enum SocialMediaPlatforms {
+  INSTAGRAM
+  FACEBOOK
+  SPOTIFY
+  YOUTUBE
+}
+
+
+  
+model User {
+  id          String   @id @default(cuid())
+  name        String 
+  email       String @unique
+  passwordHash    String @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  votes      Vote[]
+
+}
+
+model Artist {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  nickName    String
+  image      String?
+
+
+  votes      Vote[]
+  wins        Int
+  loses       Int
+
+
+  // An Artist social media accounts
+  socialMedia SocialMedia[]
+
+  // An Artist bio
+  bio         String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SocialMedia {
+  id          String   @id @default(cuid())
+  name        SocialMediaPlatforms
+  url         String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+
+  // An Artist social media accounts
+  artist      Artist @relation(fields: [artistId], references: [id])
+  artistId    String
+}
+
+
+model Vote {
+  id          String   @id @default(cuid())
+  userId      String
+  artistId    String
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  user        User @relation(fields: [userId], references: [id])
+  artist      Artist @relation(fields: [artistId], references: [id])
+
+  @@unique([userId, artistId])
+}
