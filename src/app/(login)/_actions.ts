@@ -39,7 +39,7 @@ export const signIn = async (values: z.infer<typeof authSchema>) => {
 
   await setSession(user);
 
-  redirect("/dashboard");
+  redirect("/");
 };
 
 export const signUp = async (values: z.infer<typeof authSchema>) => {
@@ -71,7 +71,7 @@ export const signUp = async (values: z.infer<typeof authSchema>) => {
 
   await setSession(user);
 
-  redirect("/dashboard");
+  redirect("/");
 };
 
 export const signOut = async () => {

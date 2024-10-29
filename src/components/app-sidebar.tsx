@@ -1,11 +1,18 @@
 "use client";
 import { cn, toUpperCase } from "@/lib/utils";
-import { HomeIcon, SwordsIcon, UsersIcon } from "lucide-react";
+import {
+  HomeIcon,
+  MicVocalIcon,
+  SwordsIcon,
+  TrophyIcon,
+  UsersIcon,
+  UsersRoundIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
-//sidebar items : მთავარი,არტისტები,ბეთლები,(battles), ლიდერბორდი
+//sidebar items : მთავარი,არტისტები,ბეთლები,(battles), ლიდერბორდი,ჩვენს შესახებ
 const sidebarItems = [
   {
     title: "მთავარი",
@@ -15,7 +22,7 @@ const sidebarItems = [
 
   {
     title: "არტისტები",
-    icon: <UsersIcon />,
+    icon: <MicVocalIcon />,
     href: "/artists",
   },
   {
@@ -25,8 +32,13 @@ const sidebarItems = [
   },
   {
     title: "ლიდერბორდი",
-    icon: <SwordsIcon />,
+    icon: <TrophyIcon />,
     href: "/leaderboard",
+  },
+  {
+    title: "ჩვენს შესახებ",
+    icon: <UsersRoundIcon />,
+    href: "/about",
   },
 ];
 

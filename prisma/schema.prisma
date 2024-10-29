@@ -29,6 +29,10 @@ enum Role {
   ADMIN
 }
 
+enum BattleType {
+  ACAPELLA
+  FLOW
+}
   
 model User {
   id          String   @id @default(cuid())
@@ -37,7 +41,7 @@ model User {
   passwordHash    String @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  role        Role @default(USER)
+  
   // Relationships
   votes      Vote[]
   comments  Comment[]
@@ -113,6 +117,10 @@ model Battles {
   id          String   @id @default(cuid())
   link       String
   coverImage String
+  title      String
+
+  // Battle Type
+  type       BattleType
 
   // Relationships
   artists    Artist[]

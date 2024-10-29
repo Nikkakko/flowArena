@@ -1,9 +1,9 @@
 import { Shell } from "@/components/shell";
 import * as React from "react";
 
-interface ArtistsPageProps {}
+interface LeaderBoardPageProps {}
 
-const ArtistsPage: React.FC<ArtistsPageProps> = ({}) => {
+const LeaderBoardPage: React.FC<LeaderBoardPageProps> = ({}) => {
   return (
     <Shell as="main" className="container mx-auto">
       {" "}
@@ -12,4 +12,4 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({}) => {
   );
 };
 
-export default ArtistsPage;
+export default LeaderBoardPage;
