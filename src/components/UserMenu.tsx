@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { Home, LogOut } from "lucide-react";
+import { Home, LogOut, User } from "lucide-react";
 import { signOut } from "@/app/(login)/_actions";
-import { cn } from "@/lib/utils";
+import { cn, toUpperCase } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 
 interface UserMenuProps {}
@@ -35,17 +35,24 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
         className={cn(
           buttonVariants({
             variant: "default",
-          })
+          }),
+          "text-white"
         )}
       >
-        {"Sign In"}
+        <div className="flex items-center gap-2">
+          <User />
+          {toUpperCase("შესვლა")}
+        </div>
       </Link>
     );
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer size-9">
-          <AvatarImage alt={user.name || ""} />
+          <AvatarImage
+            alt={user.name || "User"}
+            src={"/assets/default-user.png"}
+          />
           <AvatarFallback className="capitalize">
             {user.email
               .split(" ")

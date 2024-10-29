@@ -24,6 +24,11 @@ enum SocialMediaPlatforms {
 }
 
 
+enum Role {
+  USER
+  ADMIN
+}
+
   
 model User {
   id          String   @id @default(cuid())
@@ -32,9 +37,10 @@ model User {
   passwordHash    String @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
+  role        Role @default(USER)
   // Relationships
   votes      Vote[]
+  comments  Comment[]
 
 }
 
@@ -44,19 +50,33 @@ model Artist {
   lastName    String
   nickName    String
   image      String?
-
-
-  votes      Vote[]
+  slug       String @unique
   wins        Int
   loses       Int
+  bio        String
+  quotes Quotes[]
 
 
   // An Artist social media accounts
   socialMedia SocialMedia[]
+  // Relationships
+  votes      Vote[]
+  battles    Battles[]
 
-  // An Artist bio
-  bio         String
 
+  
+
+ 
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Quotes {
+  id          String   @id @default(cuid())
+  quote       String
+  artist      Artist @relation(fields: [artistId], references: [id])
+  artistId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -87,4 +107,30 @@ model Vote {
   artist      Artist @relation(fields: [artistId], references: [id])
 
   @@unique([userId, artistId])
+}
+
+model Battles {
+  id          String   @id @default(cuid())
+  link       String
+  coverImage String
+
+  // Relationships
+  artists    Artist[]
+  comments  Comment[]
+  
+  createdAt   DateTime @default(now())
+
+  
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  userId      String
+  battleId    String
+  comment     String
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  user        User @relation(fields: [userId], references: [id])
+  battle      Battles @relation(fields: [battleId], references: [id])
 }

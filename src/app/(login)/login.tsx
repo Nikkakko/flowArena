@@ -20,6 +20,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import Link from "next/link";
 import { signIn, signUp } from "./_actions";
+import { toUpperCase } from "@/lib/utils";
 
 interface LoginProps {
   mode?: "signin" | "signup";
@@ -63,15 +64,15 @@ const Login: React.FC<LoginProps> = ({ mode = "signin" }: LoginProps) => {
     });
   }
   return (
-    <div className="min-h-[100dvh] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div className="min-h-[100dvh] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <CircleIcon className="h-12 w-12 text-violet-500" />
+          {/* <CircleIcon className="h-12 w-12 text-primary" /> */}
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-primary">
           {mode === "signin"
-            ? "Sign in to your account"
-            : "Create your account"}
+            ? toUpperCase("ავტორიზაცია")
+            : toUpperCase("რეგისტრაცია")}
         </h2>
       </div>
 
@@ -83,13 +84,16 @@ const Login: React.FC<LoginProps> = ({ mode = "signin" }: LoginProps) => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-white">
+                    {toUpperCase("ელ. ფოსტა")}
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter your email..."
+                      placeholder={toUpperCase("შეიყვანეთ ელ. ფოსტა")}
                       {...field}
                       type="email"
                       autoComplete="email"
+                      className="text-white focus:outline-none"
                     />
                   </FormControl>
                   <FormMessage />
@@ -102,14 +106,21 @@ const Login: React.FC<LoginProps> = ({ mode = "signin" }: LoginProps) => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-white">
+                    {toUpperCase("პაროლი")}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="Enter your password..."
+                      placeholder={
+                        mode === "signin"
+                          ? toUpperCase("შეიყვანეთ პაროლი")
+                          : toUpperCase("შეიყვანეთ ახალი პაროლი")
+                      }
                       autoComplete={
                         mode === "signin" ? "current-password" : "new-password"
                       }
+                      className="text-white focus:outline-none"
                       {...field}
                     />
                   </FormControl>
@@ -123,18 +134,18 @@ const Login: React.FC<LoginProps> = ({ mode = "signin" }: LoginProps) => {
             <div>
               <Button
                 type="submit"
-                className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-primary md:hover:bg-primary-foreground focus:outline-none focus:ring-2 focus:ring-offset-2  active:bg-primary-foreground"
                 disabled={isPending}
               >
                 {isPending ? (
                   <>
                     <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
-                    Loading...
+                    {toUpperCase("იტვირთება")}
                   </>
                 ) : mode === "signin" ? (
-                  "Sign in"
+                  toUpperCase("შესვლა")
                 ) : (
-                  "Sign up"
+                  toUpperCase("რეგისტრაცია")
                 )}
               </Button>
             </div>
@@ -149,8 +160,8 @@ const Login: React.FC<LoginProps> = ({ mode = "signin" }: LoginProps) => {
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-gray-50 text-gray-500">
                 {mode === "signin"
-                  ? "New to our platform?"
-                  : "Already have an account?"}
+                  ? toUpperCase("არ გაქვთ ანგარიში?")
+                  : toUpperCase("გაქვთ ანგარიში?")}
               </span>
             </div>
           </div>
@@ -160,11 +171,15 @@ const Login: React.FC<LoginProps> = ({ mode = "signin" }: LoginProps) => {
               href={`${mode === "signin" ? "/sign-up" : "/sign-in"}${
                 redirect ? `?redirect=${redirect}` : ""
               }`}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
-              {mode === "signin"
+              {/* {mode === "signin"
                 ? "Create an account"
-                : "Sign in to existing account"}
+                : "Sign in to existing account"} */}
+
+              {mode === "signin"
+                ? toUpperCase("შექმენი ანგარიში")
+                : toUpperCase("შესვლა  ანგარიშზე")}
             </Link>
           </div>
         </div>

@@ -21,7 +21,9 @@ export const signIn = async (values: z.infer<typeof authSchema>) => {
   });
 
   if (!user) {
-    return { error: "Invalid credentials" };
+    return {
+      error: "არასწორი ელ. ფოსტა ან პაროლი. სცადეთ თავიდან.",
+    };
   }
 
   const isPasswordValid = await comparePasswords(
@@ -30,7 +32,9 @@ export const signIn = async (values: z.infer<typeof authSchema>) => {
   );
 
   if (!isPasswordValid) {
-    return { error: "Invalid email or password. Please try again." };
+    return {
+      error: "არასწორი ელ. ფოსტა ან პაროლი. სცადეთ თავიდან.",
+    };
   }
 
   await setSession(user);
@@ -53,7 +57,7 @@ export const signUp = async (values: z.infer<typeof authSchema>) => {
   });
 
   if (existingUser) {
-    return { error: "User already exists" };
+    return { error: "მომხმარებელი უკვე არსებობს" };
   }
 
   const passwordHash = await hashPassword(validateValues.data.password);
