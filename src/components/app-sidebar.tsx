@@ -44,17 +44,15 @@ const sidebarItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   return (
-    <aside className="hidden lg:flex flex-col min-h-screen  h-full py-4 bg-secondary border-r border-black/50 w-full max-w-[240px]">
+    <aside className="hidden lg:flex flex-col min-h-[100dvh] h-full   py-4 bg-secondary border-r border-black/50 w-full max-w-[240px]">
       <Link href="/" className="mb-5 mx-auto">
         <Image
           src="/assets/logo.webp"
           alt="logo"
           width={350}
           height={100}
-          //blend mode
           className={cn(
             "w-full max-w-[350px] h-full max-h-[200px] object-cover rounded-2xl  hover:opacity-80 transition-all hover:scale-105 "
           )}
@@ -63,7 +61,7 @@ export function AppSidebar() {
       </Link>
 
       <nav>
-        <ul className="flex flex-col gap-2">
+        <ul>
           {sidebarItems.map(item => {
             const isActive = pathname === item.href;
             return (
@@ -87,24 +85,3 @@ export function AppSidebar() {
     </aside>
   );
 }
-
-// import {
-//   Sidebar,
-//   SidebarContent,
-//   SidebarFooter,
-//   SidebarGroup,
-//   SidebarHeader,
-// } from "@/components/ui/sidebar";
-
-// export function AppSidebar() {
-//   return (
-//     <Sidebar>
-//       <SidebarHeader />
-//       <SidebarContent>
-//         <SidebarGroup />
-//         <SidebarGroup />
-//       </SidebarContent>
-//       <SidebarFooter />
-//     </Sidebar>
-//   );
-// }

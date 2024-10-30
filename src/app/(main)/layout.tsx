@@ -11,7 +11,7 @@ export default function DashboardLayout({
   return (
     <div className="relative flex min-h-screen flex-col ">
       {/* Include shared UI here e.g. a header or sidebar */}
-      <div className="flex flex-col lg:flex-row flex-1">
+      <div className="flex flex-col lg:flex-row ">
         <AppSidebar />
         <main className="flex-1">
           <Header />

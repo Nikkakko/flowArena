@@ -33,19 +33,42 @@ enum BattleType {
   ACAPELLA
   FLOW
 }
+
+enum BattleStatus {
+  UPCOMING
+  LIVE
+  COMPLETED
+}
+
   
 model User {
   id          String   @id @default(cuid())
   name        String 
   email       String @unique
   passwordHash    String @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
   
   // Relationships
   votes      Vote[]
   comments  Comment[]
 
+  role        Role @default(USER)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model Season {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "Season 1", "Summer 2024"
+  startDate   DateTime
+  endDate     DateTime
+  type        BattleType
+  winner      Artist   @relation("SeasonWinner", fields: [winnerId], references: [id])
+  winnerId    String
+  battles     Battle[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Artist {
@@ -61,13 +84,15 @@ model Artist {
   quotes Quotes[]
 
 
+
+
   // An Artist social media accounts
   socialMedia SocialMedia[]
   // Relationships
   votes      Vote[]
-  battles    Battles[]
-
-
+  battlesParticipated Battle[]
+seasonsWon    Season[] @relation("SeasonWinner")
+battlesWon    Battle[] @relation("BattleWinner")
   
 
  
@@ -104,41 +129,47 @@ model Vote {
   id          String   @id @default(cuid())
   userId      String
   artistId    String
+  battleId    String
   createdAt   DateTime @default(now())
 
-  // Relationships
   user        User @relation(fields: [userId], references: [id])
   artist      Artist @relation(fields: [artistId], references: [id])
+  battle      Battle @relation(fields: [battleId], references: [id])
 
-  @@unique([userId, artistId])
+  @@unique([userId, battleId])
 }
-
-model Battles {
+model Battle {
   id          String   @id @default(cuid())
   link       String
   coverImage String
   title      String
+  description String?
 
   // Battle Type
   type       BattleType
-
+  status     BattleStatus 
   // Relationships
   artists    Artist[]
   comments  Comment[]
+  votes      Vote[]
+  season      Season   @relation(fields: [seasonId], references: [id])
+  seasonId    String
+  
+  winner      Artist?  @relation("BattleWinner", fields: [winnerId], references: [id])
+  winnerId    String?
   
   createdAt   DateTime @default(now())
 
   
 }
-
 model Comment {
   id          String   @id @default(cuid())
   userId      String
   battleId    String
-  comment     String
+  content     String
+  likes       Int @default(0)
   createdAt   DateTime @default(now())
 
-  // Relationships
   user        User @relation(fields: [userId], references: [id])
-  battle      Battles @relation(fields: [battleId], references: [id])
+  battle      Battle @relation(fields: [battleId], references: [id])
 }
