@@ -90,9 +90,11 @@ model Artist {
   socialMedia SocialMedia[]
   // Relationships
   votes      Vote[]
+
+
   battlesParticipated Battle[]
-seasonsWon    Season[] @relation("SeasonWinner")
-battlesWon    Battle[] @relation("BattleWinner")
+  seasonsWon    Season[] @relation("SeasonWinner")
+  battlesWon    Battle[] @relation("BattleWinner")
   
 
  
@@ -157,6 +159,7 @@ model Battle {
   
   winner      Artist?  @relation("BattleWinner", fields: [winnerId], references: [id])
   winnerId    String?
+  
   
   createdAt   DateTime @default(now())
 

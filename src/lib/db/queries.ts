@@ -34,3 +34,11 @@ export async function getUser() {
 
   return user[0];
 }
+
+export async function getArtists() {
+  try {
+    return db.artist.findMany();
+  } catch (error) {
+    console.error(error);
+  }
+}

@@ -10,7 +10,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { Home, LogOut, StarIcon, User, User2Icon } from "lucide-react";
+import {
+  Home,
+  LogOut,
+  StarIcon,
+  User,
+  User2Icon,
+  UserRoundCheckIcon,
+} from "lucide-react";
 import { signOut } from "@/app/(login)/_actions";
 import { cn, toUpperCase } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
@@ -77,6 +84,14 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
             <span>{toUpperCase("ფავორიტები")}</span>
           </Link>
         </DropdownMenuItem>
+        {user.role === "ADMIN" && (
+          <DropdownMenuItem className="cursor-pointer text-white">
+            <Link href="/admin" className="flex w-full items-center ">
+              <UserRoundCheckIcon className="mr-2 h-4 w-4" />
+              <span>{toUpperCase("ადმინ პანელი")}</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer text-white">
