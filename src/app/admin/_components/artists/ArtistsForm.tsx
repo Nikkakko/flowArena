@@ -23,11 +23,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { artistSchema, ArtistZodType } from "../validation/artists-validation";
+import {
+  artistSchema,
+  ArtistZodType,
+} from "../../validation/artists-validation";
 import { toUpperCase } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadButton } from "@/lib/uploadthing";
 import Image from "next/image";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
+
+const frameworksList = [
+  { value: "react", label: "React", icon: Turtle },
+  { value: "angular", label: "Angular", icon: Cat },
+  { value: "vue", label: "Vue", icon: Dog },
+  { value: "svelte", label: "Svelte", icon: Rabbit },
+  { value: "ember", label: "Ember", icon: Fish },
+];
 
 interface ArtistsFormProps {}
 
@@ -270,6 +283,45 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
               <FormMessage />
             </FormItem>
           )}
+        />
+
+        {/* multi select battlesParticipated */}
+        <MultiSelect
+          options={frameworksList}
+          onValueChange={(value: string[]) => {
+            form.setValue("battlesParticipated", value);
+          }}
+          defaultValue={form.watch("battlesParticipated")}
+          placeholder={toUpperCase("ბეთლებები")}
+          variant="inverted"
+          animation={2}
+          maxCount={3}
+        />
+
+        {/* multi select seasonsWon */}
+        <MultiSelect
+          options={frameworksList}
+          onValueChange={(value: string[]) => {
+            form.setValue("seasonsWon", value);
+          }}
+          defaultValue={form.watch("seasonsWon")}
+          placeholder={toUpperCase("სეზონები")}
+          variant="inverted"
+          animation={2}
+          maxCount={3}
+        />
+
+        {/* multi select battlesWon */}
+        <MultiSelect
+          options={frameworksList}
+          onValueChange={(value: string[]) => {
+            form.setValue("battlesWon", value);
+          }}
+          defaultValue={form.watch("battlesWon")}
+          placeholder={toUpperCase("ბეთლების გამარჯვება")}
+          variant="inverted"
+          animation={2}
+          maxCount={3}
         />
 
         <Button type="submit" className="text-white">

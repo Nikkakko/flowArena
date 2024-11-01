@@ -3,8 +3,8 @@ import { Shell } from "@/components/shell";
 import { getArtists, getUser } from "@/lib/db/queries";
 import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ArtistsHandle from "./_components/ArtistsHandle";
-import BattlesHandle from "./_components/BattlesHandle";
+import ArtistsHandle from "./_components/artists/ArtistsHandle";
+import BattlesHandle from "./_components/battles/BattlesHandle";
 import SeasonsHandle from "./_components/SeasonsHandle";
 
 interface AdminPageProps {}

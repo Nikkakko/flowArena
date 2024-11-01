@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import ArtistsForm from "./ArtistsForm";
+import { toUpperCase } from "@/lib/utils";
 
 interface ArtistsHandleProps {
   artists: Artist[] | undefined;
@@ -21,12 +22,12 @@ const ArtistsHandle: React.FC<ArtistsHandleProps> = ({ artists }) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Nickname</TableHead>
-            <TableHead>Wins</TableHead>
-            <TableHead>Losses</TableHead>
-            <TableHead>Bio</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>{toUpperCase("სახელი")}</TableHead>
+            <TableHead>{toUpperCase("მეტსახელი")}</TableHead>
+            <TableHead>{toUpperCase("მოგება")}</TableHead>
+            <TableHead>{toUpperCase("წაგება")}</TableHead>
+            <TableHead>{toUpperCase("ბიოგრაფია")}</TableHead>
+            <TableHead>{toUpperCase("რედაქტირება")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

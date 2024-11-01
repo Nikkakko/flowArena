@@ -17,22 +17,9 @@ export const artistSchema = z.object({
     })
   ),
 
-  battlesParticipated: z.array(
-    z.object({
-      battleId: z.string(),
-    })
-  ),
-  seasonsWon: z.array(
-    z.object({
-      seasonId: z.string(),
-    })
-  ),
-
-  battlesWon: z.array(
-    z.object({
-      battleId: z.string(),
-    })
-  ),
+  battlesParticipated: z.array(z.string()).optional(),
+  seasonsWon: z.array(z.string()).optional(),
+  battlesWon: z.array(z.string()).optional(),
 });
 
 //export type
