@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ArtistsHandle from "./_components/artists/ArtistsHandle";
 import BattlesHandle from "./_components/battles/BattlesHandle";
-import SeasonsHandle from "./_components/SeasonsHandle";
+import SeasonsHandle from "./_components/seasons/SeasonsHandle";
 
 interface AdminPageProps {}
 

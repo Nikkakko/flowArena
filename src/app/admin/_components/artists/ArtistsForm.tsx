@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import {
   artistSchema,
-  ArtistZodType,
+  ArtistFormValues,
 } from "../../validation/artists-validation";
 import { toUpperCase } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,6 +33,9 @@ import { UploadButton } from "@/lib/uploadthing";
 import Image from "next/image";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
+import { SocialMediaPlatforms } from "@prisma/client";
+import addArtist from "../../_actions/add-artists";
+import { useToast } from "@/hooks/use-toast";
 
 const frameworksList = [
   { value: "react", label: "React", icon: Turtle },
@@ -45,8 +48,10 @@ const frameworksList = [
 interface ArtistsFormProps {}
 
 const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
+  const [isPending, startTransition] = React.useTransition();
+  const { toast } = useToast();
   // 1. Define your form.
-  const form = useForm<ArtistZodType>({
+  const form = useForm<ArtistFormValues>({
     resolver: zodResolver(artistSchema),
     defaultValues: {
       firstName: "",
@@ -56,8 +61,13 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
       wins: undefined,
       loses: undefined,
       bio: "",
-      quotes: [],
-      socialMedia: [],
+      quotes: [""], // Initialize with one empty quote
+      socialMedia: [
+        {
+          name: "FACEBOOK",
+          url: "",
+        },
+      ],
       battlesParticipated: [],
       seasonsWon: [],
       battlesWon: [],
@@ -68,10 +78,26 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
   );
 
   // 2. Define a submit handler.
-  function onSubmit(values: ArtistZodType) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  function onSubmit(values: ArtistFormValues) {
+    startTransition(async () => {
+      // Do something async, like an API call.
+      try {
+        await addArtist(values);
+        form.reset();
+        setImage(undefined);
+        toast({
+          title: "Artist added successfully",
+          duration: 5000,
+        });
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Error adding artist",
+
+          duration: 5000,
+        });
+      }
+    });
   }
 
   console.log(form.watch());
@@ -259,27 +285,57 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
           )}
         />
 
+        {/* multi quote */}
         <FormField
           control={form.control}
           name="quotes"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-white">
-                {toUpperCase("ციტატები (გამოიყენეთ მძიმე)")}
+                {toUpperCase("ციტატები")}
               </FormLabel>
               <FormControl>
-                <Input
-                  id="quotes"
-                  name="quotes"
-                  value={field.value.join(", ")}
-                  placeholder={toUpperCase("ციტატები")}
-                  className="text-white"
-                  onChange={e =>
-                    field.onChange(e.target.value.split(",").map(q => q.trim()))
-                  }
-                />
+                <>
+                  {field.value.map((quote, index: number) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-2 mb-2"
+                    >
+                      <Input
+                        value={quote}
+                        onChange={e => {
+                          const newQuotes = field.value.map((q, i) =>
+                            i === index ? e.target.value : q
+                          );
+                          field.onChange(newQuotes);
+                        }}
+                        placeholder="ციტატა"
+                        className="text-white"
+                      />
+                      <Button
+                        onClick={() => {
+                          const newQuotes = field.value.filter(
+                            (_, i) => i !== index
+                          );
+                          field.onChange(newQuotes);
+                        }}
+                        type="button"
+                        variant="destructive"
+                        className="text-white"
+                      >
+                        {toUpperCase("X")}
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    onClick={() => field.onChange([...field.value, ""])}
+                    type="button"
+                    className="text-white"
+                  >
+                    {toUpperCase("დამატება")}
+                  </Button>
+                </>
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -324,8 +380,105 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
           maxCount={3}
         />
 
-        <Button type="submit" className="text-white">
-          Submit
+        {/* social media */}
+        <FormField
+          control={form.control}
+          name="socialMedia"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">
+                {toUpperCase("სოციალური ქსელები")}
+              </FormLabel>
+              <FormControl>
+                <>
+                  {field.value.map((social, index: number) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-2 mb-2"
+                    >
+                      <Select
+                        value={social.name}
+                        onValueChange={value => {
+                          const newSocialMedia = field.value.map((s, i) =>
+                            i === index
+                              ? {
+                                  ...s,
+                                  name: value as SocialMediaPlatforms,
+                                }
+                              : s
+                          );
+                          field.onChange(newSocialMedia);
+                        }}
+                      >
+                        <SelectTrigger className="text-white">
+                          <SelectValue>
+                            {social.name}
+                            {/* <social.icon className="w-4 h-4" /> */}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(SocialMediaPlatforms).map(platform => (
+                            <SelectItem key={platform} value={platform}>
+                              {platform}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        value={social.url}
+                        onChange={e => {
+                          const newSocialMedia = field.value.map((s, i) =>
+                            i === index ? { ...s, url: e.target.value } : s
+                          );
+                          field.onChange(newSocialMedia);
+                        }}
+                        placeholder="URL"
+                        className="text-white"
+                      />
+                      <Button
+                        onClick={() => {
+                          const newSocialMedia = field.value.filter(
+                            (_, i) => i !== index
+                          );
+                          field.onChange(newSocialMedia);
+                        }}
+                        type="button"
+                        variant="destructive"
+                        className="text-white"
+                      >
+                        {toUpperCase("X")}
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    onClick={() =>
+                      field.onChange([
+                        ...field.value,
+                        {
+                          name: "FACEBOOK",
+                          url: "",
+                        },
+                      ])
+                    }
+                    type="button"
+                    className="text-white"
+                  >
+                    {toUpperCase("დამატება")}
+                  </Button>
+                </>
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button
+          type="submit"
+          className="text-white"
+          disabled={isPending || !form.formState.isDirty}
+        >
+          {toUpperCase("არტისტის დამატება")}
         </Button>
       </form>
     </Form>

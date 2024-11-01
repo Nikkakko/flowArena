@@ -23,4 +23,4 @@ export const artistSchema = z.object({
 });
 
 //export type
-export type ArtistZodType = z.infer<typeof artistSchema>;
+export type ArtistFormValues = z.infer<typeof artistSchema>;

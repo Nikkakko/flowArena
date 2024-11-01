@@ -42,3 +42,23 @@ export async function getArtists() {
     console.error(error);
   }
 }
+
+export async function getArtistBySlug(slug: string) {
+  try {
+    return db.artist.findFirst({
+      where: {
+        slug,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getBattles() {
+  try {
+    return db.battle.findMany();
+  } catch (error) {
+    console.error(error);
+  }
+}

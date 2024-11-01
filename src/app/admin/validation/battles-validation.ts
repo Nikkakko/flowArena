@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { Battle, BattleStatus, BattleType } from "@prisma/client";
 
-const BattleSchema = z.object({
+export const battleSchema = z.object({
   link: z.string().url(),
   coverImage: z.string().url(),
   title: z.string().min(3),
@@ -9,8 +9,8 @@ const BattleSchema = z.object({
   type: z.nativeEnum(BattleType),
   status: z.nativeEnum(BattleStatus),
   artists: z.array(z.string()),
-  seasonId: z.string().min(3),
-  winnerId: z.string(),
+  season: z.string().min(3),
+  winner: z.string(),
 });
 
-export type BattleZodType = z.infer<typeof BattleSchema>;
+export type BattleFormValues = z.infer<typeof battleSchema>;

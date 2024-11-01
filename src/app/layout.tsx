@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { getUser } from "@/lib/db/queries";
 import { UserProvider } from "@/lib/auth";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,7 +37,10 @@ export default function RootLayout({
           "antialiased min-h-screen bg-background"
         )}
       >
-        <UserProvider userPromise={userPromise}>{children}</UserProvider>
+        <UserProvider userPromise={userPromise}>
+          {children}
+          <Toaster />
+        </UserProvider>
       </body>
     </html>
   );
