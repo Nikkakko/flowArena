@@ -1,14 +1,19 @@
 "use server";
 import db from "@/lib/db/db";
-import {
-  artistSchema,
-  ArtistFormValues,
-} from "../validation/artists-validation";
+import { artistSchema, ArtistFormValues } from "../lib/artists-validation";
 import { slugify } from "@/lib/utils";
+import { getUser } from "@/lib/db/queries";
 //parse  zod schema
 
 export default async function addArtist(values: ArtistFormValues) {
   const parsedValues = artistSchema.parse(values);
+  const user = await getUser();
+
+  if (!user || user.role !== "ADMIN") {
+    return {
+      error: "Unauthorized",
+    };
+  }
 
   try {
     const artistExists = await db.artist.findFirst({

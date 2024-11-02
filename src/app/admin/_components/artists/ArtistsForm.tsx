@@ -23,10 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  artistSchema,
-  ArtistFormValues,
-} from "../../validation/artists-validation";
+import { artistSchema, ArtistFormValues } from "../../lib/artists-validation";
 import { toUpperCase } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadButton } from "@/lib/uploadthing";
@@ -34,7 +31,7 @@ import Image from "next/image";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
 import { SocialMediaPlatforms } from "@prisma/client";
-import addArtist from "../../_actions/add-artists";
+import addArtist from "../../_actions/action-artists";
 import { useToast } from "@/hooks/use-toast";
 
 const frameworksList = [

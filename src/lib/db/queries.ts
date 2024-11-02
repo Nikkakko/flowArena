@@ -62,3 +62,23 @@ export async function getBattles() {
     console.error(error);
   }
 }
+
+export async function getSeasons() {
+  try {
+    return db.season.findMany();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getSeasonById(id: string) {
+  try {
+    return db.season.findFirst({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}

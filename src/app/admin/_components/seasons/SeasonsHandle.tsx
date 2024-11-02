@@ -1,5 +1,6 @@
+"use client";
 import * as React from "react";
-import { Season } from "@prisma/client";
+import { Artist, Battle, Season } from "@prisma/client";
 import {
   Table,
   TableBody,
@@ -11,12 +12,34 @@ import {
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import SeasonsForm from "./SeasonsForm";
+import { toUpperCase } from "@/lib/utils";
+import { removeSeason } from "../../_actions/action-season";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 interface SeasonsHandleProps {
   seasons: Season[] | undefined;
+  artists: Artist[] | undefined;
 }
 
-const SeasonsHandle: React.FC<SeasonsHandleProps> = ({ seasons: data }) => {
+const SeasonsHandle: React.FC<SeasonsHandleProps> = ({
+  seasons,
+
+  artists,
+}) => {
+  const [isPending, startTransition] = React.useTransition();
+  const router = useRouter();
+
   return (
     <>
       <Table>
@@ -31,7 +54,7 @@ const SeasonsHandle: React.FC<SeasonsHandleProps> = ({ seasons: data }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.map(season => (
+          {seasons?.map(season => (
             <TableRow key={season.id}>
               <TableCell>{season.name}</TableCell>
               <TableCell>{season.type}</TableCell>
@@ -43,20 +66,56 @@ const SeasonsHandle: React.FC<SeasonsHandleProps> = ({ seasons: data }) => {
               </TableCell>
               <TableCell>{season.winnerId}</TableCell>
               <TableCell>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  // onClick={() => handleEdit(season)}
-                >
-                  Edit
-                </Button>
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push(`/admin/seasons/${season.id}`)}
+                  >
+                    {toUpperCase("რედაქტირება")}
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        {toUpperCase("წაშლა")}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          {toUpperCase("ნამდვილად წაშლეთ სეზონი?")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {toUpperCase(
+                            "წაშლის შემდეგ ამ სეზონის მონაწილეები და ბრძოლები წაიშლება"
+                          )}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>
+                          {toUpperCase("გაუქმება")}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() =>
+                            startTransition(async () => {
+                              await removeSeason(season.id);
+                            })
+                          }
+                          disabled={isPending}
+                        >
+                          {toUpperCase("წაშლა")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      <SeasonsForm />
+      <SeasonsForm artists={artists} />
     </>
   );
 };

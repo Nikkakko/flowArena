@@ -64,8 +64,10 @@ model Season {
   startDate   DateTime
   endDate     DateTime
   type        BattleType
-  winner      Artist   @relation("SeasonWinner", fields: [winnerId], references: [id])
-  winnerId    String
+  
+  winner      Artist?   @relation("SeasonWinner", fields: [winnerId], references: [id])
+  winnerId    String?
+  
   battles     Battle[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -117,7 +119,7 @@ model SocialMedia {
   name        SocialMediaPlatforms
   url         String
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now())
 
   // Relationships
 

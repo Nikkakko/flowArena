@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Shell } from "@/components/shell";
-import { getArtists, getUser } from "@/lib/db/queries";
+import { getArtists, getBattles, getSeasons, getUser } from "@/lib/db/queries";
 import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ArtistsHandle from "./_components/artists/ArtistsHandle";
@@ -11,7 +11,16 @@ interface AdminPageProps {}
 
 const AdminPage: React.FC<AdminPageProps> = async ({}) => {
   const user = await getUser();
-  const artists = await getArtists();
+  // const artists = await getArtists();
+  // const battles = await getBattles();
+  // const seasons = await getSeasons();
+
+  //promise all
+  const [artists, battles, seasons] = await Promise.all([
+    getArtists(),
+    getBattles(),
+    getSeasons(),
+  ]);
 
   if (!user || user.role !== "ADMIN") {
     redirect("/sign-in");
@@ -30,10 +39,14 @@ const AdminPage: React.FC<AdminPageProps> = async ({}) => {
           <ArtistsHandle artists={artists} />
         </TabsContent>
         <TabsContent value="battles">
-          <BattlesHandle />
+          <BattlesHandle battles={battles} />
         </TabsContent>
         <TabsContent value="seasons">
-          <SeasonsHandle />
+          <SeasonsHandle
+            seasons={seasons}
+            battles={battles}
+            artists={artists}
+          />
         </TabsContent>
       </Tabs>
     </Shell>

@@ -24,48 +24,71 @@ import {
 } from "@/components/ui/select";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { toUpperCase } from "@/lib/utils";
+import { SeasonFormValues, seasonSchema } from "../../lib/seasons-validation";
+import { Artist, Battle } from "@prisma/client";
+import { useToast } from "@/hooks/use-toast";
+import addSeasonAction, { editSeason } from "../../_actions/action-season";
+import { selectTypeList } from "../../lib/constants";
+import { useRouter } from "next/navigation";
 
-// Define the schema based on the Prisma model
-const seasonSchema = z.object({
-  name: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  type: z.enum(["ACAPELLA", "FLOW"]),
-  winnerId: z.string(),
-  battleIds: z.array(z.string()),
-});
+type SeasonsFormProps = {
+  // Add props here
+  artists?: Artist[] | undefined;
 
-type SeasonFormValues = z.infer<typeof seasonSchema>;
+  initialData?: SeasonFormValues & { id: string };
+};
 
-// Mock data for artists and battles (replace with actual data fetching)
-const artistsList = [
-  { value: "artist1", label: "Artist 1" },
-  { value: "artist2", label: "Artist 2" },
-  // Add more artists...
-];
+const SeasonsForm: React.FC<SeasonsFormProps> = ({
+  artists,
 
-const battlesList = [
-  { value: "battle1", label: "Battle 1" },
-  { value: "battle2", label: "Battle 2" },
-  // Add more battles...
-];
-
-const SeasonsForm: React.FC = () => {
+  initialData,
+}) => {
+  const [isPending, startTransition] = React.useTransition();
+  const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<SeasonFormValues>({
     resolver: zodResolver(seasonSchema),
     defaultValues: {
-      name: "",
-      startDate: "",
-      endDate: "",
-      type: "ACAPELLA",
-      winnerId: "",
-      battleIds: [],
+      name: initialData?.name || "",
+      startDate: initialData?.startDate || undefined,
+      endDate: initialData?.endDate || undefined,
+      type: initialData?.type || undefined,
+      winnerId: initialData?.winnerId || undefined,
     },
   });
 
   function onSubmit(values: SeasonFormValues) {
     console.log(values);
-    // Handle form submission
+
+    startTransition(async () => {
+      try {
+        switch (initialData) {
+          case undefined:
+            await addSeasonAction(values);
+            form.reset();
+            toast({
+              title: "Season added",
+              description: "Season has been added successfully",
+            });
+
+            break;
+          default:
+            await editSeason(initialData.id, values);
+            toast({
+              title: "Season updated",
+              description: "Season has been updated successfully",
+            });
+            router.push("/admin");
+            break;
+        }
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Error",
+          description: "Something went wrong",
+        });
+      }
+    });
   }
 
   return (
@@ -100,7 +123,14 @@ const SeasonsForm: React.FC = () => {
                 {toUpperCase("დაწყების თარიღი")}
               </FormLabel>
               <FormControl>
-                <Input type="date" {...field} className="text-white" />
+                <Input
+                  type="date"
+                  {...field}
+                  value={
+                    field.value ? field.value.toISOString().split("T")[0] : ""
+                  }
+                  className="text-white"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -116,7 +146,14 @@ const SeasonsForm: React.FC = () => {
                 {toUpperCase("დასრულების თარიღი")}
               </FormLabel>
               <FormControl>
-                <Input type="date" {...field} className="text-white" />
+                <Input
+                  type="date"
+                  {...field}
+                  value={
+                    field.value ? field.value.toISOString().split("T")[0] : ""
+                  }
+                  className="text-white"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,15 +170,16 @@ const SeasonsForm: React.FC = () => {
               </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-white/50">
                     <SelectValue placeholder={toUpperCase("აირჩიეთ ტიპი")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="ACAPELLA">
-                    {toUpperCase("აკაპელა")}
-                  </SelectItem>
-                  <SelectItem value="FLOW">{toUpperCase("ფლოუ")}</SelectItem>
+                  {selectTypeList.map(type => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {toUpperCase(type.label)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -157,18 +195,21 @@ const SeasonsForm: React.FC = () => {
               <FormLabel className="text-white">
                 {toUpperCase("გამარჯვებული")}
               </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value ? field.value : undefined}
+              >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-white/50">
                     <SelectValue
                       placeholder={toUpperCase("აირჩიეთ გამარჯვებული")}
                     />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {artistsList.map(artist => (
-                    <SelectItem key={artist.value} value={artist.value}>
-                      {artist.label}
+                  {artists?.map(artist => (
+                    <SelectItem key={artist.id} value={artist.id}>
+                      {toUpperCase(`${artist.firstName} ${artist.lastName}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -178,30 +219,12 @@ const SeasonsForm: React.FC = () => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="battleIds"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">
-                {toUpperCase("ბეთლები")}
-              </FormLabel>
-              <FormControl>
-                <MultiSelect
-                  options={battlesList}
-                  onValueChange={(value: string[]) => field.onChange(value)}
-                  defaultValue={field.value}
-                  placeholder={toUpperCase("აირჩიეთ ბეთლები")}
-                  variant="inverted"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" className="text-white">
-          {toUpperCase("შენახვა")}
+        <Button
+          type="submit"
+          className="text-white"
+          disabled={isPending || !form.formState.isDirty}
+        >
+          {initialData ? toUpperCase("რედაქტირება") : toUpperCase("დამატება")}
         </Button>
       </form>
     </Form>

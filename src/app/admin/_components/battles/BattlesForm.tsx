@@ -27,20 +27,9 @@ import { UploadButton } from "@/lib/uploadthing";
 import Image from "next/image";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { toUpperCase } from "@/lib/utils";
-import {
-  BattleFormValues,
-  battleSchema,
-} from "../../validation/battles-validation";
+import { BattleFormValues, battleSchema } from "../../lib/battles-validation";
 import { BattleStatus, BattleType } from "@prisma/client";
-type selectBattleType = {
-  value: BattleType;
-  label: string;
-};
-
-type selectBattleStatus = {
-  value: BattleStatus;
-  label: string;
-};
+import { selectBattleStatusList, selectTypeList } from "../../lib/constants";
 
 // Mock data for artists and seasons (replace with actual data fetching)
 const artistsList = [
@@ -79,32 +68,6 @@ const BattlesForm: React.FC = () => {
     console.log(values);
     // Handle form submission
   }
-
-  const selectTypeList: selectBattleType[] = [
-    {
-      value: BattleType.ACAPELLA,
-      label: "აკაპელა",
-    },
-    {
-      value: BattleType.FLOW,
-      label: "ფლოუ",
-    },
-  ];
-
-  const selectBattleStatusList: selectBattleStatus[] = [
-    {
-      value: BattleStatus.UPCOMING,
-      label: "მოახლოებული",
-    },
-    {
-      value: BattleStatus.LIVE,
-      label: "მიმდინარე",
-    },
-    {
-      value: BattleStatus.COMPLETED,
-      label: "დასრულებული",
-    },
-  ];
 
   return (
     <Form {...form}>
