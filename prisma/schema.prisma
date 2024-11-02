@@ -75,22 +75,19 @@ model Season {
 
 model Artist {
   id          String   @id @default(cuid())
-  firstName   String
-  lastName    String
   nickName    String
   image      String?
   slug       String @unique
   wins        Int
   loses       Int
   bio        String
-  quotes Quotes[]
 
 
 
 
-  // An Artist social media accounts
-  socialMedia SocialMedia[]
   // Relationships
+  socialMedia SocialMedia[]
+  quotes Quotes[]
   votes      Vote[]
 
 

@@ -8,15 +8,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Battle } from "@prisma/client";
+import { Artist, Battle, Season } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import BattlesForm from "./BattlesForm";
 
 interface BattlesHandleProps {
   battles: Battle[] | undefined;
+  artists: Artist[] | undefined;
+  seasons: Season[] | undefined;
 }
 
-const BattlesHandle: React.FC<BattlesHandleProps> = ({ battles: data }) => {
+const BattlesHandle: React.FC<BattlesHandleProps> = ({
+  battles,
+  artists,
+  seasons,
+}) => {
   return (
     <>
       <Table>
@@ -30,7 +36,7 @@ const BattlesHandle: React.FC<BattlesHandleProps> = ({ battles: data }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.map(battle => (
+          {battles?.map(battle => (
             <TableRow key={battle.id}>
               <TableCell>{battle.title}</TableCell>
               <TableCell>{battle.type}</TableCell>
@@ -50,7 +56,7 @@ const BattlesHandle: React.FC<BattlesHandleProps> = ({ battles: data }) => {
         </TableBody>
       </Table>
 
-      <BattlesForm />
+      <BattlesForm artists={artists} seasons={seasons} />
     </>
   );
 };

@@ -11,9 +11,6 @@ interface AdminPageProps {}
 
 const AdminPage: React.FC<AdminPageProps> = async ({}) => {
   const user = await getUser();
-  // const artists = await getArtists();
-  // const battles = await getBattles();
-  // const seasons = await getSeasons();
 
   //promise all
   const [artists, battles, seasons] = await Promise.all([
@@ -36,17 +33,21 @@ const AdminPage: React.FC<AdminPageProps> = async ({}) => {
           <TabsTrigger value="seasons">Seasons</TabsTrigger>
         </TabsList>
         <TabsContent value="artists">
-          <ArtistsHandle artists={artists} />
+          <ArtistsHandle
+            artists={artists}
+            battles={battles}
+            seasons={seasons}
+          />
         </TabsContent>
         <TabsContent value="battles">
-          <BattlesHandle battles={battles} />
-        </TabsContent>
-        <TabsContent value="seasons">
-          <SeasonsHandle
-            seasons={seasons}
+          <BattlesHandle
             battles={battles}
             artists={artists}
+            seasons={seasons}
           />
+        </TabsContent>
+        <TabsContent value="seasons">
+          <SeasonsHandle seasons={seasons} artists={artists} />
         </TabsContent>
       </Tabs>
     </Shell>

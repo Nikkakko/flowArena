@@ -82,3 +82,34 @@ export async function getSeasonById(id: string) {
     console.error(error);
   }
 }
+
+export async function getBattleById(id: string) {
+  try {
+    return db.battle.findFirst({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getArtistById(id: string) {
+  try {
+    return db.artist.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        quotes: true,
+        socialMedia: true,
+        battlesParticipated: true,
+        seasonsWon: true,
+        battlesWon: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}

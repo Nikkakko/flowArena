@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Artist } from "@prisma/client";
+import { Artist, Battle, Season } from "@prisma/client";
 import {
   Table,
   TableBody,
@@ -8,21 +8,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import ArtistsForm from "./ArtistsForm";
-import { toUpperCase } from "@/lib/utils";
+import { cn, toUpperCase } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface ArtistsHandleProps {
   artists: Artist[] | undefined;
+  battles: Battle[] | undefined;
+  seasons: Season[] | undefined;
 }
 
-const ArtistsHandle: React.FC<ArtistsHandleProps> = ({ artists }) => {
+const ArtistsHandle: React.FC<ArtistsHandleProps> = ({
+  artists,
+  battles,
+  seasons,
+}) => {
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{toUpperCase("სახელი")}</TableHead>
             <TableHead>{toUpperCase("მეტსახელი")}</TableHead>
             <TableHead>{toUpperCase("მოგება")}</TableHead>
             <TableHead>{toUpperCase("წაგება")}</TableHead>
@@ -33,7 +40,6 @@ const ArtistsHandle: React.FC<ArtistsHandleProps> = ({ artists }) => {
         <TableBody>
           {artists?.map(artist => (
             <TableRow key={artist.id}>
-              <TableCell>{`${artist.firstName} ${artist.lastName}`}</TableCell>
               <TableCell>{artist.nickName}</TableCell>
               <TableCell>{artist.wins}</TableCell>
               <TableCell>{artist.loses}</TableCell>
@@ -41,20 +47,21 @@ const ArtistsHandle: React.FC<ArtistsHandleProps> = ({ artists }) => {
                 {artist.bio ? artist.bio.substring(0, 50) + "..." : ""}
               </TableCell>
               <TableCell>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  //   onClick={() => handleEdit(artist)}
+                <Link
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" })
+                  )}
+                  href={`/admin/artists/${artist.id}`}
                 >
                   Edit
-                </Button>
+                </Link>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      <ArtistsForm />
+      <ArtistsForm artists={artists} battles={battles} seasons={seasons} />
     </>
   );
 };

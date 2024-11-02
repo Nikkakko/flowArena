@@ -30,33 +30,33 @@ import { UploadButton } from "@/lib/uploadthing";
 import Image from "next/image";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
-import { SocialMediaPlatforms } from "@prisma/client";
+import { Artist, Battle, Season, SocialMediaPlatforms } from "@prisma/client";
 import addArtist from "../../_actions/action-artists";
 import { useToast } from "@/hooks/use-toast";
 
-const frameworksList = [
-  { value: "react", label: "React", icon: Turtle },
-  { value: "angular", label: "Angular", icon: Cat },
-  { value: "vue", label: "Vue", icon: Dog },
-  { value: "svelte", label: "Svelte", icon: Rabbit },
-  { value: "ember", label: "Ember", icon: Fish },
-];
+interface ArtistsFormProps {
+  initialData?: ArtistFormValues & { id: string };
+  artists?: Artist[] | undefined;
+  battles?: Battle[] | undefined;
+  seasons?: Season[] | undefined;
+}
 
-interface ArtistsFormProps {}
-
-const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
+const ArtistsForm: React.FC<ArtistsFormProps> = ({
+  initialData,
+  artists,
+  battles,
+  seasons,
+}) => {
   const [isPending, startTransition] = React.useTransition();
   const { toast } = useToast();
   // 1. Define your form.
   const form = useForm<ArtistFormValues>({
     resolver: zodResolver(artistSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
       nickName: "",
       image: "",
-      wins: undefined,
-      loses: undefined,
+      wins: "0",
+      loses: "0",
       bio: "",
       quotes: [""], // Initialize with one empty quote
       socialMedia: [
@@ -70,8 +70,8 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
       battlesWon: [],
     },
   });
-  const [image, setImage] = React.useState<string | undefined>(
-    form.watch("image")
+  const [image, setImage] = React.useState<string | null>(
+    form.watch("image") || null
   );
 
   // 2. Define a submit handler.
@@ -81,7 +81,7 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
       try {
         await addArtist(values);
         form.reset();
-        setImage(undefined);
+        setImage(null);
         toast({
           title: "Artist added successfully",
           duration: 5000,
@@ -97,7 +97,6 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
     });
   }
 
-  console.log(form.watch());
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-10">
@@ -112,7 +111,7 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
                 height={80}
               />
               <Button
-                onClick={() => setImage(undefined)}
+                onClick={() => setImage(null)}
                 className=" text-white absolute top-0 right-0 w-4 h-4 rounded-full"
                 type="button"
               >
@@ -154,48 +153,6 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
         <div className="grid grid-cols-3 gap-4">
           <FormField
             control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">
-                  {toUpperCase("სახელი")}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={toUpperCase("სახელი")}
-                    {...field}
-                    className="text-white"
-                  />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">
-                  {toUpperCase("გვარი")}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={toUpperCase("გვარი")}
-                    {...field}
-                    className="text-white"
-                  />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="nickName"
             render={({ field }) => (
               <FormItem>
@@ -226,7 +183,6 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    type="number"
                     placeholder={toUpperCase("გამარჯვება")}
                     {...field}
                     className="text-white"
@@ -248,7 +204,6 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    type="number"
                     placeholder={toUpperCase("წაგება")}
                     {...field}
                     className="text-white"
@@ -340,12 +295,19 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
 
         {/* multi select battlesParticipated */}
         <MultiSelect
-          options={frameworksList}
+          options={
+            battles?.map(battle => ({
+              label: battle.title,
+              value: battle.id,
+            })) || []
+          }
           onValueChange={(value: string[]) => {
             form.setValue("battlesParticipated", value);
           }}
           defaultValue={form.watch("battlesParticipated")}
-          placeholder={toUpperCase("ბეთლებები")}
+          placeholder={toUpperCase(
+            "მონიშნეთ ბეთლები რომელშიც მონაწილეობა მიიღო არტისტმა"
+          )}
           variant="inverted"
           animation={2}
           maxCount={3}
@@ -353,12 +315,17 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
 
         {/* multi select seasonsWon */}
         <MultiSelect
-          options={frameworksList}
+          options={
+            seasons?.map(season => ({
+              label: season.name,
+              value: season.id,
+            })) || []
+          }
           onValueChange={(value: string[]) => {
             form.setValue("seasonsWon", value);
           }}
           defaultValue={form.watch("seasonsWon")}
-          placeholder={toUpperCase("სეზონები")}
+          placeholder={toUpperCase("მონიშნეთ მოგებული სეზონი")}
           variant="inverted"
           animation={2}
           maxCount={3}
@@ -366,12 +333,17 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({}) => {
 
         {/* multi select battlesWon */}
         <MultiSelect
-          options={frameworksList}
+          options={
+            battles?.map(battle => ({
+              label: battle.title,
+              value: battle.id,
+            })) || []
+          }
           onValueChange={(value: string[]) => {
             form.setValue("battlesWon", value);
           }}
           defaultValue={form.watch("battlesWon")}
-          placeholder={toUpperCase("ბეთლების გამარჯვება")}
+          placeholder={toUpperCase("მონიშნეთ მოგებული ბეთლები")}
           variant="inverted"
           animation={2}
           maxCount={3}

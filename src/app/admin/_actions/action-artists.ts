@@ -3,6 +3,7 @@ import db from "@/lib/db/db";
 import { artistSchema, ArtistFormValues } from "../lib/artists-validation";
 import { slugify } from "@/lib/utils";
 import { getUser } from "@/lib/db/queries";
+import { revalidatePath } from "next/cache";
 //parse  zod schema
 
 export default async function addArtist(values: ArtistFormValues) {
@@ -30,8 +31,6 @@ export default async function addArtist(values: ArtistFormValues) {
 
     const artist = await db.artist.create({
       data: {
-        firstName: parsedValues.firstName,
-        lastName: parsedValues.lastName,
         nickName: parsedValues.nickName,
         image: parsedValues.image,
         slug: slugify(parsedValues.nickName),
@@ -56,6 +55,9 @@ export default async function addArtist(values: ArtistFormValues) {
         },
       },
     });
+
+    //revalidate
+    revalidatePath("/admin");
 
     return artist;
   } catch (error) {

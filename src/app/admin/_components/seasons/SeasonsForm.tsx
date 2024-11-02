@@ -38,11 +38,7 @@ type SeasonsFormProps = {
   initialData?: SeasonFormValues & { id: string };
 };
 
-const SeasonsForm: React.FC<SeasonsFormProps> = ({
-  artists,
-
-  initialData,
-}) => {
+const SeasonsForm: React.FC<SeasonsFormProps> = ({ artists, initialData }) => {
   const [isPending, startTransition] = React.useTransition();
   const { toast } = useToast();
   const router = useRouter();
@@ -209,7 +205,7 @@ const SeasonsForm: React.FC<SeasonsFormProps> = ({
                 <SelectContent>
                   {artists?.map(artist => (
                     <SelectItem key={artist.id} value={artist.id}>
-                      {toUpperCase(`${artist.firstName} ${artist.lastName}`)}
+                      {toUpperCase(`${artist.nickName}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>

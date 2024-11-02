@@ -28,23 +28,24 @@ import Image from "next/image";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { toUpperCase } from "@/lib/utils";
 import { BattleFormValues, battleSchema } from "../../lib/battles-validation";
-import { BattleStatus, BattleType } from "@prisma/client";
+import { Artist, BattleStatus, BattleType, Season } from "@prisma/client";
 import { selectBattleStatusList, selectTypeList } from "../../lib/constants";
+import { useToast } from "@/hooks/use-toast";
+import { addBattleAction } from "../../_actions/action-battle";
 
-// Mock data for artists and seasons (replace with actual data fetching)
-const artistsList = [
-  { value: "artist1", label: "Artist 1" },
-  { value: "artist2", label: "Artist 2" },
-  // Add more artists...
-];
+type BattlesFormProps = {
+  initialData?: BattleFormValues & { id: string };
+  artists?: Artist[] | undefined;
+  seasons?: Season[] | undefined;
+};
 
-const seasonsList = [
-  { value: "season1", label: "Season 1" },
-  { value: "season2", label: "Season 2" },
-  // Add more seasons...
-];
-
-const BattlesForm: React.FC = () => {
+const BattlesForm: React.FC<BattlesFormProps> = ({
+  initialData,
+  artists,
+  seasons,
+}) => {
+  const [isPending, startTransition] = React.useTransition();
+  const { toast } = useToast();
   const form = useForm<BattleFormValues>({
     resolver: zodResolver(battleSchema),
     defaultValues: {
@@ -54,9 +55,9 @@ const BattlesForm: React.FC = () => {
       description: "",
       type: undefined,
       status: undefined,
-      artists: [],
-      season: "",
-      winner: undefined,
+      artistIds: [],
+      seasonId: "",
+      winnerId: "",
     },
   });
 
@@ -67,6 +68,22 @@ const BattlesForm: React.FC = () => {
   function onSubmit(values: BattleFormValues) {
     console.log(values);
     // Handle form submission
+    startTransition(async () => {
+      try {
+        // Add battle
+        await addBattleAction(values);
+        form.reset();
+        toast({
+          title: "Battle added",
+          description: "Battle has been added successfully",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Something went wrong. Please try again later.",
+        });
+      }
+    });
   }
 
   return (
@@ -236,7 +253,7 @@ const BattlesForm: React.FC = () => {
 
         <FormField
           control={form.control}
-          name="artists"
+          name="artistIds"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-white">
@@ -244,7 +261,12 @@ const BattlesForm: React.FC = () => {
               </FormLabel>
               <FormControl>
                 <MultiSelect
-                  options={artistsList}
+                  options={
+                    artists?.map(artist => ({
+                      label: artist.nickName,
+                      value: artist.id,
+                    })) || []
+                  }
                   onValueChange={(value: string[]) => field.onChange(value)}
                   defaultValue={field.value as string[] | undefined}
                   placeholder={toUpperCase("აირჩიეთ არტისტები")}
@@ -258,7 +280,7 @@ const BattlesForm: React.FC = () => {
 
         <FormField
           control={form.control}
-          name="season"
+          name="seasonId"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-white">
@@ -271,9 +293,9 @@ const BattlesForm: React.FC = () => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {seasonsList.map(season => (
-                    <SelectItem key={season.value} value={season.value}>
-                      {season.label}
+                  {seasons?.map(season => (
+                    <SelectItem key={season.id} value={season.id}>
+                      {toUpperCase(season.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -285,7 +307,7 @@ const BattlesForm: React.FC = () => {
 
         <FormField
           control={form.control}
-          name="winner"
+          name="winnerId"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-white">
@@ -300,9 +322,9 @@ const BattlesForm: React.FC = () => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {artistsList.map(artist => (
-                    <SelectItem key={artist.value} value={artist.value}>
-                      {artist.label}
+                  {artists?.map(artist => (
+                    <SelectItem key={artist.id} value={artist.id}>
+                      {toUpperCase(`${artist.nickName}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -312,7 +334,7 @@ const BattlesForm: React.FC = () => {
           )}
         />
 
-        <Button type="submit" className="text-white">
+        <Button type="submit" className="text-white" disabled={isPending}>
           {toUpperCase("შენახვა")}
         </Button>
       </form>

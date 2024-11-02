@@ -20,7 +20,7 @@ async function main() {
     const salt = await bcrypt.genSalt(Number(process.env.SALT));
     const hashPassword = await bcrypt.hash(admin.password, salt);
 
-    if (admin.email !== "nikolozkopadze@gmail.com") {
+    if (admin.email !== process.env.ADMIN_EMAIL) {
       throw new Error("Please provide correct email");
     }
 
