@@ -35,6 +35,7 @@ export async function addBattleAction(values: BattleFormValues) {
         slug: slugify(parsedValues.title),
         description: parsedValues.description,
         coverImage: parsedValues.coverImage,
+        isFeatured: parsedValues.isFeatured,
         status: parsedValues.status,
         link: parsedValues.link,
         season: {
@@ -63,7 +64,7 @@ export async function addBattleAction(values: BattleFormValues) {
   }
 }
 
-export async function editBattle(id: string, values: BattleFormValues) {
+export async function updateBattle(id: string, values: BattleFormValues) {
   const parsedValues = battleSchema.parse(values);
   const user = await getUser();
 
@@ -86,6 +87,7 @@ export async function editBattle(id: string, values: BattleFormValues) {
         status: parsedValues.status,
         link: parsedValues.link,
         type: parsedValues.type,
+        isFeatured: parsedValues.isFeatured,
         artists: {
           set: parsedValues.artistIds.map(id => ({ id })),
         },

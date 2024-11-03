@@ -104,6 +104,11 @@ export async function getBattleById(id: string) {
       where: {
         id,
       },
+      include: {
+        artists: true,
+        winner: true,
+        season: true,
+      },
     });
   } catch (error) {
     console.error(error);

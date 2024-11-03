@@ -10,7 +10,8 @@ export const battleSchema = z.object({
   status: z.nativeEnum(BattleStatus),
   artistIds: z.array(z.string()),
   seasonId: z.string().min(3),
-  winnerId: z.string(),
+  winnerId: z.string().optional(),
+  isFeatured: z.boolean(),
 });
 
 export type BattleFormValues = z.infer<typeof battleSchema>;

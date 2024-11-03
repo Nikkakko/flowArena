@@ -11,8 +11,8 @@ export default async function Home() {
     getPopularArtists(),
   ]);
   return (
-    <Shell as="section" className="container mx-auto p-4 2xl:p-0">
-      <section className="mb-12 ">
+    <Shell as="section" className="container mx-auto p-4 2xl:px-0">
+      <section className="mb-12  ">
         <h1 className="text-4xl font-bold mb-4 text-white">
           {toUpperCase("მოგესალმებით FlowFlow Magazine-ში")}
         </h1>

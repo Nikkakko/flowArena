@@ -11,7 +11,9 @@ interface BattlesCardProps {
 }
 
 const BattlesCard: React.FC<BattlesCardProps> = ({ battle }) => {
-  const i = 1;
+  const battleDescription = battle.description
+    ? battle.description.slice(0, 100)
+    : "";
   return (
     <div className="bg-secondary rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all shadow-sm group">
       <div className="aspect-video relative h-[279px]">
@@ -19,16 +21,14 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle }) => {
           src={battle.coverImage}
           alt={battle.title}
           fill
-          className="object-cover"
+          className="object-cover grayscale group-hover:grayscale-0 transition-all"
         />
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold mb-2 text-white">
           {toUpperCase(battle.title)}
         </h3>
-        <p className="text-gray-400 mb-4">
-          {toUpperCase("ნახეთ უახლესი ბეთლი ორ საუკეთესო არტისტს შორის")}
-        </p>
+        <p className="text-gray-400 mb-4">{toUpperCase(battleDescription)}</p>
         <Link
           className={cn(
             buttonVariants({ variant: "outline" }),

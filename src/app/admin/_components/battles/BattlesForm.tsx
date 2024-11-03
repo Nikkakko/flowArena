@@ -31,7 +31,8 @@ import { BattleFormValues, battleSchema } from "../../lib/battles-validation";
 import { Artist, BattleStatus, BattleType, Season } from "@prisma/client";
 import { selectBattleStatusList, selectTypeList } from "../../lib/constants";
 import { useToast } from "@/hooks/use-toast";
-import { addBattleAction } from "../../_actions/action-battle";
+import { addBattleAction, updateBattle } from "../../_actions/action-battle";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type BattlesFormProps = {
   initialData?: BattleFormValues & { id: string };
@@ -49,15 +50,16 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
   const form = useForm<BattleFormValues>({
     resolver: zodResolver(battleSchema),
     defaultValues: {
-      link: "",
-      coverImage: "",
-      title: "",
-      description: "",
-      type: undefined,
-      status: undefined,
-      artistIds: [],
-      seasonId: "",
-      winnerId: "",
+      link: initialData?.link || "",
+      coverImage: initialData?.coverImage || "",
+      title: initialData?.title || "",
+      description: initialData?.description || "",
+      type: initialData?.type || undefined,
+      status: initialData?.status || undefined,
+      artistIds: initialData?.artistIds || [],
+      seasonId: initialData?.seasonId || "",
+      winnerId: initialData?.winnerId || undefined,
+      isFeatured: false,
     },
   });
 
@@ -70,13 +72,22 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
     // Handle form submission
     startTransition(async () => {
       try {
-        // Add battle
-        await addBattleAction(values);
-        form.reset();
-        toast({
-          title: "Battle added",
-          description: "Battle has been added successfully",
-        });
+        if (initialData) {
+          await updateBattle(initialData.id, values);
+          toast({
+            title: "Battle updated successfully",
+            variant: "default",
+            duration: 5000,
+          });
+        } else {
+          await addBattleAction(values);
+          form.reset();
+          toast({
+            title: "Battle added successfully",
+            variant: "default",
+            duration: 5000,
+          });
+        }
       } catch (error) {
         toast({
           title: "Error",
@@ -157,9 +168,12 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
               <FormLabel className="text-white">
                 {toUpperCase("ტიპი")}
               </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value ?? undefined}
+              >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-white">
                     <SelectValue placeholder={toUpperCase("აირჩიეთ ტიპი")} />
                   </SelectTrigger>
                 </FormControl>
@@ -184,9 +198,12 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
               <FormLabel className="text-white">
                 {toUpperCase("სტატუსი")}
               </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value ?? undefined}
+              >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-white">
                     <SelectValue placeholder={toUpperCase("აირჩიეთ სტატუსი")} />
                   </SelectTrigger>
                 </FormControl>
@@ -288,7 +305,7 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
               </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-white">
                     <SelectValue placeholder={toUpperCase("აირჩიეთ სეზონი")} />
                   </SelectTrigger>
                 </FormControl>
@@ -311,11 +328,11 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-white">
-                {toUpperCase("გამარჯვებული")}
+                {toUpperCase("გამარჯვებუ���ი")}
               </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-white">
                     <SelectValue
                       placeholder={toUpperCase("აირჩიეთ გამარჯვებული")}
                     />
@@ -330,6 +347,29 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
                 </SelectContent>
               </Select>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="isFeatured"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-white">
+                  {toUpperCase("რჩეული")}
+                </FormLabel>
+                <FormDescription className="text-white">
+                  {toUpperCase("მონიშნეთ თუ გსურთ რომ ბრძოლა იყოს რჩეული")}
+                </FormDescription>
+              </div>
             </FormItem>
           )}
         />
