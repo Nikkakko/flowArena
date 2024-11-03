@@ -28,15 +28,11 @@ import {
 import { useRouter } from "next/navigation";
 
 interface SeasonsHandleProps {
-  seasons: Season[] | undefined;
+  seasons: (Season & { winner: Artist | null })[] | undefined;
   artists: Artist[] | undefined;
 }
 
-const SeasonsHandle: React.FC<SeasonsHandleProps> = ({
-  seasons,
-
-  artists,
-}) => {
+const SeasonsHandle: React.FC<SeasonsHandleProps> = ({ seasons, artists }) => {
   const [isPending, startTransition] = React.useTransition();
   const router = useRouter();
 
@@ -64,7 +60,7 @@ const SeasonsHandle: React.FC<SeasonsHandleProps> = ({
               <TableCell>
                 {format(new Date(season.endDate), "yyyy-MM-dd")}
               </TableCell>
-              <TableCell>{season.winnerId}</TableCell>
+              <TableCell>{season.winner?.nickName}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-4">
                   <Button

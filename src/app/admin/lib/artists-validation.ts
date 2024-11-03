@@ -14,10 +14,30 @@ export const artistSchema = z.object({
       url: z.string().url(),
     })
   ),
+  battlesParticipated: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string(),
+    })
+  ),
 
-  battlesParticipated: z.array(z.string()).optional(),
-  seasonsWon: z.array(z.string()).optional(),
-  battlesWon: z.array(z.string()).optional(),
+  seasonsWon: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string(),
+    })
+  ),
+
+  battlesWon: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string(),
+    })
+  ),
+
+  // battlesParticipated: z.array(z.string()).optional(),
+  // seasonsWon: z.array(z.string()).optional(),
+  // battlesWon: z.array(z.string()).optional(),
 });
 
 //export type

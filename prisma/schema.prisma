@@ -87,7 +87,7 @@ model Artist {
 
   // Relationships
   socialMedia SocialMedia[]
-  quotes Quotes[]
+  quotes Quote[]
   votes      Vote[]
 
 
@@ -102,7 +102,7 @@ model Artist {
   updatedAt   DateTime @updatedAt
 }
 
-model Quotes {
+model Quote {
   id          String   @id @default(cuid())
   quote       String
   artist      Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)

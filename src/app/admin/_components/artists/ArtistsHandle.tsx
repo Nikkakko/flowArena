@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import { Artist, Battle, Season } from "@prisma/client";
 import {
@@ -13,6 +14,18 @@ import ArtistsForm from "./ArtistsForm";
 import { cn, toUpperCase } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { removeArtist } from "../../_actions/action-artists";
 
 interface ArtistsHandleProps {
   artists: Artist[] | undefined;
@@ -25,6 +38,9 @@ const ArtistsHandle: React.FC<ArtistsHandleProps> = ({
   battles,
   seasons,
 }) => {
+  const [isPending, startTransition] = React.useTransition();
+  const router = useRouter();
+
   return (
     <>
       <Table>
@@ -47,14 +63,51 @@ const ArtistsHandle: React.FC<ArtistsHandleProps> = ({
                 {artist.bio ? artist.bio.substring(0, 50) + "..." : ""}
               </TableCell>
               <TableCell>
-                <Link
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" })
-                  )}
-                  href={`/admin/artists/${artist.id}`}
-                >
-                  Edit
-                </Link>
+                <div className="flex items-center gap-4">
+                  <Link
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" })
+                    )}
+                    href={`/admin/artists/${artist.id}`}
+                  >
+                    {toUpperCase("რედაქტირება")}
+                  </Link>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        {toUpperCase("წაშლა")}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          {toUpperCase("ნამდვილად წაშლეთ სეზონი?")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {toUpperCase(
+                            "წაშლის შემდეგ ამ არტისტის ბრძოლები და ბრძოლები წაიშლება"
+                          )}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>
+                          {toUpperCase("გაუქმება")}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() =>
+                            startTransition(async () => {
+                              await removeArtist(artist.id);
+                            })
+                          }
+                          disabled={isPending}
+                        >
+                          {toUpperCase("წაშლა")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </TableCell>
             </TableRow>
           ))}

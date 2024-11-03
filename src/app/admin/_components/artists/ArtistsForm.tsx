@@ -29,9 +29,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { UploadButton } from "@/lib/uploadthing";
 import Image from "next/image";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
 import { Artist, Battle, Season, SocialMediaPlatforms } from "@prisma/client";
-import addArtist from "../../_actions/action-artists";
+import addArtist, { updateArtist } from "../../_actions/action-artists";
 import { useToast } from "@/hooks/use-toast";
 
 interface ArtistsFormProps {
@@ -53,21 +52,16 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
   const form = useForm<ArtistFormValues>({
     resolver: zodResolver(artistSchema),
     defaultValues: {
-      nickName: "",
-      image: "",
-      wins: "0",
-      loses: "0",
-      bio: "",
-      quotes: [""], // Initialize with one empty quote
-      socialMedia: [
-        {
-          name: "FACEBOOK",
-          url: "",
-        },
-      ],
-      battlesParticipated: [],
-      seasonsWon: [],
-      battlesWon: [],
+      nickName: initialData?.nickName || "",
+      image: initialData?.image || "",
+      wins: initialData?.wins || "0",
+      loses: initialData?.loses || "0",
+      bio: initialData?.bio || "",
+      quotes: initialData?.quotes || [],
+      socialMedia: initialData?.socialMedia || [],
+      battlesParticipated: initialData?.battlesParticipated || [],
+      seasonsWon: initialData?.seasonsWon || [],
+      battlesWon: initialData?.battlesWon || [],
     },
   });
   const [image, setImage] = React.useState<string | null>(
@@ -77,20 +71,31 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
   // 2. Define a submit handler.
   function onSubmit(values: ArtistFormValues) {
     startTransition(async () => {
-      // Do something async, like an API call.
       try {
-        await addArtist(values);
-        form.reset();
-        setImage(null);
-        toast({
-          title: "Artist added successfully",
-          duration: 5000,
-        });
+        if (initialData) {
+          await updateArtist(initialData.id, values);
+          toast({
+            title: "Artist updated successfully",
+            variant: "default",
+            duration: 5000,
+          });
+        } else {
+          await addArtist(values);
+          form.reset();
+          setImage(null);
+          toast({
+            title: "Artist added successfully",
+            variant: "default",
+            duration: 5000,
+          });
+        }
       } catch (error) {
         console.error(error);
         toast({
-          title: "Error adding artist",
-
+          title: "Error",
+          description:
+            error instanceof Error ? error.message : "Something went wrong",
+          variant: "destructive",
           duration: 5000,
         });
       }
@@ -294,60 +299,95 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
         />
 
         {/* multi select battlesParticipated */}
-        <MultiSelect
-          options={
-            battles?.map(battle => ({
-              label: battle.title,
-              value: battle.id,
-            })) || []
-          }
-          onValueChange={(value: string[]) => {
-            form.setValue("battlesParticipated", value);
-          }}
-          defaultValue={form.watch("battlesParticipated")}
-          placeholder={toUpperCase(
-            "მონიშნეთ ბეთლები რომელშიც მონაწილეობა მიიღო არტისტმა"
-          )}
-          variant="inverted"
-          animation={2}
-          maxCount={3}
-        />
+
+        <div>
+          <FormDescription className="text-white">
+            {toUpperCase("ბე���ლებში მონაწილეობა")}
+          </FormDescription>
+          <MultiSelect
+            options={
+              battles?.map(battle => ({
+                label: battle.title,
+                value: battle.id,
+              })) || []
+            }
+            onValueChange={(value: string[]) => {
+              form.setValue(
+                "battlesParticipated",
+                value.map(v => ({
+                  value: v,
+                  label: battles?.find(b => b.id === v)?.title || v,
+                }))
+              );
+            }}
+            defaultValue={form
+              .watch("battlesParticipated")
+              .map(battle => battle.value)}
+            placeholder={toUpperCase(
+              "მონიშნეთ ბეთლები რომელშიც მონაწილეობა მიიღო არტისტმა"
+            )}
+            variant="inverted"
+            maxCount={3}
+          />
+        </div>
 
         {/* multi select seasonsWon */}
-        <MultiSelect
-          options={
-            seasons?.map(season => ({
-              label: season.name,
-              value: season.id,
-            })) || []
-          }
-          onValueChange={(value: string[]) => {
-            form.setValue("seasonsWon", value);
-          }}
-          defaultValue={form.watch("seasonsWon")}
-          placeholder={toUpperCase("მონიშნეთ მოგებული სეზონი")}
-          variant="inverted"
-          animation={2}
-          maxCount={3}
-        />
+        <div>
+          <FormDescription className="text-white">
+            {toUpperCase("მოგებული სეზონები")}
+          </FormDescription>
+          <MultiSelect
+            options={
+              seasons?.map(season => ({
+                label: season.name,
+                value: season.id,
+              })) || []
+            }
+            onValueChange={(value: string[]) => {
+              form.setValue(
+                "seasonsWon",
+                value.map(v => ({
+                  value: v,
+                  label: seasons?.find(s => s.id === v)?.name || v,
+                }))
+              );
+            }}
+            placeholder={toUpperCase("მონიშნეთ მოგებული სეზონი")}
+            defaultValue={form.watch("seasonsWon").map(season => season.value)}
+            variant="inverted"
+            maxCount={3}
+          />
+        </div>
 
         {/* multi select battlesWon */}
-        <MultiSelect
-          options={
-            battles?.map(battle => ({
-              label: battle.title,
-              value: battle.id,
-            })) || []
-          }
-          onValueChange={(value: string[]) => {
-            form.setValue("battlesWon", value);
-          }}
-          defaultValue={form.watch("battlesWon")}
-          placeholder={toUpperCase("მონიშნეთ მოგებული ბეთლები")}
-          variant="inverted"
-          animation={2}
-          maxCount={3}
-        />
+
+        <div>
+          <FormDescription className="text-white">
+            {toUpperCase("მოგებული ბეთლები")}
+          </FormDescription>
+
+          <MultiSelect
+            options={
+              battles?.map(battle => ({
+                label: battle.title,
+                value: battle.id,
+              })) || []
+            }
+            onValueChange={(value: string[]) => {
+              form.setValue(
+                "battlesWon",
+                value.map(v => ({
+                  value: v,
+                  label: battles?.find(b => b.id === v)?.title || v,
+                }))
+              );
+            }}
+            defaultValue={form.watch("battlesWon").map(battle => battle.value)}
+            placeholder={toUpperCase("მონიშნეთ მოგებული ბეთლები")}
+            variant="inverted"
+            maxCount={3}
+          />
+        </div>
 
         {/* social media */}
         <FormField
@@ -447,7 +487,9 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
           className="text-white"
           disabled={isPending || !form.formState.isDirty}
         >
-          {toUpperCase("არტისტის დამატება")}
+          {initialData === undefined
+            ? toUpperCase("დამატება")
+            : toUpperCase("რედაქტირება")}
         </Button>
       </form>
     </Form>

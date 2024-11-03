@@ -54,8 +54,6 @@ const SeasonsForm: React.FC<SeasonsFormProps> = ({ artists, initialData }) => {
   });
 
   function onSubmit(values: SeasonFormValues) {
-    console.log(values);
-
     startTransition(async () => {
       try {
         switch (initialData) {

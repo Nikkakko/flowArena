@@ -1,7 +1,7 @@
 import { Shell } from "@/components/shell";
 import * as React from "react";
 import SeasonsForm from "../../_components/seasons/SeasonsForm";
-import { getSeasonById } from "@/lib/db/queries";
+import { getArtists, getSeasonById } from "@/lib/db/queries";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { toUpperCase } from "@/lib/utils";
@@ -16,6 +16,7 @@ const SeasonEditPage: React.FC<SeasonEditPageProps> = async ({
   params: { id },
 }) => {
   const season = await getSeasonById(id);
+  const artists = await getArtists();
   if (!season) {
     return <div>Season not found</div>;
   }
@@ -34,6 +35,7 @@ const SeasonEditPage: React.FC<SeasonEditPageProps> = async ({
           type: season.type,
           winnerId: season.winnerId,
         }}
+        artists={artists}
       />
     </Shell>
   );

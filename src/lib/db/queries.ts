@@ -35,6 +35,8 @@ export async function getUser() {
   return user[0];
 }
 
+export async function getCachedUser() {} // TODO
+
 export async function getArtists() {
   try {
     return db.artist.findMany();
@@ -57,7 +59,12 @@ export async function getArtistBySlug(slug: string) {
 
 export async function getBattles() {
   try {
-    return db.battle.findMany();
+    return db.battle.findMany({
+      include: {
+        winner: true,
+        season: true,
+      },
+    });
   } catch (error) {
     console.error(error);
   }
@@ -65,7 +72,11 @@ export async function getBattles() {
 
 export async function getSeasons() {
   try {
-    return db.season.findMany();
+    return db.season.findMany({
+      include: {
+        winner: true,
+      },
+    });
   } catch (error) {
     console.error(error);
   }
@@ -76,6 +87,10 @@ export async function getSeasonById(id: string) {
     return db.season.findFirst({
       where: {
         id,
+      },
+
+      include: {
+        winner: true,
       },
     });
   } catch (error) {

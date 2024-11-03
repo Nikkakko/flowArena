@@ -1,5 +1,5 @@
 import { Shell } from "@/components/shell";
-import { getArtistById } from "@/lib/db/queries";
+import { getArtistById, getBattles, getSeasons } from "@/lib/db/queries";
 import { toUpperCase } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -15,7 +15,12 @@ interface ArtistEditPageProps {
 const ArtistEditPage: React.FC<ArtistEditPageProps> = async ({
   params: { id },
 }) => {
-  const artist = await getArtistById(id);
+  const [artist, battles, seasons] = await Promise.all([
+    getArtistById(id),
+    getBattles(),
+    getSeasons(),
+  ]);
+
   if (!artist) {
     return <div>Artist not found</div>;
   }
@@ -38,12 +43,22 @@ const ArtistEditPage: React.FC<ArtistEditPageProps> = async ({
             name: social.name,
             url: social.url,
           })),
-          battlesParticipated: artist.battlesParticipated.map(
-            battle => battle.id
-          ),
-          seasonsWon: artist.seasonsWon.map(season => season.id),
-          battlesWon: artist.battlesWon.map(battle => battle.id),
+          battlesParticipated: artist.battlesParticipated.map(battle => ({
+            label: battle.title,
+            value: battle.id,
+          })),
+          seasonsWon: artist.seasonsWon.map(season => ({
+            label: season.name,
+            value: season.id,
+          })),
+
+          battlesWon: artist.battlesWon.map(battle => ({
+            label: battle.title,
+            value: battle.id,
+          })),
         }}
+        battles={battles}
+        seasons={seasons}
       />
     </Shell>
   );
