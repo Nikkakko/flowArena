@@ -4,24 +4,27 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 import { buttonVariants } from "./ui/button";
+import { Battle } from "@prisma/client";
 
-interface BattlesCardProps {}
+interface BattlesCardProps {
+  battle: Battle;
+}
 
-const BattlesCard: React.FC<BattlesCardProps> = ({}) => {
+const BattlesCard: React.FC<BattlesCardProps> = ({ battle }) => {
   const i = 1;
   return (
     <div className="bg-secondary rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all shadow-sm group">
-      <div className="aspect-video relative">
+      <div className="aspect-video relative h-[279px]">
         <Image
-          src="/placeholder.svg"
-          alt={`Battle ${i}`}
+          src={battle.coverImage}
+          alt={battle.title}
           fill
           className="object-cover"
         />
       </div>
       <div className="p-4">
-        <h3 className="text-lg font-semibold mb-2">
-          {toUpperCase("ბეთლი სათაური")}
+        <h3 className="text-lg font-semibold mb-2 text-white">
+          {toUpperCase(battle.title)}
         </h3>
         <p className="text-gray-400 mb-4">
           {toUpperCase("ნახეთ უახლესი ბეთლი ორ საუკეთესო არტისტს შორის")}
@@ -31,7 +34,7 @@ const BattlesCard: React.FC<BattlesCardProps> = ({}) => {
             buttonVariants({ variant: "outline" }),
             "w-full border-primary text-primary hover:bg-primary hover:text-white"
           )}
-          href="/"
+          href={`/battles/${battle.slug}`}
         >
           <div className="flex items-center gap-2">
             {toUpperCase("ნახეთ მეტი")}

@@ -34,6 +34,7 @@ const ArtistEditPage: React.FC<ArtistEditPageProps> = async ({
         initialData={{
           id: artist.id,
           nickName: artist.nickName,
+          isPopular: artist.isPopular,
           image: artist.image,
           wins: artist.wins.toString(),
           loses: artist.loses.toString(),

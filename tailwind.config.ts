@@ -15,6 +15,7 @@ export default withUt({
         background: "#212227",
         // primary: "#F15A22",
         // primaryLight: "#F15A2280",
+        success: "#00C853",
         redCard: "#FF1C1C",
         yellowCard: "#FFCD1C",
         // secondary: "#1B1C21",

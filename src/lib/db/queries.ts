@@ -128,3 +128,35 @@ export async function getArtistById(id: string) {
     console.error(error);
   }
 }
+
+export async function getPopularArtists() {
+  try {
+    return db.artist.findMany({
+      orderBy: {
+        wins: "desc",
+      },
+      where: {
+        isPopular: true,
+      },
+      take: 4,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getFeaturedBattles() {
+  try {
+    return db.battle.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        isFeatured: true,
+      },
+      take: 6,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}

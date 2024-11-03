@@ -32,6 +32,7 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { Artist, Battle, Season, SocialMediaPlatforms } from "@prisma/client";
 import addArtist, { updateArtist } from "../../_actions/action-artists";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface ArtistsFormProps {
   initialData?: ArtistFormValues & { id: string };
@@ -56,6 +57,7 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
       image: initialData?.image || "",
       wins: initialData?.wins || "0",
       loses: initialData?.loses || "0",
+      isPopular: initialData?.isPopular || false,
       bio: initialData?.bio || "",
       quotes: initialData?.quotes || [],
       socialMedia: initialData?.socialMedia || [],
@@ -302,7 +304,7 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
 
         <div>
           <FormDescription className="text-white">
-            {toUpperCase("ბე���ლებში მონაწილეობა")}
+            {toUpperCase("ბეთლებში მონაწილ��ობა")}
           </FormDescription>
           <MultiSelect
             options={
@@ -482,14 +484,37 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="isPopular"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-white">
+                  {toUpperCase("პოპულარული")}
+                </FormLabel>
+                <FormDescription className="text-white">
+                  {toUpperCase("მონიშნეთ თუ არტისტი პოპულარულია")}
+                </FormDescription>
+              </div>
+            </FormItem>
+          )}
+        />
+
         <Button
           type="submit"
           className="text-white"
           disabled={isPending || !form.formState.isDirty}
         >
           {initialData === undefined
-            ? toUpperCase("დამატება")
-            : toUpperCase("რედაქტირება")}
+            ? toUpperCase("არტისტის დამატება")
+            : toUpperCase("არტისტის რედაქტირება")}
         </Button>
       </form>
     </Form>

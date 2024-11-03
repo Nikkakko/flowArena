@@ -2,9 +2,14 @@ import BattlesCard from "@/components/BattlesCard";
 import FeaturedArtistsCard from "@/components/FeaturedArtistsCard";
 import LatestBattleCard from "@/components/LatestBattleCard";
 import { Shell } from "@/components/shell";
+import { getFeaturedBattles, getPopularArtists } from "@/lib/db/queries";
 import { toUpperCase } from "@/lib/utils";
 
-export default function Home() {
+export default async function Home() {
+  const [battles, popularArtists] = await Promise.all([
+    getFeaturedBattles(),
+    getPopularArtists(),
+  ]);
   return (
     <Shell as="section" className="container mx-auto p-4 2xl:p-0">
       <section className="mb-12 ">
@@ -15,8 +20,8 @@ export default function Home() {
           {toUpperCase("აღმოაჩინეთ საუკეთესო რეპ ბეთლები და არტისტები")}
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map(i => (
-            <BattlesCard key={i} />
+          {battles?.map(battle => (
+            <BattlesCard key={battle.id} battle={battle} />
           ))}
         </div>
       </section>
@@ -27,8 +32,8 @@ export default function Home() {
           {toUpperCase("პოპულარული არტისტები")}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
-            <FeaturedArtistsCard key={i} />
+          {popularArtists?.map(artist => (
+            <FeaturedArtistsCard key={artist.id} artist={artist} />
           ))}
         </div>
       </section>

@@ -36,6 +36,7 @@ export default async function addArtist(values: ArtistFormValues) {
         slug: slugify(parsedValues.nickName),
         wins: parseInt(parsedValues.wins),
         loses: parseInt(parsedValues.loses),
+        isPopular: parsedValues.isPopular,
         bio: parsedValues.bio,
         quotes: { create: parsedValues.quotes.map(quote => ({ quote })) },
         socialMedia: {
@@ -124,6 +125,7 @@ export async function updateArtist(id: string, values: ArtistFormValues) {
         slug: slugify(parsedValues.nickName),
         wins: parseInt(parsedValues.wins),
         loses: parseInt(parsedValues.loses),
+        isPopular: parsedValues.isPopular,
         bio: parsedValues.bio,
         quotes: {
           create: parsedValues.quotes.map(quote => ({ quote })),

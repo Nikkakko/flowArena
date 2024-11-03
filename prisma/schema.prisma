@@ -81,6 +81,7 @@ model Artist {
   wins        Int
   loses       Int
   bio        String
+  isPopular   Boolean @default(false)
 
 
 
@@ -146,6 +147,7 @@ model Battle {
   title      String
   description String?
   slug      String @unique
+  isFeatured Boolean @default(false)
 
   // Battle Type
   type       BattleType
