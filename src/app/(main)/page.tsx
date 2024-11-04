@@ -4,6 +4,14 @@ import LatestBattleCard from "@/components/LatestBattleCard";
 import { Shell } from "@/components/shell";
 import { getFeaturedBattles, getPopularArtists } from "@/lib/db/queries";
 import { toUpperCase } from "@/lib/utils";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 export default async function Home() {
   const [battles, popularArtists] = await Promise.all([
@@ -11,9 +19,9 @@ export default async function Home() {
     getPopularArtists(),
   ]);
   return (
-    <Shell as="section" className="container mx-auto p-4 2xl:px-0">
-      <section className="mb-12  ">
-        <h1 className="text-4xl font-bold mb-4 text-white">
+    <Shell as="section" className="container mx-auto ">
+      <section className="mb-12 p-4 2xl:px-0 ">
+        <h1 className="lg:text-4xl text-base font-bold mb-4 text-white">
           {toUpperCase("მოგესალმებით FlowFlow Magazine-ში")}
         </h1>
         <p className="text-gray-400 text-xl mb-6">
@@ -27,18 +35,28 @@ export default async function Home() {
       </section>
 
       {/* Featured Artists */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-white">
+      <section className="mb-12 w-full max-w-[375px] md:max-w-[512px] lg:max-w-[768px] xl:max-w-[1184px] 2xl:max-w-full">
+        <h2 className="lg:text-2xl text-lg font-bold mb-6 text-white px-4 2xl:px-0">
           {toUpperCase("პოპულარული არტისტები")}
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {popularArtists?.map(artist => (
-            <FeaturedArtistsCard key={artist.id} artist={artist} />
-          ))}
-        </div>
+
+        <Carousel>
+          <CarouselPrevious className="text-white border-primary " />
+          <CarouselContent>
+            {popularArtists?.map(artist => (
+              <CarouselItem
+                key={artist.id}
+                className="basis-[290px] md:basis-1/2 lg:basis-1/3 pl-8"
+              >
+                <FeaturedArtistsCard artist={artist} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselNext className="text-white border-primary" />
+        </Carousel>
       </section>
       {/* Latest Battles */}
-      <section>
+      <section className="p-4 2xl:px-0">
         <h2 className="text-2xl font-bold mb-6">
           {toUpperCase("უახლესი ბეთლები")}
         </h2>

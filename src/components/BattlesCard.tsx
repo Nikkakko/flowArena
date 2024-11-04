@@ -15,8 +15,8 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle }) => {
     ? battle.description.slice(0, 100)
     : "";
   return (
-    <div className="bg-secondary rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all shadow-sm group">
-      <div className="aspect-video relative h-[279px]">
+    <div className="bg-secondary w-full max-w-[350px] lg:max-w-[496px] rounded-lg  overflow-hidden hover:ring-2 hover:ring-primary transition-all shadow-sm group">
+      <div className="w-full max-w-[350px] lg:max-w-[496px] h-[170px] lg:h-auto  lg:aspect-video relative  ">
         <Image
           src={battle.coverImage}
           alt={battle.title}
@@ -32,7 +32,7 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle }) => {
         <Link
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "w-full border-primary text-primary hover:bg-primary hover:text-white"
+            "lg:w-full border-primary text-primary hover:bg-primary hover:text-white"
           )}
           href={`/battles/${battle.slug}`}
         >

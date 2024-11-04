@@ -143,6 +143,10 @@ export async function getPopularArtists() {
       where: {
         isPopular: true,
       },
+      include: {
+        quotes: true,
+        socialMedia: true,
+      },
       take: 4,
     });
   } catch (error) {
