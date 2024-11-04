@@ -51,6 +51,13 @@ export async function getArtistBySlug(slug: string) {
       where: {
         slug,
       },
+      include: {
+        quotes: true,
+        socialMedia: true,
+        battlesParticipated: true,
+        seasonsWon: true,
+        battlesWon: true,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -147,7 +154,7 @@ export async function getPopularArtists() {
         quotes: true,
         socialMedia: true,
       },
-      take: 4,
+      take: 10,
     });
   } catch (error) {
     console.error(error);

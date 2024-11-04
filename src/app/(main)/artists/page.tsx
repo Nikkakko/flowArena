@@ -5,7 +5,7 @@ interface ArtistsPageProps {}
 
 const ArtistsPage: React.FC<ArtistsPageProps> = ({}) => {
   return (
-    <Shell as="main" className="container mx-auto">
+    <Shell as="main" className=" mx-auto">
       {" "}
       content{" "}
     </Shell>

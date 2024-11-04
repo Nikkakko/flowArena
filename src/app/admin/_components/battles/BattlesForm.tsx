@@ -81,12 +81,13 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
           });
         } else {
           await addBattleAction(values);
-          form.reset();
+
           toast({
             title: "Battle added successfully",
             variant: "default",
             duration: 5000,
           });
+          form.reset();
         }
       } catch (error) {
         toast({

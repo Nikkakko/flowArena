@@ -13,7 +13,7 @@ export default function DashboardLayout({
     <>
       <SidebarProvider defaultOpen>
         <AppSidebar />
-        <main className="flex-1">
+        <main className="flex-1 overflow-x-hidden">
           <Header />
           {children}
           <Footer />

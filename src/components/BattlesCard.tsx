@@ -6,17 +6,21 @@ import * as React from "react";
 import { buttonVariants } from "./ui/button";
 import { Battle } from "@prisma/client";
 
-interface BattlesCardProps {
+interface BattlesCardProps extends React.HTMLAttributes<HTMLDivElement> {
   battle: Battle;
 }
-
-const BattlesCard: React.FC<BattlesCardProps> = ({ battle }) => {
+const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
   const battleDescription = battle.description
     ? battle.description.slice(0, 100)
     : "";
   return (
-    <div className="bg-secondary w-full max-w-[350px] lg:max-w-[496px] rounded-lg  overflow-hidden hover:ring-2 hover:ring-primary transition-all shadow-sm group">
-      <div className="w-full max-w-[350px] lg:max-w-[496px] h-[170px] lg:h-auto  lg:aspect-video relative  ">
+    <div
+      className={cn(
+        "bg-secondary w-full rounded-lg  overflow-hidden hover:ring-2 hover:ring-primary transition-all shadow-sm group",
+        props.className
+      )}
+    >
+      <div className="w-full  h-[200px] md:h-[450px] lg:h-auto  lg:aspect-video relative  ">
         <Image
           src={battle.coverImage}
           alt={battle.title}
