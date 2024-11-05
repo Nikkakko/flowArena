@@ -1,6 +1,5 @@
 import { toUpperCase } from "@/lib/utils";
 import { Artist, Quote, SocialMedia } from "@prisma/client";
-import { YoutubeIcon } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
 import { Icons } from "./Icons";

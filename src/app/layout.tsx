@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { getUser } from "@/lib/db/queries";
 import { UserProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

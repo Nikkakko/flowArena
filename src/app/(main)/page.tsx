@@ -11,6 +11,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import ArtistTooltip from "@/components/artist-tooltip";
 
 export default async function Home() {
   const [battles, popularArtists] = await Promise.all([
@@ -35,6 +38,20 @@ export default async function Home() {
             />
           ))}
         </div>
+
+        <Link
+          href="/battles"
+          className="text-white font-normal flex items-center justify-end gap-2 mt-4
+           group hover:text-primary transition-colors duration-300 ease-in-out 
+            "
+        >
+          {toUpperCase("ყველა ბეთლი")}
+          <ArrowRight
+            className="inline-block 
+            group-hover:translate-x-2 transition-transform duration-300 ease-in-out
+          "
+          />
+        </Link>
       </section>
 
       {/* Featured Artists */}
@@ -44,14 +61,16 @@ export default async function Home() {
         </h2>
 
         <Carousel>
-          <CarouselPrevious className="text-white border-primary  -translate-y-[-80px] left-4" />
+          <CarouselPrevious className="text-white border-primary -translate-y-[-80px] left-4" />
           <CarouselContent>
             {popularArtists?.map(artist => (
               <CarouselItem
                 key={artist.id}
-                className="basis-[300px] md:basis-1/2 lg:basis-1/3 "
+                className="basis-[300px] md:basis-1/2 lg:basis-1/3  "
               >
-                <FeaturedArtistsCard artist={artist} />
+                <ArtistTooltip data={artist.quotes}>
+                  <FeaturedArtistsCard artist={artist} />
+                </ArtistTooltip>
               </CarouselItem>
             ))}
           </CarouselContent>

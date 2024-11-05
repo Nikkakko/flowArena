@@ -88,6 +88,7 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
             duration: 5000,
           });
           form.reset();
+          //reset
         }
       } catch (error) {
         toast({
