@@ -1,13 +1,69 @@
-import { Shell } from "@/components/shell";
 import * as React from "react";
+import { Shell } from "@/components/shell";
+import { getFilteredBattles } from "@/lib/db/queries";
+import SearchField from "@/components/SearchField";
+import BattleSorting from "@/components/BattleSorting";
+import { toUpperCase } from "@/lib/utils";
+import { Pagination } from "@/components/ui/pagination";
+import { paginationParamsCache } from "@/hooks/use-pagination-params";
+import { SearchParams } from "nuqs";
+import { PaginationProperties } from "@/components/Pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import BattlesCard from "@/components/BattlesCard";
+import { sortingParamsCache } from "@/hooks/use-sorting-params";
 
-interface BattlesPageProps {}
+interface BattlesPageProps {
+  searchParams: SearchParams;
+}
 
-const BattlesPage: React.FC<BattlesPageProps> = ({}) => {
+const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
+  const { page, per_page } = paginationParamsCache.parse(searchParams);
+  const { sort } = sortingParamsCache.parse(searchParams);
+  const queryTransactionsParams =
+    typeof searchParams.sBattle === "string" ? searchParams.sBattle : "";
+
+  const battleData = await getFilteredBattles({
+    battleName: queryTransactionsParams,
+    page,
+    limit: per_page,
+    sort,
+  });
+
+  const totalPages = Math.ceil((battleData?.total ?? 0) / per_page);
+  const checkData =
+    battleData && battleData.battles && battleData.battles.length > 0;
+
   return (
-    <Shell as="main" className="container mx-auto">
-      {" "}
-      content{" "}
+    <Shell as="section" variant="default" className="container mx-auto">
+      <div className="flex items-start justify-between w-full">
+        <SearchField
+          placeholder={toUpperCase("მოძებნეთ ბეთლები")}
+          className="mb-6 max-w-sm"
+          query={"sBattle"}
+          defaultValue={queryTransactionsParams}
+        />
+        <BattleSorting />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {checkData ? (
+          battleData.battles.map(battle => (
+            <BattlesCard key={battle.id} battle={battle} />
+          ))
+        ) : (
+          <div className="col-span-full text-center text-gray-500  h-[calc(100vh-20rem)] flex items-center justify-center">
+            {toUpperCase("ბეთლი არ მოიძებნა, სცადეთ სხვა სიტყვა")}
+          </div>
+        )}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-8">
+          <React.Suspense>
+            <PaginationProperties pageCount={totalPages} />
+          </React.Suspense>
+        </div>
+      )}
     </Shell>
   );
 };

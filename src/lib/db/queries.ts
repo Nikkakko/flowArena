@@ -176,3 +176,45 @@ export async function getFeaturedBattles() {
     console.error(error);
   }
 }
+
+export async function getFilteredBattles({
+  battleName,
+  page,
+  limit,
+  sort,
+}: {
+  battleName: string;
+  page: number;
+  limit: number;
+  sort: string | null;
+}) {
+  try {
+    const battles = await db.battle.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        title: {
+          contains: battleName,
+          mode: "insensitive",
+        },
+        ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const total = await db.battle.count({
+      where: {
+        title: {
+          contains: battleName,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    return { battles, total };
+  } catch (error) {
+    console.error(error);
+  }
+}
