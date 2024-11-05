@@ -105,16 +105,22 @@ export async function getSeasonById(id: string) {
   }
 }
 
-export async function getBattleById(id: string) {
+export async function getBattleBySlug(slug: string) {
   try {
     return db.battle.findFirst({
       where: {
-        id,
+        slug,
       },
       include: {
-        artists: true,
         winner: true,
         season: true,
+        artists: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
+        votes: true,
       },
     });
   } catch (error) {

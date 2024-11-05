@@ -48,8 +48,11 @@ model User {
   passwordHash    String @unique
   
   // Relationships
-  votes      Vote[]
+  battleVotes BattleVote[]
+  artistVotes ArtistVote[]
   comments  Comment[]
+
+ 
 
   role        Role @default(USER)
 
@@ -89,7 +92,7 @@ model Artist {
   // Relationships
   socialMedia SocialMedia[]
   quotes Quote[]
-  votes      Vote[]
+  votes      ArtistVote[]
 
 
   battlesParticipated Battle[]
@@ -109,7 +112,7 @@ model Quote {
   artist      Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
   artistId    String
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now())
 }
 
 model SocialMedia {
@@ -127,19 +130,33 @@ model SocialMedia {
 }
 
 
-model Vote {
+model BattleVote {
   id          String   @id @default(cuid())
   userId      String
-  artistId    String
   battleId    String
   createdAt   DateTime @default(now())
 
   user        User @relation(fields: [userId], references: [id])
-  artist      Artist @relation(fields: [artistId], references: [id])
   battle      Battle @relation(fields: [battleId], references: [id])
 
+  // Unique constraint to ensure one vote per user per battle
   @@unique([userId, battleId])
 }
+
+model ArtistVote {
+  id          String   @id @default(cuid())
+  userId      String
+  artistId    String
+  createdAt   DateTime @default(now())
+
+  user        User @relation(fields: [userId], references: [id])
+  artist      Artist @relation(fields: [artistId], references: [id])
+
+  // Unique constraint to ensure one vote per user per artist
+  @@unique([userId, artistId])
+}
+
+
 model Battle {
   id          String   @id @default(cuid())
   link       String
@@ -155,7 +172,7 @@ model Battle {
   // Relationships
   artists    Artist[]
   comments  Comment[]
-  votes      Vote[]
+  votes      BattleVote[]
   season      Season   @relation(fields: [seasonId], references: [id])
   seasonId    String
   
