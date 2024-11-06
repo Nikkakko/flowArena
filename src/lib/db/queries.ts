@@ -107,7 +107,7 @@ export async function getSeasonById(id: string) {
 
 export async function getBattleBySlug(slug: string) {
   try {
-    return db.battle.findFirst({
+    const battle = await db.battle.findFirst({
       where: {
         slug,
       },
@@ -115,14 +115,18 @@ export async function getBattleBySlug(slug: string) {
         winner: true,
         season: true,
         artists: true,
+
         comments: {
           include: {
             user: true,
           },
         },
+
         votes: true,
       },
     });
+
+    return battle;
   } catch (error) {
     console.error(error);
   }

@@ -54,6 +54,10 @@ model User {
 
  
 
+
+
+ 
+
   role        Role @default(USER)
 
   createdAt   DateTime @default(now())

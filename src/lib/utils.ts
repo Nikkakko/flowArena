@@ -22,6 +22,7 @@ export const toUpperCase = (text: string): string => {
 
   return text;
 };
+
 export const slugify = (text: string): string => {
   return text
     .toString()
@@ -31,3 +32,11 @@ export const slugify = (text: string): string => {
     .replace(/[^\w\-]+/g, "") // Remove all non-word chars
     .replace(/\-\-+/g, "-"); // Replace multiple - with single -
 };
+
+export function checkUserVote(
+  votes: { userId: string }[],
+  userId?: string
+): boolean {
+  if (!userId) return false;
+  return votes.some(vote => vote.userId === userId);
+}

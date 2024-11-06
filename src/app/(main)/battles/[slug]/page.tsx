@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Shell } from "@/components/shell";
-import { getBattleBySlug } from "@/lib/db/queries";
+import { getBattleBySlug, getUser } from "@/lib/db/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { notFound } from "next/navigation";
-import { toUpperCase } from "@/lib/utils";
+import { toUpperCase, checkUserVote } from "@/lib/utils";
 import { BattleInteractions } from "@/components/BattleInteractions";
 import { BattleCommentsSection } from "@/components/BattleCommentsSection";
 
@@ -18,6 +18,7 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
 }) => {
   const battle = await getBattleBySlug(slug);
   if (!battle) notFound();
+
   return (
     <Shell variant="default" className="mx-auto ">
       <main className="p-6">
@@ -40,6 +41,7 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
                 votesCount={battle.votes.length}
                 commentsCount={battle.comments.length}
                 battleId={battle.id}
+                votes={battle.votes}
               />
             </CardContent>
           </Card>
