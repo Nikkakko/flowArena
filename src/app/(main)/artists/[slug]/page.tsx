@@ -12,6 +12,8 @@ import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Metadata } from "next";
 import NoBattlesFoundCard from "@/components/NoBattlesFoundCard";
+import { Badge } from "@/components/ui/badge";
+import { TrophyIcon } from "lucide-react";
 const RandomQuoteList = dynamic(() => import("@/components/RandomQuoteList"), {
   ssr: false,
   loading: () => <Skeleton className="h-12 w-full bg-secondary" />,
@@ -103,9 +105,18 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
 
         <div className="flex-1 space-y-6">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-4">
-              {toUpperCase(artist.nickName)}
-            </h1>
+            <div className="flex items-center justify-between w-full">
+              <h1 className="text-4xl font-bold text-white mb-4">
+                {toUpperCase(artist.nickName)}
+              </h1>
+              {artist.seasonsWon.length > 0 &&
+                artist.seasonsWon.map(season => (
+                  <Badge key={season.id} className="bg-primary text-white">
+                    {toUpperCase(season.name)}
+                    <TrophyIcon className="w-4 h-4 ml-1 inline-block" />
+                  </Badge>
+                ))}
+            </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {stats.map(stat => (
