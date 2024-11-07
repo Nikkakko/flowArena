@@ -36,10 +36,12 @@ const FeaturedArtistsCard: React.FC<FeaturedArtistsCardProps> = ({
           <h3 className="font-semibold text-white">
             {toUpperCase(artist.nickName)}
           </h3>
-          <p className="text-sm text-gray-400">
-            {toUpperCase("მოგება")}:{" "}
-            <span className="text-success">{artist.wins} </span>
-          </p>
+          {artist.wins > 0 && (
+            <p className="text-sm text-gray-400">
+              {toUpperCase("მოგება")}:{" "}
+              <span className="text-success">{artist.wins} </span>
+            </p>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-2 absolute z-20 bottom-2  right-2 lg:right-4">

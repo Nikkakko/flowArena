@@ -46,8 +46,12 @@ const SeasonsForm: React.FC<SeasonsFormProps> = ({ artists, initialData }) => {
     resolver: zodResolver(seasonSchema),
     defaultValues: {
       name: initialData?.name || "",
-      startDate: initialData?.startDate || undefined,
-      endDate: initialData?.endDate || undefined,
+      startDate: initialData?.startDate
+        ? new Date(initialData.startDate)
+        : new Date(),
+      endDate: initialData?.endDate
+        ? new Date(initialData.endDate)
+        : new Date(),
       type: initialData?.type || undefined,
       winnerId: initialData?.winnerId || undefined,
     },
@@ -119,10 +123,8 @@ const SeasonsForm: React.FC<SeasonsFormProps> = ({ artists, initialData }) => {
               <FormControl>
                 <Input
                   type="date"
-                  {...field}
-                  value={
-                    field.value ? field.value.toISOString().split("T")[0] : ""
-                  }
+                  value={field.value.toISOString().split("T")[0]}
+                  onChange={e => field.onChange(new Date(e.target.value))}
                   className="text-white"
                 />
               </FormControl>
@@ -137,15 +139,13 @@ const SeasonsForm: React.FC<SeasonsFormProps> = ({ artists, initialData }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-white">
-                {toUpperCase("დასრულების თარიღი")}
+                {toUpperCase("დ��სრულების თარიღი")}
               </FormLabel>
               <FormControl>
                 <Input
                   type="date"
-                  {...field}
-                  value={
-                    field.value ? field.value.toISOString().split("T")[0] : ""
-                  }
+                  value={field.value.toISOString().split("T")[0]}
+                  onChange={e => field.onChange(new Date(e.target.value))}
                   className="text-white"
                 />
               </FormControl>

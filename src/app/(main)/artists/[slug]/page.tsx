@@ -10,6 +10,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import ArtistParticipatedCard from "@/components/ArtistParticipatedCard";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Metadata } from "next";
+import NoBattlesFoundCard from "@/components/NoBattlesFoundCard";
 const RandomQuoteList = dynamic(() => import("@/components/RandomQuoteList"), {
   ssr: false,
   loading: () => <Skeleton className="h-12 w-full bg-secondary" />,
@@ -18,6 +20,24 @@ const RandomQuoteList = dynamic(() => import("@/components/RandomQuoteList"), {
 interface ArtistSlugProps {
   params: {
     slug: string;
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: ArtistSlugProps): Promise<Metadata> {
+  const artist = await getArtistBySlug(params.slug);
+
+  if (!artist) {
+    return {
+      title: `${toUpperCase("ბეთლი ვერ მოიძებნა")}`,
+      description: `${toUpperCase("ბეთლი ვერ მოიძებნა")}`,
+    };
+  }
+
+  return {
+    title: artist.nickName,
+    description: `${toUpperCase("ნახე და შეაფასე ")} ${artist.nickName}`,
   };
 }
 
@@ -38,10 +58,10 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
     { label: "წაგება", value: artist.loses, valueClass: "text-destructive" },
     {
       label: "ჯამში",
-      value: artist.wins + artist.loses,
+      value: artist.battlesParticipated.length,
       valueClass: "text-white",
     },
-    { label: "მოგების %", value: `${winRate}%`, valueClass: "text-primary" },
+    { label: "მოგების %", value: `${winRate} %`, valueClass: "text-primary" },
   ];
 
   const socialMediaList = artist.socialMedia.map(social => ({
@@ -111,13 +131,18 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
               </h2>
               <ScrollArea className="h-[500px]  rounded-md border p-4">
                 <div className="grid gap-4">
-                  {artist.battlesParticipated.map(battle => (
+                  {artist.battlesParticipated?.map(battle => (
                     <ArtistParticipatedCard
                       key={battle.id}
                       battle={battle}
                       artistId={artist.id}
                     />
                   ))}
+
+                  {/* if artists has win but now battle render it */}
+                  {artist.wins > 0 && artist.battlesWon.length === 0 && (
+                    <NoBattlesFoundCard />
+                  )}
                 </div>
               </ScrollArea>
             </div>

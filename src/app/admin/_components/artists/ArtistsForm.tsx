@@ -33,6 +33,7 @@ import { Artist, Battle, Season, SocialMediaPlatforms } from "@prisma/client";
 import addArtist, { updateArtist } from "../../_actions/action-artists";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useRouter } from "next/navigation";
 
 interface ArtistsFormProps {
   initialData?: ArtistFormValues & { id: string };
@@ -49,6 +50,7 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
 }) => {
   const [isPending, startTransition] = React.useTransition();
   const { toast } = useToast();
+  const router = useRouter();
   // 1. Define your form.
   const form = useForm<ArtistFormValues>({
     resolver: zodResolver(artistSchema),
@@ -81,6 +83,8 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
             variant: "default",
             duration: 5000,
           });
+
+          router.push("/admin");
         } else {
           await addArtist(values);
           form.reset();
@@ -91,6 +95,8 @@ const ArtistsForm: React.FC<ArtistsFormProps> = ({
             duration: 5000,
           });
         }
+
+        router.push("/admin");
       } catch (error) {
         console.error(error);
         toast({

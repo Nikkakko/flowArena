@@ -3,12 +3,13 @@ import { Battle } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
+import { Badge } from "@/components/ui/badge";
 
 interface ArtistParticipatedCardProps {
   battle: Battle & {
     season: {
       name: string;
-    };
+    } | null;
   };
   artistId: string;
 }
@@ -39,7 +40,7 @@ const ArtistParticipatedCard: React.FC<ArtistParticipatedCardProps> = ({
           </p>
           {/* season */}
           <p className="text-xs text-gray-500">
-            {toUpperCase(battle.season.name)}
+            {toUpperCase(battle.season?.name || "სეზონი არ მოიძებნა")}
           </p>
 
           <p className="text-xs text-gray-500">
@@ -47,21 +48,18 @@ const ArtistParticipatedCard: React.FC<ArtistParticipatedCardProps> = ({
           </p>
         </div>
       </div>
+
       <div className="text-sm">
         {battle.status === "COMPLETED" ? (
-          battle.winnerId === artistId ? (
-            <span className="text-success px-3 py-1 rounded-full bg-success/10">
-              {toUpperCase("მოგებული")}
-            </span>
+          battle.winnerId === null ? (
+            <Badge variant="secondary">{toUpperCase("არ შეფასებულა")}</Badge>
+          ) : battle.winnerId === artistId ? (
+            <Badge variant="success">{toUpperCase("მოგებული")}</Badge>
           ) : (
-            <span className="text-destructive px-3 py-1 rounded-full bg-destructive/10">
-              {toUpperCase("წაგებული")}
-            </span>
+            <Badge variant="destructive">{toUpperCase("წაგებული")}</Badge>
           )
         ) : (
-          <span className="text-primary px-3 py-1 rounded-full bg-primary/10">
-            {toUpperCase(battle.status)}
-          </span>
+          <Badge>{toUpperCase(battle.status)}</Badge>
         )}
       </div>
     </Link>

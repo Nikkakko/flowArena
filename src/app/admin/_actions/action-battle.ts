@@ -11,57 +11,85 @@ export async function addBattleAction(values: BattleFormValues) {
   const user = await getUser();
 
   if (!user || user.role !== "ADMIN") {
-    return {
-      error: "Unauthorized",
-    };
+    return { error: "Unauthorized" };
   }
 
   try {
+    // Check if battle exists
     const battleExists = await db.battle.findFirst({
-      where: {
-        slug: slugify(parsedValues.title),
-      },
+      where: { slug: slugify(parsedValues.title) },
     });
 
     if (battleExists) {
-      return {
-        error: "Battle already exists",
-      };
+      return { error: "Battle already exists" };
     }
 
-    const battle = await db.battle.create({
-      data: {
-        title: parsedValues.title,
-        slug: slugify(parsedValues.title),
-        description: parsedValues.description,
-        coverImage: parsedValues.coverImage,
-        isFeatured: parsedValues.isFeatured,
-        status: parsedValues.status,
-        link: parsedValues.link,
+    // Only validate winner if it exists
+    if (
+      parsedValues.winnerId &&
+      !parsedValues.artistIds.includes(parsedValues.winnerId)
+    ) {
+      return { error: "Winner must be one of the battle participants" };
+    }
 
-        season: {
-          connect: {
-            id: parsedValues.seasonId,
-          },
-        },
-        type: parsedValues.type,
-        artists: {
-          connect: parsedValues.artistIds.map(id => ({ id })),
-        },
-        winner: {
-          connect: {
-            id: parsedValues.winnerId,
-          },
-        },
-      },
+    // Verify all artists exist
+    const existingArtists = await db.artist.findMany({
+      where: { id: { in: parsedValues.artistIds } },
+      select: { id: true },
     });
 
-    //revalidate
-    revalidatePath("/admin");
+    if (existingArtists.length !== parsedValues.artistIds.length) {
+      return { error: "One or more artists do not exist" };
+    }
 
-    return battle;
+    const result = await db.$transaction(async tx => {
+      // Create battle with optional winner
+      const battle = await tx.battle.create({
+        data: {
+          title: parsedValues.title,
+          slug: slugify(parsedValues.title),
+          description: parsedValues.description,
+          coverImage: parsedValues.coverImage,
+          isFeatured: parsedValues.isFeatured,
+          status: parsedValues.status,
+          link: parsedValues.link,
+          season: { connect: { id: parsedValues.seasonId } },
+          type: parsedValues.type,
+          artists: { connect: parsedValues.artistIds.map(id => ({ id })) },
+          // Only connect winner if it exists
+          ...(parsedValues.winnerId && {
+            winner: { connect: { id: parsedValues.winnerId } },
+          }),
+        },
+      });
+
+      // Only update statistics if there's a winner
+      if (parsedValues.winnerId) {
+        // Update winner
+        await tx.artist.update({
+          where: { id: parsedValues.winnerId },
+          data: { wins: { increment: 1 } },
+        });
+
+        // Update losers
+        const loserIds = parsedValues.artistIds.filter(
+          id => id !== parsedValues.winnerId
+        );
+
+        await tx.artist.updateMany({
+          where: { id: { in: loserIds } },
+          data: { loses: { increment: 1 } },
+        });
+      }
+
+      return battle;
+    });
+
+    revalidatePath("/admin");
+    return { success: true, data: result };
   } catch (error) {
-    console.error(error);
+    console.error("Failed to create battle:", error);
+    return { error: "Failed to create battle" };
   }
 }
 
@@ -93,11 +121,10 @@ export async function updateBattle(id: string, values: BattleFormValues) {
         artists: {
           set: parsedValues.artistIds.map(id => ({ id })),
         },
-        winner: {
-          connect: {
-            id: parsedValues.winnerId,
-          },
-        },
+        // Handle optional winner
+        winner: parsedValues.winnerId
+          ? { connect: { id: parsedValues.winnerId } }
+          : { disconnect: true },
       },
     });
 
@@ -107,6 +134,7 @@ export async function updateBattle(id: string, values: BattleFormValues) {
     return battle;
   } catch (error) {
     console.error(error);
+    return { error: "Failed to update battle" };
   }
 }
 

@@ -28,7 +28,7 @@ const RandomQuoteList: React.FC<RandomQuoteListProps> = ({ data }) => {
   }, [data]);
 
   return (
-    <p className="text-gray-400 italic text-center text-sm max-w-[256px]">
+    <p className="text-gray-400 italic text-start text-sm max-w-[256px]">
       {randomQuote && randomQuote.quote}
     </p>
   );

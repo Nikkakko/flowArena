@@ -74,6 +74,7 @@ model Season {
   updatedAt   DateTime @updatedAt
 }
 
+
 model Artist {
   id          String   @id @default(cuid())
   nickName    String
@@ -83,9 +84,6 @@ model Artist {
   loses       Int
   bio        String
   isPopular   Boolean @default(false)
-
-
-
 
   // Relationships
   socialMedia SocialMedia[]
@@ -97,9 +95,6 @@ model Artist {
   seasonsWon    Season[] @relation("SeasonWinner")
   battlesWon    Battle[] @relation("BattleWinner")
   
-
- 
-
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -164,17 +159,18 @@ model Battle {
   slug      String @unique
   isFeatured Boolean @default(false)
 
-
-
   // Battle Type
   type       BattleType
   status     BattleStatus 
+  
   // Relationships
   artists    Artist[]
   comments  Comment[]
   votes      BattleVote[]
-  season      Season   @relation(fields: [seasonId], references: [id])
-  seasonId    String
+  
+  season      Season?   @relation(fields: [seasonId], references: [id])
+  seasonId    String?
+
   
   winner      Artist?  @relation("BattleWinner", fields: [winnerId], references: [id])
   winnerId    String?
@@ -183,6 +179,7 @@ model Battle {
 
   
 }
+
 model Comment {
   id          String   @id @default(cuid())
   userId      String

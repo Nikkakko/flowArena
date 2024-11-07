@@ -61,9 +61,6 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
       artistIds: initialData?.artistIds || [],
       seasonId: initialData?.seasonId || "",
       winnerId: initialData?.winnerId || undefined,
-      battleDate: initialData?.battleDate
-        ? new Date(initialData.battleDate)
-        : new Date(),
       isFeatured: false,
     },
   });
@@ -108,36 +105,6 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-10">
         {/* add date*/}
-        <FormField
-          control={form.control}
-          name="battleDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">
-                {toUpperCase("ბეთლის ჩატარების თარიღი")}
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  placeholder={toUpperCase("ბეთლის ჩატარების თარიღი")}
-                  {...field}
-                  value={
-                    field.value instanceof Date
-                      ? field.value.toISOString().split("T")[0]
-                      : field.value
-                  }
-                  onChange={e => {
-                    field.onChange(
-                      e.target.value ? new Date(e.target.value) : null
-                    );
-                  }}
-                  className="text-white"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <FormField
           control={form.control}

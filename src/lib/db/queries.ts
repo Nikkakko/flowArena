@@ -198,6 +198,9 @@ export async function getPopularArtists() {
       },
       where: {
         isPopular: true,
+        wins: {
+          gt: 0,
+        },
       },
       include: {
         quotes: true,
