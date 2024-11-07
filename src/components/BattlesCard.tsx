@@ -25,6 +25,7 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
           src={battle.coverImage}
           alt={battle.title}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover grayscale group-hover:grayscale-0 transition-all"
         />
       </div>
@@ -34,6 +35,7 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
         </h3>
         <p className="text-gray-400 mb-4">{toUpperCase(battleDescription)}</p>
         <Link
+          prefetch={true}
           className={cn(
             buttonVariants({ variant: "outline" }),
             "lg:w-full border-primary text-primary hover:bg-primary hover:text-white"

@@ -50,6 +50,11 @@ export function checkUserVote(
   return votes.some(vote => vote.userId === userId);
 }
 
+function getGeorgianNumberCase(number: number, word: string): string {
+  if (number === 1) return word + "ის";
+  return word + "ის";
+}
+
 export function getRelativeTime(date: Date | string) {
   const now = new Date();
   const dateToCompare = new Date(date);
@@ -61,11 +66,12 @@ export function getRelativeTime(date: Date | string) {
   const months = differenceInMonths(now, dateToCompare);
   const years = differenceInYears(now, dateToCompare);
 
-  if (seconds < 60) return "just now";
+  if (seconds < 60) return "წუთის წინ";
   if (minutes < 60)
-    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
-  if (hours < 24) return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
-  if (days < 30) return `${days} ${days === 1 ? "day" : "days"} ago`;
-  if (months < 12) return `${months} ${months === 1 ? "month" : "months"} ago`;
-  return `${years} ${years === 1 ? "year" : "years"} ago`;
+    return `${minutes} ${getGeorgianNumberCase(minutes, "წუთ")} წინ`;
+  if (hours < 24) return `${hours} ${getGeorgianNumberCase(hours, "საათ")} წინ`;
+  if (days < 30) return `${days} ${getGeorgianNumberCase(days, "დღ")} წინ`;
+  if (months < 12)
+    return `${months} ${getGeorgianNumberCase(months, "თვ")} წინ`;
+  return `${years} ${getGeorgianNumberCase(years, "წელ")} წინ`;
 }

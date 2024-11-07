@@ -27,7 +27,10 @@ const ArtistTooltip: React.FC<ArtistTooltipProps> = ({ data, children }) => {
     [data]
   );
 
-  if (data.length === 0) return <>{children}</>;
+  // if quote is '' then return children
+  const emptyQuote = data.find(quote => quote.quote === "");
+
+  if (data.length === 0 || emptyQuote) return <>{children}</>;
 
   return (
     <TooltipProvider delayDuration={200}>

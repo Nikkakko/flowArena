@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth/session";
 import db from "@/lib/db/db";
+import { unstable_cache } from "next/cache";
 
 export async function getUser() {
   const sessionCookie = cookies().get("session");
@@ -33,16 +34,6 @@ export async function getUser() {
   }
 
   return user[0];
-}
-
-export async function getCachedUser() {} // TODO
-
-export async function getArtists() {
-  try {
-    return db.artist.findMany();
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 export async function getArtistBySlug(slug: string) {

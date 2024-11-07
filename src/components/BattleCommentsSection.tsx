@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Comment, User } from "@prisma/client";
-import { toUpperCase } from "@/lib/utils";
+import { getRelativeTime, toUpperCase } from "@/lib/utils";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { EditIcon, Trash2Icon } from "lucide-react"; // Add this import for delete icon
 import { useForm } from "react-hook-form";
@@ -184,11 +184,7 @@ export function BattleCommentsSection({
                     {comment.user.name}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {toUpperCase(
-                      formatDistance(new Date(), comment.createdAt, {
-                        locale: ka,
-                      })
-                    )}
+                    {toUpperCase(getRelativeTime(comment.createdAt))}
                   </p>
                 </div>
                 {user && user.id === comment.userId && (

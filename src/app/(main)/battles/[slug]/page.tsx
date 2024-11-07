@@ -7,6 +7,15 @@ import { Metadata } from "next";
 import { toUpperCase } from "@/lib/utils";
 import { BattleInteractions } from "@/components/BattleInteractions";
 import { BattleCommentsSection } from "@/components/BattleCommentsSection";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import Link from "next/link";
 
 interface BattleDetailPageProps {
   params: {
@@ -41,6 +50,24 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
 
   return (
     <Shell variant="default" className="mx-auto ">
+      <Breadcrumb className="mb-6">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">{toUpperCase("მთავარი")}</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/battles">
+              {toUpperCase("ბეთლები")}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{battle.title}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <main className="p-6">
         <div className="max-w-4xl mx-auto">
           <Card className="bg-secondary border-none mb-6">

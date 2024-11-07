@@ -4,11 +4,9 @@ import { getFilteredBattles } from "@/lib/db/queries";
 import SearchField from "@/components/SearchField";
 import BattleSorting from "@/components/BattleSorting";
 import { toUpperCase } from "@/lib/utils";
-import { Pagination } from "@/components/ui/pagination";
 import { paginationParamsCache } from "@/hooks/use-pagination-params";
 import { SearchParams } from "nuqs";
 import { PaginationProperties } from "@/components/Pagination";
-import { Skeleton } from "@/components/ui/skeleton";
 import BattlesCard from "@/components/BattlesCard";
 import { sortingParamsCache } from "@/hooks/use-sorting-params";
 
