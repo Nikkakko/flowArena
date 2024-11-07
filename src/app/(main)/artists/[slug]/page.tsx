@@ -140,7 +140,7 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
                   ))}
 
                   {/* if artists has win but now battle render it */}
-                  {artist.wins > 0 && artist.battlesWon.length === 0 && (
+                  {artist.wins > artist.battlesWon.length && (
                     <NoBattlesFoundCard />
                   )}
                 </div>

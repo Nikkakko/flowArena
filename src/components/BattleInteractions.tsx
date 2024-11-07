@@ -8,12 +8,15 @@ import { ThumbsUp, MessageSquare, Share2 } from "lucide-react";
 import { addVoteToBattle } from "@/lib/actions/battle-action";
 import { useUser } from "@/lib/auth";
 import { useOptimisticAction } from "next-safe-action/hooks";
+import { Artist } from "@prisma/client";
+import BattleArtistCard from "./BattleArtistCard";
 
 interface BattleInteractionsProps {
   votesCount: number;
   commentsCount: number;
   battleId: string;
   votes: Array<{ userId: string }>;
+  artists: Artist[];
 }
 
 export function BattleInteractions({
@@ -21,6 +24,7 @@ export function BattleInteractions({
   commentsCount,
   battleId,
   votes,
+  artists,
 }: BattleInteractionsProps) {
   const { user } = useUser();
   const { toast } = useToast();
@@ -75,15 +79,22 @@ export function BattleInteractions({
         </div>
       </div>
 
-      <Button
-        variant="outline"
-        className="flex items-center text-white"
-        type="button"
-        onClick={handleCopyUrl}
-      >
-        <Share2 className="mr-2 h-4 w-4" />
-        {toUpperCase("გაზიარება")}
-      </Button>
+      <div className="flex space-x-4 items-center">
+        <div className="justify-start flex items-center space-x-2 my-3">
+          {artists.map(artist => (
+            <BattleArtistCard key={artist.id} artist={artist} />
+          ))}
+        </div>
+        <Button
+          variant="outline"
+          className="flex items-center text-white"
+          type="button"
+          onClick={handleCopyUrl}
+        >
+          <Share2 className="mr-2 h-4 w-4" />
+          {toUpperCase("გაზიარება")}
+        </Button>
+      </div>
     </div>
   );
 }

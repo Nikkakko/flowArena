@@ -48,6 +48,11 @@ export async function getArtistBySlug(slug: string) {
           include: {
             season: true,
           },
+          orderBy: [
+            {
+              createdAt: "asc",
+            },
+          ],
         },
         seasonsWon: true,
         battlesWon: true,

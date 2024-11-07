@@ -4,7 +4,7 @@ import { getBattleBySlug } from "@/lib/db/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { toUpperCase } from "@/lib/utils";
+import { getYouTubeVideoId, toUpperCase } from "@/lib/utils";
 import { BattleInteractions } from "@/components/BattleInteractions";
 import { BattleCommentsSection } from "@/components/BattleCommentsSection";
 import {
@@ -16,6 +16,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import BattleArtistCard from "@/components/BattleArtistCard";
 
 interface BattleDetailPageProps {
   params: {
@@ -68,19 +70,28 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
         </BreadcrumbList>
       </Breadcrumb>
 
-      <main className="p-6">
-        <div className="max-w-4xl mx-auto">
+      <main className="p-6 ">
+        <div className="max-w-4xl mx-auto ">
           <Card className="bg-secondary border-none mb-6">
             <CardHeader>
-              <CardTitle className="text-white">{battle.title}</CardTitle>
+              <div className="flex items-center justify-between w-full">
+                <CardTitle className="text-white">{battle.title}</CardTitle>
+                <CardTitle className="text-white text-base">
+                  {toUpperCase(battle.season?.name || "სეზონი არ მოიძებნა")}
+                </CardTitle>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="aspect-video relative mb-4">
                 <iframe
-                  src={`https://www.youtube.com/embed/${battle.link}`}
+                  src={`https://www.youtube.com/embed/${getYouTubeVideoId(
+                    battle.link
+                  )}`}
                   title={battle.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture,x-frame-options"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
                   className="absolute top-0 left-0 w-full h-full rounded-lg"
                 ></iframe>
               </div>
@@ -89,6 +100,7 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
                 commentsCount={battle.comments.length}
                 battleId={battle.id}
                 votes={battle.votes}
+                artists={battle.artists}
               />
             </CardContent>
           </Card>
