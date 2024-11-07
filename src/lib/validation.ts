@@ -7,3 +7,9 @@ export const authSchema = z.object({
     message: toUpperCase("პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო"),
   }),
 });
+
+export const commentSchema = z.object({
+  content: z.string().min(1, {
+    message: "კომენტარი ცარიელია",
+  }),
+});

@@ -120,6 +120,9 @@ export async function getBattleBySlug(slug: string) {
           include: {
             user: true,
           },
+          orderBy: {
+            createdAt: "desc",
+          },
         },
 
         votes: true,

@@ -1,15 +1,35 @@
 import * as React from "react";
 import { Shell } from "@/components/shell";
-import { getBattleBySlug, getUser } from "@/lib/db/queries";
+import { getBattleBySlug } from "@/lib/db/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { notFound } from "next/navigation";
-import { toUpperCase, checkUserVote } from "@/lib/utils";
+import { Metadata } from "next";
+import { toUpperCase } from "@/lib/utils";
 import { BattleInteractions } from "@/components/BattleInteractions";
 import { BattleCommentsSection } from "@/components/BattleCommentsSection";
 
 interface BattleDetailPageProps {
   params: {
     slug: string;
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: BattleDetailPageProps): Promise<Metadata> {
+  const battle = await getBattleBySlug(params.slug);
+
+  if (!battle) {
+    return {
+      title: `${toUpperCase("ბეთლი ვერ მოიძებნა")}`,
+      description: `${toUpperCase("ბეთლი ვერ მოიძებნა")}`,
+    };
+  }
+
+  return {
+    title: battle.title,
+
+    description: `${toUpperCase("ნახე და შეაფასე ")} ${battle.title}`,
   };
 }
 
@@ -53,7 +73,10 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <BattleCommentsSection comments={battle.comments} />
+              <BattleCommentsSection
+                comments={battle.comments}
+                battleId={battle.id}
+              />
             </CardContent>
           </Card>
         </div>

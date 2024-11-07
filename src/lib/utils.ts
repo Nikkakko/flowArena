@@ -1,5 +1,14 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import {
+  differenceInSeconds,
+  differenceInMinutes,
+  differenceInHours,
+  differenceInDays,
+  differenceInMonths,
+  differenceInYears,
+  format,
+} from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -39,4 +48,24 @@ export function checkUserVote(
 ): boolean {
   if (!userId) return false;
   return votes.some(vote => vote.userId === userId);
+}
+
+export function getRelativeTime(date: Date | string) {
+  const now = new Date();
+  const dateToCompare = new Date(date);
+
+  const seconds = differenceInSeconds(now, dateToCompare);
+  const minutes = differenceInMinutes(now, dateToCompare);
+  const hours = differenceInHours(now, dateToCompare);
+  const days = differenceInDays(now, dateToCompare);
+  const months = differenceInMonths(now, dateToCompare);
+  const years = differenceInYears(now, dateToCompare);
+
+  if (seconds < 60) return "just now";
+  if (minutes < 60)
+    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+  if (hours < 24) return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  if (days < 30) return `${days} ${days === 1 ? "day" : "days"} ago`;
+  if (months < 12) return `${months} ${months === 1 ? "month" : "months"} ago`;
+  return `${years} ${years === 1 ? "year" : "years"} ago`;
 }

@@ -47,20 +47,25 @@ export function BattleInteractions({
         <Button
           variant="outline"
           className={cn(
-            "flex items-center text-white",
+            "flex items-center text-white transition-all duration-200 ease-in-out active:scale-95",
             optimisticState.hasVoted && "bg-primary hover:bg-primary/90"
           )}
-          onClick={() => {
+          onClick={async () => {
             if (!user) {
               toast({
-                title: toUpperCase("გაი���რეთ ავტორიზაცია"),
+                title: toUpperCase("გაიარეთ ავტორიზაცია"),
               });
               return;
             }
             execute({ battleId, userId: user.id, hasVoted });
           }}
         >
-          <ThumbsUp className="mr-2 h-4 w-4" />
+          <ThumbsUp
+            className={cn(
+              "mr-2 h-4 w-4 transition-transform duration-200",
+              optimisticState.hasVoted && "scale-110"
+            )}
+          />
           {optimisticState.count}
         </Button>
 

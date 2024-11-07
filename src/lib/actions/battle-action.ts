@@ -3,6 +3,13 @@ import * as z from "zod";
 import db from "@/lib/db/db";
 import { revalidatePath } from "next/cache";
 import { actionClient } from "@/lib/safe-action";
+import rateLimit from "@/lib/rate-limit";
+import { getUser } from "../db/queries";
+
+const limiter = rateLimit({
+  interval: 60000, // 60 seconds
+  uniqueTokenPerInterval: 500,
+});
 
 const voteSchema = z.object({
   battleId: z.string(),
@@ -10,112 +17,35 @@ const voteSchema = z.object({
   hasVoted: z.boolean(),
 });
 
-// export async function addVoteToBattle(data: z.infer<typeof voteSchema>) {
-//   const { battleId, userId } = voteSchema.parse(data);
-//   if (!battleId || !userId) {
-//     return {
-//       error: "Invalid data",
-//     };
-//   }
-//   try {
-//     await db.battleVote.create({
-//       data: {
-//         userId,
-//         battleId,
-//       },
-//     });
+const commentSchema = z.object({
+  battleId: z.string(),
+  content: z.string(),
+});
 
-//     //revalidate
-//     revalidatePath(`/battles`);
-//   } catch (error) {
-//     if ((error as any).code === "P2002") {
-//       // Unique constraint violation on userId and battleId
-//       console.log("You have already voted for this battle.");
-//       // Optionally show an error message to the user
-//       return { error: "You can only vote once per battle." };
-//     }
-//     // Handle other errors
-//     console.error("An unexpected error occurred:", error);
-//   }
-// }
+const deleteCommentSchema = z.object({
+  commentId: z.string(),
+});
+
+const editCommentSchema = z.object({
+  commentId: z.string(),
+  content: z.string(),
+});
 
 export const addVoteToBattle = actionClient
   .schema(voteSchema)
   .action(async ({ parsedInput }) => {
     const { battleId, userId, hasVoted } = parsedInput;
-    if (!battleId || !userId) {
-      return {
-        error: "Invalid data",
-      };
-    }
+
     try {
-      if (hasVoted) {
-        await db.battleVote.delete({
-          where: {
-            userId_battleId: {
-              userId: userId,
-              battleId: battleId,
-            },
-          },
-        });
-      } else {
-        await db.battleVote.create({
-          data: {
-            userId,
-            battleId,
-          },
-        });
+      // Rate limit: 5 votes per minute per user
+      await limiter.check(5, `vote_${userId}`);
+
+      if (!battleId || !userId) {
+        return { error: "Invalid data" };
       }
 
-      //revalidate
-      revalidatePath(`/battles`);
-    } catch (error) {
-      if ((error as any).code === "P2002") {
-        // Unique constraint violation on userId and battleId
-        console.log("You have already voted for this battle.");
-        // Optionally show an error message to the user
-        return { error: "You can only vote once per battle." };
-      }
-      // Handle other errors
-      console.error("An unexpected error occurred:", error);
-    }
-  });
-
-// export async function removeVoteFromBattle(data: z.infer<typeof voteSchema>) {
-//   const { battleId, userId } = voteSchema.parse(data);
-//   if (!battleId || !userId) {
-//     return {
-//       error: "Invalid data",
-//     };
-//   }
-//   try {
-//     await db.battleVote.delete({
-//       where: {
-//         userId_battleId: {
-//           battleId,
-//           userId,
-//         },
-//       },
-//     });
-
-//     //revalidate
-//     revalidatePath(`/battles`);
-//   } catch (error) {
-//     console.error("An unexpected error occurred:", error);
-//   }
-// }
-
-export const removeVoteFromBattle = actionClient
-  .schema(voteSchema)
-  .action(async ({ parsedInput }) => {
-    const { battleId, userId } = parsedInput;
-    if (!battleId || !userId) {
-      return {
-        error: "Invalid data",
-      };
-    }
-    try {
-      await db.battleVote.delete({
+      // Check if vote exists first
+      const existingVote = await db.battleVote.findUnique({
         where: {
           userId_battleId: {
             userId: userId,
@@ -124,35 +54,8 @@ export const removeVoteFromBattle = actionClient
         },
       });
 
-      //revalidate
-      revalidatePath(`/battles`);
-
-      // Optionally return data to the client
-      return {
-        hasVoted: false,
-      };
-    } catch (error) {
-      if ((error as any).code === "P2025") {
-        // Unique constraint violation on userId and battleId
-        console.log("Record to delete does not exist.");
-        // Optionally show an error message to the user
-        return { error: "You can only vote once per battle." };
-      }
-      console.error("An unexpected error occurred:", error);
-    }
-  });
-
-export const toggleBattleVote = actionClient
-  .schema(voteSchema)
-  .action(async ({ parsedInput }) => {
-    const { battleId, userId, hasVoted } = parsedInput;
-    if (!battleId || !userId) {
-      return {
-        error: "Invalid data",
-      };
-    }
-    try {
-      if (hasVoted) {
+      if (hasVoted && existingVote) {
+        // Delete vote
         await db.battleVote.delete({
           where: {
             userId_battleId: {
@@ -161,7 +64,8 @@ export const toggleBattleVote = actionClient
             },
           },
         });
-      } else {
+      } else if (!hasVoted && !existingVote) {
+        // Create vote only if it doesn't exist
         await db.battleVote.create({
           data: {
             userId,
@@ -170,14 +74,136 @@ export const toggleBattleVote = actionClient
         });
       }
 
-      //revalidate
       revalidatePath(`/battles`);
-
-      // Optionally return data to the client
-      return {
-        hasVoted: !hasVoted,
-      };
+      return { success: true };
     } catch (error) {
-      console.error("An unexpected error occurred:", error);
+      console.error("Vote operation failed:", error);
+      if (error instanceof Error && error.message === "Rate limit exceeded") {
+        return { error: "Too many requests. Please try again later." };
+      }
+      return { error: "Failed to process vote" };
+    }
+  });
+
+export const addCommentToBattle = actionClient
+  .schema(commentSchema)
+  .action(async ({ parsedInput }) => {
+    const { battleId, content } = parsedInput;
+    const user = await getUser();
+
+    try {
+      if (!battleId || !user || !content) {
+        return { error: "Invalid data" };
+      }
+
+      // Rate limit: 10 comments per minute per user
+      await limiter.check(10, `comment_${user.id}`);
+
+      const newComment = await db.comment.create({
+        data: {
+          userId: user.id,
+          battleId,
+          content,
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      revalidatePath(`/battles`);
+      return { success: true, newComment };
+    } catch (error) {
+      console.error("Comment operation failed:", error);
+      return { error: "Failed to process comment" };
+    }
+  });
+
+// user can delete their own comments
+
+export const deleteComment = actionClient
+  .schema(deleteCommentSchema)
+  .action(async ({ parsedInput }) => {
+    const { commentId } = parsedInput;
+
+    try {
+      const user = await getUser();
+
+      if (!commentId || !user) {
+        return { error: "Invalid data" };
+      }
+
+      const comment = await db.comment.findUnique({
+        where: {
+          id: commentId,
+        },
+      });
+
+      if (!comment) {
+        return { error: "Comment not found" };
+      }
+
+      if (comment.userId !== user.id) {
+        return { error: "Unauthorized" };
+      }
+
+      await db.comment.delete({
+        where: {
+          id: commentId,
+        },
+      });
+
+      revalidatePath(`/battles`);
+      return { success: true, commentId };
+    } catch (error) {
+      console.error("Delete comment operation failed:", error);
+      return { error: "Failed to delete comment" };
+    }
+  });
+
+// user can edit their own comments
+
+export const editComment = actionClient
+  .schema(editCommentSchema)
+  .action(async ({ parsedInput }) => {
+    const { commentId, content } = parsedInput;
+
+    try {
+      const user = await getUser();
+
+      if (!commentId || !user || !content) {
+        return { error: "Invalid data" };
+      }
+
+      const comment = await db.comment.findUnique({
+        where: {
+          id: commentId,
+        },
+      });
+
+      if (!comment) {
+        return { error: "Comment not found" };
+      }
+
+      if (comment.userId !== user.id) {
+        return { error: "Unauthorized" };
+      }
+
+      const updatedComment = await db.comment.update({
+        where: {
+          id: commentId,
+        },
+        data: {
+          content,
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      revalidatePath(`/battles`);
+      return { success: true, updatedComment };
+    } catch (error) {
+      console.error("Edit comment operation failed:", error);
+      return { error: "Failed to edit comment" };
     }
   });
