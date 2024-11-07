@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth/session";
 import db from "@/lib/db/db";
-import { unstable_cache } from "next/cache";
 
 export async function getUser() {
   const sessionCookie = cookies().get("session");
@@ -45,7 +44,11 @@ export async function getArtistBySlug(slug: string) {
       include: {
         quotes: true,
         socialMedia: true,
-        battlesParticipated: true,
+        battlesParticipated: {
+          include: {
+            season: true,
+          },
+        },
         seasonsWon: true,
         battlesWon: true,
       },
@@ -61,6 +64,22 @@ export async function getBattles() {
       include: {
         winner: true,
         season: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getArtists() {
+  try {
+    return db.artist.findMany({
+      include: {
+        quotes: true,
+        socialMedia: true,
+        battlesParticipated: true,
+        seasonsWon: true,
+        battlesWon: true,
       },
     });
   } catch (error) {
@@ -89,6 +108,32 @@ export async function getSeasonById(id: string) {
 
       include: {
         winner: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getBattleById(id: string) {
+  try {
+    return db.battle.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        winner: true,
+        season: true,
+        artists: true,
+        comments: {
+          include: {
+            user: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+        votes: true,
       },
     });
   } catch (error) {
@@ -204,6 +249,7 @@ export async function getFilteredBattles({
         },
         ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
       },
+
       skip: (page - 1) * limit,
       take: limit,
     });
@@ -218,6 +264,55 @@ export async function getFilteredBattles({
     });
 
     return { battles, total };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getFilteredArtists({
+  artistName,
+  page,
+  limit,
+  sort,
+}: {
+  artistName: string;
+  page: number;
+  limit: number;
+  sort: string | null;
+}) {
+  try {
+    const artists = await db.artist.findMany({
+      orderBy: [
+        {
+          wins: "desc",
+        },
+      ],
+      where: {
+        nickName: {
+          contains: artistName,
+          mode: "insensitive",
+        },
+        ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
+      },
+      include: {
+        seasonsWon: true,
+        socialMedia: true,
+        quotes: true,
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const total = await db.artist.count({
+      where: {
+        nickName: {
+          contains: artistName,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    return { artists, total };
   } catch (error) {
     console.error(error);
   }

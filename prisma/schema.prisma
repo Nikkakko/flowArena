@@ -52,12 +52,6 @@ model User {
   artistVotes ArtistVote[]
   comments  Comment[]
 
- 
-
-
-
- 
-
   role        Role @default(USER)
 
   createdAt   DateTime @default(now())
@@ -170,6 +164,8 @@ model Battle {
   slug      String @unique
   isFeatured Boolean @default(false)
 
+
+
   // Battle Type
   type       BattleType
   status     BattleStatus 
@@ -182,7 +178,6 @@ model Battle {
   
   winner      Artist?  @relation("BattleWinner", fields: [winnerId], references: [id])
   winnerId    String?
-  
   
   createdAt   DateTime @default(now())
 

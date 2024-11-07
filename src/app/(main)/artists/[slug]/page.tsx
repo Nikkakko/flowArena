@@ -2,6 +2,18 @@ import { Shell } from "@/components/shell";
 import { getArtistBySlug } from "@/lib/db/queries";
 import { notFound } from "next/navigation";
 import * as React from "react";
+import Image from "next/image";
+import { Icons } from "@/components/Icons";
+import { toUpperCase } from "@/lib/utils";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
+import ArtistParticipatedCard from "@/components/ArtistParticipatedCard";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
+const RandomQuoteList = dynamic(() => import("@/components/RandomQuoteList"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-12 w-full bg-secondary" />,
+});
 
 interface ArtistSlugProps {
   params: {
@@ -12,10 +24,106 @@ interface ArtistSlugProps {
 const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
   const artist = await getArtistBySlug(slug);
   if (!artist) notFound();
+
+  // Calculate winrate
+  const winRate =
+    artist.loses > 0
+      ? ((artist.wins / (artist.wins + artist.loses)) * 100).toFixed(1)
+      : artist.wins > 0
+      ? "100"
+      : "0";
+
+  const stats = [
+    { label: "მოგება", value: artist.wins, valueClass: "text-success" },
+    { label: "წაგება", value: artist.loses, valueClass: "text-destructive" },
+    {
+      label: "ჯამში",
+      value: artist.wins + artist.loses,
+      valueClass: "text-white",
+    },
+    { label: "მოგების %", value: `${winRate}%`, valueClass: "text-primary" },
+  ];
+
+  const socialMediaList = artist.socialMedia.map(social => ({
+    ...social,
+    icon: Icons[social.name.toLowerCase() as keyof typeof Icons],
+  }));
+
+  //re-render randomquote every 10 seconds
+
   return (
-    <Shell className="mx-auto flex-1" as="main">
-      <h1>ArtistSlug</h1>
-      <p>{slug}</p>
+    <Shell className="mx-auto flex-1 space-y-8" as="main">
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="flex flex-col gap-4">
+          <div className="relative w-48 h-48 lg:w-64 lg:h-64">
+            <Image
+              src={artist.image || "/assets/artist-placeholder.webp"}
+              alt={`Artist ${artist.nickName}`}
+              fill
+              className="rounded-xl object-cover grayscale"
+            />
+          </div>
+
+          <div className="flex">
+            {socialMediaList.map(social => (
+              <a
+                key={social.id}
+                href={social.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-white hover:text-primary p-2"
+              >
+                {social.icon()}
+              </a>
+            ))}
+          </div>
+
+          <RandomQuoteList data={artist.quotes} />
+        </div>
+
+        <div className="flex-1 space-y-6">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-4">
+              {toUpperCase(artist.nickName)}
+            </h1>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {stats.map(stat => (
+                <div
+                  key={stat.label}
+                  className="bg-secondary/50 p-4 rounded-lg border border-secondary"
+                >
+                  <p className="text-sm text-gray-400">
+                    {toUpperCase(stat.label)}
+                  </p>
+                  <p className={`text-2xl font-bold ${stat.valueClass}`}>
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {artist.battlesParticipated.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-2xl font-semibold text-white">
+                {toUpperCase("ბეთლები")}
+              </h2>
+              <ScrollArea className="h-[500px]  rounded-md border p-4">
+                <div className="grid gap-4">
+                  {artist.battlesParticipated.map(battle => (
+                    <ArtistParticipatedCard
+                      key={battle.id}
+                      battle={battle}
+                      artistId={artist.id}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+        </div>
+      </div>
     </Shell>
   );
 };

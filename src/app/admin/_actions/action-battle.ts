@@ -38,6 +38,7 @@ export async function addBattleAction(values: BattleFormValues) {
         isFeatured: parsedValues.isFeatured,
         status: parsedValues.status,
         link: parsedValues.link,
+
         season: {
           connect: {
             id: parsedValues.seasonId,
@@ -88,6 +89,7 @@ export async function updateBattle(id: string, values: BattleFormValues) {
         link: parsedValues.link,
         type: parsedValues.type,
         isFeatured: parsedValues.isFeatured,
+
         artists: {
           set: parsedValues.artistIds.map(id => ({ id })),
         },

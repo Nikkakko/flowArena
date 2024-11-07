@@ -33,6 +33,7 @@ import { selectBattleStatusList, selectTypeList } from "../../lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { addBattleAction, updateBattle } from "../../_actions/action-battle";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useRouter } from "next/navigation";
 
 type BattlesFormProps = {
   initialData?: BattleFormValues & { id: string };
@@ -47,6 +48,7 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
 }) => {
   const [isPending, startTransition] = React.useTransition();
   const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<BattleFormValues>({
     resolver: zodResolver(battleSchema),
     defaultValues: {
@@ -59,6 +61,9 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
       artistIds: initialData?.artistIds || [],
       seasonId: initialData?.seasonId || "",
       winnerId: initialData?.winnerId || undefined,
+      battleDate: initialData?.battleDate
+        ? new Date(initialData.battleDate)
+        : new Date(),
       isFeatured: false,
     },
   });
@@ -79,16 +84,16 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
             variant: "default",
             duration: 5000,
           });
+          router.push("/admin");
         } else {
           await addBattleAction(values);
-
           toast({
             title: "Battle added successfully",
             variant: "default",
             duration: 5000,
           });
           form.reset();
-          //reset
+          router.push("/admin");
         }
       } catch (error) {
         toast({
@@ -102,6 +107,38 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-10">
+        {/* add date*/}
+        <FormField
+          control={form.control}
+          name="battleDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">
+                {toUpperCase("ბეთლის ჩატარების თარიღი")}
+              </FormLabel>
+              <FormControl>
+                <Input
+                  type="date"
+                  placeholder={toUpperCase("ბეთლის ჩატარების თარიღი")}
+                  {...field}
+                  value={
+                    field.value instanceof Date
+                      ? field.value.toISOString().split("T")[0]
+                      : field.value
+                  }
+                  onChange={e => {
+                    field.onChange(
+                      e.target.value ? new Date(e.target.value) : null
+                    );
+                  }}
+                  className="text-white"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="title"
@@ -330,7 +367,7 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-white">
-                {toUpperCase("გამარჯვებუ���ი")}
+                {toUpperCase("გამარჯვებული")}
               </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -369,7 +406,7 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
                   {toUpperCase("რჩეული")}
                 </FormLabel>
                 <FormDescription className="text-white">
-                  {toUpperCase("მონიშნეთ თუ გსურთ რომ ბრძოლა იყოს რჩეული")}
+                  {toUpperCase("მონიშნეთ თუ გსურთ ��ომ ბრძოლა იყოს რჩეული")}
                 </FormDescription>
               </div>
             </FormItem>

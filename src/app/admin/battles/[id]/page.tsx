@@ -15,10 +15,6 @@ interface BattleEditPageProps {
 const BattleEditPage: React.FC<BattleEditPageProps> = async ({
   params: { id },
 }) => {
-  // const battle = await getBattleById(id);
-  // const artits = await getArtists();
-  // const seasons = await getSeasons();
-
   const [battle, artists, seasons] = await Promise.all([
     getBattleById(id),
     getArtists(),
