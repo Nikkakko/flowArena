@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Shell } from "@/components/shell";
-import { getFilteredBattles } from "@/lib/db/queries";
+import { getFilteredBattles, getSeasons } from "@/lib/db/queries";
 import BattleSorting from "@/components/battle/BattleSorting";
 import { toUpperCase } from "@/lib/utils";
 import { paginationParamsCache } from "@/hooks/use-pagination-params";
@@ -9,6 +9,8 @@ import { PaginationProperties } from "@/components/shared/Pagination";
 import BattlesCard from "@/components/cards/BattlesCard";
 import { sortingParamsCache } from "@/hooks/use-sorting-params";
 import SearchField from "@/components/shared/SearchField";
+import SelectSeason from "@/components/SelectSeason";
+import { seasonParamsCache } from "@/hooks/use-season-params";
 
 interface BattlesPageProps {
   searchParams: SearchParams;
@@ -16,16 +18,21 @@ interface BattlesPageProps {
 
 const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
   const { page, per_page } = paginationParamsCache.parse(searchParams);
+  const { season } = seasonParamsCache.parse(searchParams);
   const { sort } = sortingParamsCache.parse(searchParams);
   const queryTransactionsParams =
     typeof searchParams.sBattle === "string" ? searchParams.sBattle : "";
 
-  const battleData = await getFilteredBattles({
-    battleName: queryTransactionsParams,
-    page,
-    limit: per_page,
-    sort,
-  });
+  const [battleData, seasons] = await Promise.all([
+    getFilteredBattles({
+      battleName: queryTransactionsParams,
+      page,
+      limit: per_page,
+      sort,
+      season,
+    }),
+    getSeasons(),
+  ]);
 
   const totalPages = Math.ceil((battleData?.total ?? 0) / per_page);
   const checkData =
@@ -40,7 +47,10 @@ const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
           query={"sBattle"}
           defaultValue={queryTransactionsParams}
         />
-        <BattleSorting />
+        <div className="flex items-center space-x-2">
+          <SelectSeason seasons={seasons} />
+          <BattleSorting />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

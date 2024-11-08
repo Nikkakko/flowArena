@@ -1,3 +1,4 @@
+import * as React from "react";
 import ArtistCard from "@/components/cards/ArtistCard";
 import { PaginationProperties } from "@/components/shared/Pagination";
 import SearchField from "@/components/shared/SearchField";
@@ -7,7 +8,6 @@ import { sortingParamsCache } from "@/hooks/use-sorting-params";
 import { getFilteredArtists } from "@/lib/db/queries";
 import { toUpperCase } from "@/lib/utils";
 import { SearchParams } from "nuqs";
-import * as React from "react";
 
 interface ArtistsPageProps {
   searchParams: SearchParams;

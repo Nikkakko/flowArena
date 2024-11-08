@@ -9,7 +9,7 @@ export type RenderingOptions = (typeof renderingOptions)[number];
 
 export const paginationParams = {
   page: parseAsInteger.withDefault(1),
-  per_page: parseAsInteger.withDefault(8),
+  per_page: parseAsInteger.withDefault(12),
 };
 
 export const paginationParamsCache = createSearchParamsCache(paginationParams);

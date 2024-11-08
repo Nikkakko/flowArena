@@ -97,6 +97,7 @@ export async function getSeasons() {
     return db.season.findMany({
       include: {
         winner: true,
+        battles: true,
       },
     });
   } catch (error) {
@@ -239,11 +240,13 @@ export async function getFilteredBattles({
   page,
   limit,
   sort,
+  season,
 }: {
   battleName: string;
   page: number;
   limit: number;
   sort: string | null;
+  season: string | undefined;
 }) {
   try {
     const battles = await db.battle.findMany({
@@ -256,6 +259,14 @@ export async function getFilteredBattles({
           mode: "insensitive",
         },
         ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
+        ...(season && {
+          season: {
+            name: {
+              contains: season,
+              mode: "insensitive",
+            },
+          },
+        }),
       },
 
       skip: (page - 1) * limit,
