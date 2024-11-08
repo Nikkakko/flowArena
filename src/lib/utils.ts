@@ -14,6 +14,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const toUpperGeorgian = (text: string): string => {
+  return text.replace(/[ა-ჰ]/g, char => char.toLocaleUpperCase("ka-GE"));
+};
+
 const capitalize = (text: string): string => {
   return text.replace(/\b\w/g, char => char.toUpperCase());
 };

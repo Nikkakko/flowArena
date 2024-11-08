@@ -1,6 +1,6 @@
-import BattlesCard from "@/components/BattlesCard";
-import FeaturedArtistsCard from "@/components/FeaturedArtistsCard";
-import LatestBattleCard from "@/components/LatestBattleCard";
+import BattlesCard from "@/components/cards/BattlesCard";
+import FeaturedArtistsCard from "@/components/cards/FeaturedArtistsCard";
+import LatestBattleCard from "@/components/cards/LatestBattleCard";
 import { Shell } from "@/components/shell";
 import { getFeaturedBattles, getPopularArtists } from "@/lib/db/queries";
 import { toUpperCase } from "@/lib/utils";
@@ -14,20 +14,23 @@ import {
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import ArtistTooltip from "@/components/artist-tooltip";
+import { siteConfig } from "@/config/site";
 
 export default async function Home() {
   const [battles, popularArtists] = await Promise.all([
     getFeaturedBattles(),
     getPopularArtists(),
   ]);
+
+  console.log(battles?.length, "battles");
   return (
     <Shell as="section" className="mx-auto container">
       <section className="mb-12 p-4 2xl:px-0 ">
         <h1 className="lg:text-4xl text-base font-bold mb-4 text-white">
-          {toUpperCase("მოგესალმებით FlowFlow Magazine-ში")}
+          {toUpperCase(siteConfig.welcomeMessage)}
         </h1>
         <p className="text-gray-400 text-base lg:text-xl mb-6">
-          {toUpperCase("აღმოაჩინეთ საუკეთესო რეპ ბეთლები და არტისტები")}
+          {toUpperCase(siteConfig.description)}
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 container gap-4">
           {battles?.map(battle => (

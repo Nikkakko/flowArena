@@ -1,25 +1,23 @@
-import { toUpperCase } from "@/lib/utils";
+"use client";
 import { Artist, Quote, SocialMedia } from "@prisma/client";
-import Image from "next/image";
 import * as React from "react";
-import { Icons } from "./Icons";
+import Image from "next/image";
 import Link from "next/link";
+import { toUpperCase } from "@/lib/utils";
+import { Icons } from "../Icons";
 
-interface FeaturedArtistsCardProps {
+interface ArtistCardProps {
   artist: Artist & {
     quotes: Quote[];
     socialMedia: SocialMedia[];
   };
 }
 
-const FeaturedArtistsCard: React.FC<FeaturedArtistsCardProps> = ({
-  artist,
-}) => {
+const ArtistCard: React.FC<ArtistCardProps> = ({ artist }) => {
   const socialMediaList = artist.socialMedia.map(social => ({
     ...social,
     icon: Icons[social.name.toLowerCase() as keyof typeof Icons],
   }));
-
   return (
     <div className="bg-secondary rounded-lg p-2 lg:p-4 text-center shadow-sm border lg:hover:border-primary transition relative ">
       <div className="flex items-start lg:items-center gap-4">
@@ -36,12 +34,10 @@ const FeaturedArtistsCard: React.FC<FeaturedArtistsCardProps> = ({
           <h3 className="font-semibold text-white">
             {toUpperCase(artist.nickName)}
           </h3>
-          {artist.wins > 0 && (
-            <p className="text-sm text-gray-400">
-              {toUpperCase("მოგება")}:{" "}
-              <span className="text-success">{artist.wins} </span>
-            </p>
-          )}
+          <p className="text-sm text-gray-400">
+            {toUpperCase("მოგება")}:{" "}
+            <span className="text-success">{artist.wins} </span>
+          </p>
         </div>
       </div>
       <div className="flex items-center gap-2 absolute z-20 bottom-2  right-2 lg:right-4">
@@ -60,11 +56,15 @@ const FeaturedArtistsCard: React.FC<FeaturedArtistsCardProps> = ({
         })}
       </div>
 
-      <Link href={`/artists/${artist.slug}`} className="absolute inset-0 z-10">
+      <Link
+        href={`/artists/${artist.slug}`}
+        className="absolute inset-0 z-10"
+        prefetch={true}
+      >
         <span className="sr-only">{toUpperCase(artist.nickName)}</span>
       </Link>
     </div>
   );
 };
 
-export default FeaturedArtistsCard;
+export default ArtistCard;

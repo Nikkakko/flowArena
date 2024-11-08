@@ -4,14 +4,14 @@ import { notFound } from "next/navigation";
 import * as React from "react";
 import Image from "next/image";
 import { Icons } from "@/components/Icons";
-import { toUpperCase } from "@/lib/utils";
+import { cn, toUpperCase } from "@/lib/utils";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ArtistParticipatedCard from "@/components/ArtistParticipatedCard";
+import ArtistParticipatedCard from "@/components/cards/ArtistParticipatedCard";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Metadata } from "next";
-import NoBattlesFoundCard from "@/components/NoBattlesFoundCard";
+import NoBattlesFoundCard from "@/components/cards/NoBattlesFoundCard";
 import { Badge } from "@/components/ui/badge";
 import { TrophyIcon } from "lucide-react";
 const RandomQuoteList = dynamic(() => import("@/components/RandomQuoteList"), {
@@ -111,7 +111,10 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
               </h1>
               {artist.seasonsWon.length > 0 &&
                 artist.seasonsWon.map(season => (
-                  <Badge key={season.id} className="bg-primary text-white">
+                  <Badge
+                    key={season.id}
+                    className={cn("bg-primary text-white")}
+                  >
                     {toUpperCase(season.name)}
                     <TrophyIcon className="w-4 h-4 ml-1 inline-block" />
                   </Badge>

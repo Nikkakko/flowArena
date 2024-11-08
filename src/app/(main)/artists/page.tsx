@@ -1,6 +1,6 @@
-import ArtistCard from "@/components/ArtistCard";
-import FeaturedArtistsCard from "@/components/FeaturedArtistsCard";
-import { PaginationProperties } from "@/components/Pagination";
+import ArtistCard from "@/components/cards/ArtistCard";
+import FeaturedArtistsCard from "@/components/cards/FeaturedArtistsCard";
+import { PaginationProperties } from "@/components/shared/Pagination";
 import SearchField from "@/components/SearchField";
 import { Shell } from "@/components/shell";
 import { paginationParamsCache } from "@/hooks/use-pagination-params";

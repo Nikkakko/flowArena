@@ -1,5 +1,5 @@
+import { siteConfig } from "@/config/site";
 import { toUpperCase } from "@/lib/utils";
-import { Facebook, Instagram, Youtube } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -9,10 +9,10 @@ const Footer: React.FC<FooterProps> = ({}) => {
   return (
     <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
       <p className="text-xs text-muted-foreground text-center">
-        {toUpperCase("© 2024 FlowFlow Magazine. ყველა უფლება დაცულია.")}
+        {toUpperCase(siteConfig.footer.text)}
       </p>
       <nav className="sm:ml-auto flex gap-4 sm:gap-6 transition">
-        <Link className="group" href="#">
+        {/* <Link className="group" href="#">
           <Youtube
             className=" text-muted-foreground group-hover:text-primary-foreground "
             size={24}
@@ -29,7 +29,12 @@ const Footer: React.FC<FooterProps> = ({}) => {
             className=" text-muted-foreground group-hover:text-primary-foreground "
             size={24}
           />
-        </Link>
+        </Link> */}
+        {siteConfig.footer.socialLinks.map((link, index) => (
+          <Link key={index} href={link.href} className="group">
+            {<link.icon />}
+          </Link>
+        ))}
       </nav>
     </footer>
   );

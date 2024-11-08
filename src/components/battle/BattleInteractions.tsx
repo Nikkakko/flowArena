@@ -9,7 +9,7 @@ import { addVoteToBattle } from "@/lib/actions/battle-action";
 import { useUser } from "@/lib/auth";
 import { useOptimisticAction } from "next-safe-action/hooks";
 import { Artist } from "@prisma/client";
-import BattleArtistCard from "./BattleArtistCard";
+import BattleArtistCard from "../cards/BattleArtistCard";
 
 interface BattleInteractionsProps {
   votesCount: number;
@@ -17,6 +17,7 @@ interface BattleInteractionsProps {
   battleId: string;
   votes: Array<{ userId: string }>;
   artists: Artist[];
+  winnerId: string | null;
 }
 
 export function BattleInteractions({
@@ -25,6 +26,7 @@ export function BattleInteractions({
   battleId,
   votes,
   artists,
+  winnerId,
 }: BattleInteractionsProps) {
   const { user } = useUser();
   const { toast } = useToast();
@@ -61,7 +63,7 @@ export function BattleInteractions({
               });
               return;
             }
-            execute({ battleId, userId: user.id, hasVoted });
+            execute({ battleId, hasVoted });
           }}
         >
           <ThumbsUp
@@ -82,7 +84,11 @@ export function BattleInteractions({
       <div className="flex space-x-4 items-center">
         <div className="justify-start flex items-center space-x-2 my-3">
           {artists.map(artist => (
-            <BattleArtistCard key={artist.id} artist={artist} />
+            <BattleArtistCard
+              key={artist.id}
+              artist={artist}
+              winner={artist.id === winnerId}
+            />
           ))}
         </div>
         <Button

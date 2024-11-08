@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getYouTubeVideoId, toUpperCase } from "@/lib/utils";
-import { BattleInteractions } from "@/components/BattleInteractions";
-import { BattleCommentsSection } from "@/components/BattleCommentsSection";
+import { BattleInteractions } from "@/components/battle/BattleInteractions";
+import { BattleCommentsSection } from "@/components/battle/BattleCommentsSection";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import BattleArtistCard from "@/components/BattleArtistCard";
+import BattleArtistCard from "@/components/cards/BattleArtistCard";
 
 interface BattleDetailPageProps {
   params: {
@@ -101,6 +101,7 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
                 battleId={battle.id}
                 votes={battle.votes}
                 artists={battle.artists}
+                winnerId={battle.winnerId}
               />
             </CardContent>
           </Card>

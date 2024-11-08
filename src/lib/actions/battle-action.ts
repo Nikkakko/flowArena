@@ -13,7 +13,6 @@ const limiter = rateLimit({
 
 const voteSchema = z.object({
   battleId: z.string(),
-  userId: z.string(),
   hasVoted: z.boolean(),
 });
 
@@ -34,9 +33,15 @@ const editCommentSchema = z.object({
 export const addVoteToBattle = actionClient
   .schema(voteSchema)
   .action(async ({ parsedInput }) => {
-    const { battleId, userId, hasVoted } = parsedInput;
+    const { battleId, hasVoted } = parsedInput;
 
     try {
+      const user = await getUser();
+      const userId = user?.id;
+
+      if (!userId) {
+        return { error: "You must be logged in to vote" };
+      }
       // Rate limit: 5 votes per minute per user
       await limiter.check(5, `vote_${userId}`);
 
@@ -208,6 +213,4 @@ export const editComment = actionClient
     }
   });
 
-
-  //add like to comment
-  
+//add like to comment

@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
-import { buttonVariants } from "./ui/button";
+import { buttonVariants } from "../ui/button";
 import { Battle } from "@prisma/client";
 
 interface BattlesCardProps extends React.HTMLAttributes<HTMLDivElement> {

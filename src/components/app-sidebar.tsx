@@ -1,13 +1,6 @@
 "use client";
 import { cn, toUpperCase } from "@/lib/utils";
-import {
-  HomeIcon,
-  MicVocalIcon,
-  SwordsIcon,
-  TrophyIcon,
-  UsersIcon,
-  UsersRoundIcon,
-} from "lucide-react";
+
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -21,35 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
-const items = [
-  {
-    title: "მთავარი",
-    icon: HomeIcon,
-    href: "/",
-  },
-
-  {
-    title: "არტისტები",
-    icon: MicVocalIcon,
-    href: "/artists",
-  },
-  {
-    title: "ბეთლები",
-    icon: SwordsIcon,
-    href: "/battles",
-  },
-  {
-    title: "ლიდერბორდი",
-    icon: TrophyIcon,
-    href: "/leaderboard",
-  },
-  {
-    title: "ჩვენს შესახებ",
-    icon: UsersRoundIcon,
-    href: "/about",
-  },
-];
+import { siteConfig } from "@/config/site";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -114,7 +79,7 @@ export function AppSidebar() {
           </SidebarHeader>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map(item => {
+              {siteConfig.navItems.map(item => {
                 const isActive = pathname === item.href;
                 return (
                   <SidebarMenuItem key={item.title}>
