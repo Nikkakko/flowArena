@@ -20,7 +20,7 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
         props.className
       )}
     >
-      <div className="w-full  h-[200px] md:h-[450px] lg:h-auto  lg:aspect-video relative  ">
+      <div className="w-full  h-[200px] md:h-[250px] lg:h-auto  lg:aspect-video relative  ">
         <Image
           src={battle.coverImage}
           alt={battle.title}

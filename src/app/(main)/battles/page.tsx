@@ -39,7 +39,11 @@ const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
     battleData && battleData.battles && battleData.battles.length > 0;
 
   return (
-    <Shell as="section" variant="default" className="container mx-auto">
+    <Shell
+      as="section"
+      variant="default"
+      className="container mx-auto px-4 2xl:px-0"
+    >
       <div className="flex items-start justify-between w-full">
         <SearchField
           placeholder={toUpperCase("მოძებნეთ ბეთლები")}
@@ -47,13 +51,13 @@ const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
           query={"sBattle"}
           defaultValue={queryTransactionsParams}
         />
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-col gap-2 xl:flex-row items-center ">
           <SelectSeason seasons={seasons} />
           <BattleSorting />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {checkData ? (
           battleData.battles.map(battle => (
             <BattlesCard key={battle.id} battle={battle} />
