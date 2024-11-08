@@ -22,7 +22,6 @@ export default async function Home() {
     getPopularArtists(),
   ]);
 
-  console.log(battles?.length, "battles");
   return (
     <Shell as="section" className="mx-auto container">
       <section className="mb-12 p-4 2xl:px-0 ">

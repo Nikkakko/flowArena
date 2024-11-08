@@ -1,7 +1,6 @@
 import ArtistCard from "@/components/cards/ArtistCard";
-import FeaturedArtistsCard from "@/components/cards/FeaturedArtistsCard";
 import { PaginationProperties } from "@/components/shared/Pagination";
-import SearchField from "@/components/SearchField";
+import SearchField from "@/components/shared/SearchField";
 import { Shell } from "@/components/shell";
 import { paginationParamsCache } from "@/hooks/use-pagination-params";
 import { sortingParamsCache } from "@/hooks/use-sorting-params";
@@ -31,7 +30,7 @@ const ArtistsPage: React.FC<ArtistsPageProps> = async ({ searchParams }) => {
     artistsData && artistsData.artists && artistsData.artists.length > 0;
 
   return (
-    <Shell as="section" variant="default" className="container mx-auto">
+    <Shell as="section" variant="default" className="container mx-auto ">
       <div className="flex items-start justify-between w-full">
         <SearchField
           placeholder={toUpperCase("მოძებნეთ არტისტი")}

@@ -12,24 +12,6 @@ const Footer: React.FC<FooterProps> = ({}) => {
         {toUpperCase(siteConfig.footer.text)}
       </p>
       <nav className="sm:ml-auto flex gap-4 sm:gap-6 transition">
-        {/* <Link className="group" href="#">
-          <Youtube
-            className=" text-muted-foreground group-hover:text-primary-foreground "
-            size={24}
-          />
-        </Link>
-        <Link className="group" href="#">
-          <Instagram
-            className=" text-muted-foreground group-hover:text-primary-foreground "
-            size={24}
-          />
-        </Link>
-        <Link className="group" href="#">
-          <Facebook
-            className=" text-muted-foreground group-hover:text-primary-foreground "
-            size={24}
-          />
-        </Link> */}
         {siteConfig.footer.socialLinks.map((link, index) => (
           <Link key={index} href={link.href} className="group">
             {<link.icon />}

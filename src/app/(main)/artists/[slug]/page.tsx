@@ -3,7 +3,7 @@ import { getArtistBySlug } from "@/lib/db/queries";
 import { notFound } from "next/navigation";
 import * as React from "react";
 import Image from "next/image";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/shared/Icons";
 import { cn, toUpperCase } from "@/lib/utils";
 
 import { ScrollArea } from "@/components/ui/scroll-area";

@@ -1,4 +1,4 @@
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/shared/Icons";
 import { toUpperGeorgian } from "@/lib/utils";
 import {
   HomeIcon,

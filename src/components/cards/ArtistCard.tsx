@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toUpperCase } from "@/lib/utils";
-import { Icons } from "../Icons";
+import { Icons } from "../shared/Icons";
 
 interface ArtistCardProps {
   artist: Artist & {

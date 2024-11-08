@@ -2,7 +2,7 @@ import { toUpperCase } from "@/lib/utils";
 import { Artist, Quote, SocialMedia } from "@prisma/client";
 import Image from "next/image";
 import * as React from "react";
-import { Icons } from "../Icons";
+import { Icons } from "../shared/Icons";
 import Link from "next/link";
 
 interface FeaturedArtistsCardProps {

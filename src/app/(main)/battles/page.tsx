@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Shell } from "@/components/shell";
 import { getFilteredBattles } from "@/lib/db/queries";
-import SearchField from "@/components/SearchField";
 import BattleSorting from "@/components/battle/BattleSorting";
 import { toUpperCase } from "@/lib/utils";
 import { paginationParamsCache } from "@/hooks/use-pagination-params";
@@ -9,6 +8,7 @@ import { SearchParams } from "nuqs";
 import { PaginationProperties } from "@/components/shared/Pagination";
 import BattlesCard from "@/components/cards/BattlesCard";
 import { sortingParamsCache } from "@/hooks/use-sorting-params";
+import SearchField from "@/components/shared/SearchField";
 
 interface BattlesPageProps {
   searchParams: SearchParams;
