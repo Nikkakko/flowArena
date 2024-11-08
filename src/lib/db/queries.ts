@@ -336,3 +336,18 @@ export async function getFilteredArtists({
     console.error(error);
   }
 }
+
+export async function getLeaderboardArtists() {
+  try {
+    return await db.artist.findMany({
+      orderBy: [{ wins: "desc" }, { loses: "asc" }],
+      include: {
+        votes: true,
+        battlesWon: true,
+        seasonsWon: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}

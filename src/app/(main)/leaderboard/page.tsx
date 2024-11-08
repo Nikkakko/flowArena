@@ -1,15 +1,28 @@
 import { Shell } from "@/components/shell";
-import * as React from "react";
+import { LeaderboardTable } from "@/components/LeaderboardTable";
+import { getLeaderboardArtists } from "@/lib/db/queries";
 
-interface LeaderBoardPageProps {}
+import { toUpperCase } from "@/lib/utils";
 
-const LeaderBoardPage: React.FC<LeaderBoardPageProps> = ({}) => {
+export default async function LeaderBoardPage() {
+  const artists = await getLeaderboardArtists();
+
   return (
-    <Shell as="main" className="container mx-auto">
-      {" "}
-      content{" "}
+    <Shell as="main" className="container mx-auto py-8">
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-white">
+            {toUpperCase("არტისტების რეიტინგი")}
+          </h1>
+          <p className="text-muted-foreground">
+            {toUpperCase(
+              "შეაფასე შენი საყვარელი არტისტები და ნახე როგორ არის მათი რეიტინგი!"
+            )}
+          </p>
+        </div>
+
+        {artists && <LeaderboardTable artists={artists} />}
+      </div>
     </Shell>
   );
-};
-
-export default LeaderBoardPage;
+}
