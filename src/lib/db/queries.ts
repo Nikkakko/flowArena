@@ -337,17 +337,48 @@ export async function getFilteredArtists({
   }
 }
 
-export async function getLeaderboardArtists() {
+export async function getLeaderboardArtists({
+  page = 1,
+  limit = 10,
+  nickName = "",
+}: {
+  page: number;
+  limit: number;
+
+  nickName?: string;
+}) {
   try {
-    return await db.artist.findMany({
-      orderBy: [{ wins: "desc" }, { loses: "asc" }],
+    const artists = await db.artist.findMany({
+      orderBy: [
+        {
+          wins: "desc",
+        },
+      ],
+      where: {
+        nickName: {
+          contains: nickName,
+          mode: "insensitive",
+        },
+      },
+
       include: {
         votes: true,
         battlesWon: true,
         seasonsWon: true,
       },
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
+    const total = await db.artist.count();
+
+    return {
+      artists,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   } catch (error) {
     console.error(error);
+    return null;
   }
 }

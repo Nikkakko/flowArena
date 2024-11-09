@@ -25,19 +25,19 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarHeader className="mb-4">
             <Link href="/">
-              {/* <Image
-                src="/assets/logo.webp"
+              <Image
+                src="/assets/flowarena-logo.png"
                 alt="logo"
-                width={350}
-                height={100}
+                width={201}
+                height={112}
                 className={cn(
-                  "w-full max-w-[350px] h-[200px] object-cover rounded-2xl  hover:opacity-80 transition-all hover:scale-105 "
+                  "object-cover hover:opacity-80 transition-all hover:scale-105 "
                 )}
                 quality={100}
-              /> */}
-              <h1 className="text-white text-2xl font-bold">
+              />
+              {/* <h1 className="text-white text-2xl font-bold">
                 {siteConfig.name}
-              </h1>
+              </h1> */}
             </Link>
           </SidebarHeader>
           <SidebarGroupContent>

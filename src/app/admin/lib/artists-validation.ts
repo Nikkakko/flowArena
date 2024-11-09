@@ -7,7 +7,7 @@ export const artistSchema = z.object({
   wins: z.string().min(0), // TODO: Change to number
   loses: z.string().min(0), // TODO: Change to number
   bio: z.string().max(500),
-  quotes: z.array(z.string().max(100)),
+  quotes: z.array(z.string().max(400)),
   isPopular: z.boolean(),
   socialMedia: z.array(
     z.object({

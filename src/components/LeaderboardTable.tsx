@@ -1,6 +1,5 @@
 "use client";
-
-import { Artist, ArtistVote, Battle, Season, User } from "@prisma/client";
+import { Artist, ArtistVote, Battle, Season } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -18,24 +17,37 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { useUser } from "@/lib/auth";
 import { toUpperCase } from "@/lib/utils";
-import { TrophyIcon } from "lucide-react";
+import { TrophyIcon, ChevronDown, ChevronUp } from "lucide-react";
+import { PaginationProperties } from "./shared/Pagination";
+import SearchField from "@/components/shared/SearchField";
+import { useSearchParams } from "next/navigation";
 
 interface LeaderboardTableProps {
   artists: (Artist & {
     votes: ArtistVote[];
-
     battlesWon: Battle[];
     seasonsWon: Season[];
   })[];
+  totalPages: number;
+  currentPage: number;
 }
 
-export function LeaderboardTable({ artists }: LeaderboardTableProps) {
+export function LeaderboardTable({
+  artists,
+  totalPages,
+  currentPage,
+}: LeaderboardTableProps) {
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [votingArtist, setVotingArtist] = useState<string | null>(null);
   const { user } = useUser();
+  const searchParams = useSearchParams();
+  const queryTransactionsParams = searchParams.get("sArtist");
 
   const handleVote = async (artistId: string) => {
     if (!user) {
@@ -90,17 +102,45 @@ export function LeaderboardTable({ artists }: LeaderboardTableProps) {
     },
     {
       accessorKey: "wins",
-      header: toUpperCase("მოგება"),
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="flex items-center gap-1"
+          >
+            {toUpperCase("მოგება")}
+            {column.getIsSorted() === "asc" ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </Button>
+        );
+      },
       cell: ({ row }) => {
-        return <div className="text-success">{row.original.wins}</div>;
+        return (
+          <div className="text-success text-center lg:text-start">
+            {row.original.wins}
+          </div>
+        );
       },
     },
     {
       accessorKey: "loses",
       header: toUpperCase("წაგება"),
       cell: ({ row }) => {
-        return <div className="text-destructive">{row.original.loses}</div>;
+        return (
+          <div className="text-destructive text-center lg:text-start">
+            {row.original.loses}
+          </div>
+        );
       },
+    },
+    {
+      accessorKey: "votes",
+      header: toUpperCase("ხმები"),
+      cell: ({ row }) => row.original.votes.length,
     },
 
     {
@@ -109,19 +149,20 @@ export function LeaderboardTable({ artists }: LeaderboardTableProps) {
       cell: ({ row }) => {
         const seasons = row.original.seasonsWon.map(season => season.name);
         return (
-          <div className="text-success flex items-center gap-1">
+          <div className="text-success flex flex-col-reverse lg:flex-row  text-center items-center gap-1">
             {toUpperCase(seasons.join(", "))}
             {/* if winner show trophy */}
             {row.original.seasonsWon.length > 0 && (
-              <TrophyIcon className="w-4 h-4 ml-2" />
+              <TrophyIcon className="w-4 h-4 shrink-0" />
             )}
           </div>
         );
       },
     },
+
     {
       id: "actions",
-      header: "Action",
+      header: toUpperCase("შეფასება"),
       cell: ({ row }) => (
         <Button
           variant="default"
@@ -147,50 +188,65 @@ export function LeaderboardTable({ artists }: LeaderboardTableProps) {
     data: artists,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
   });
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map(row => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map(cell => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+    <>
+      <div className="rounded-md border my-10 w-full overflow-auto">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                {toUpperCase("არტისტები არ მოიძებნა")}
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  {toUpperCase("არტისტები არ მოიძებნა")}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {totalPages > 1 && <PaginationProperties pageCount={totalPages} />}
+    </>
   );
 }
