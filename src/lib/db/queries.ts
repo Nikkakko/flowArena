@@ -344,7 +344,6 @@ export async function getLeaderboardArtists({
 }: {
   page: number;
   limit: number;
-
   nickName?: string;
 }) {
   try {
@@ -365,6 +364,7 @@ export async function getLeaderboardArtists({
         votes: true,
         battlesWon: true,
         seasonsWon: true,
+        
       },
       skip: (page - 1) * limit,
       take: limit,

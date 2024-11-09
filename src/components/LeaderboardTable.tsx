@@ -1,4 +1,5 @@
 "use client";
+import * as React from "react";
 import { Artist, ArtistVote, Battle, Season } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,11 +23,16 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useUser } from "@/lib/auth";
-import { toUpperCase } from "@/lib/utils";
-import { TrophyIcon, ChevronDown, ChevronUp } from "lucide-react";
+import { checkUserVote, cn, toUpperCase } from "@/lib/utils";
+import {
+  TrophyIcon,
+  ChevronDown,
+  ChevronUp,
+  ThumbsUpIcon,
+  ThumbsDownIcon,
+} from "lucide-react";
 import { PaginationProperties } from "./shared/Pagination";
-import SearchField from "@/components/shared/SearchField";
-import { useSearchParams } from "next/navigation";
+import { addVoteToArtist } from "@/lib/actions/artist-action";
 
 interface LeaderboardTableProps {
   artists: (Artist & {
@@ -35,41 +41,25 @@ interface LeaderboardTableProps {
     seasonsWon: Season[];
   })[];
   totalPages: number;
-  currentPage: number;
 }
 
 export function LeaderboardTable({
   artists,
   totalPages,
-  currentPage,
 }: LeaderboardTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [votingArtist, setVotingArtist] = useState<string | null>(null);
   const { user } = useUser();
-  const searchParams = useSearchParams();
-  const queryTransactionsParams = searchParams.get("sArtist");
+  const [isPending, startTransition] = React.useTransition();
 
   const handleVote = async (artistId: string) => {
     if (!user) {
-      toast.error("Please login to vote");
+      toast.error(toUpperCase("გაიარეთ ავტორიზაცია"));
       return;
     }
 
-    setVotingArtist(artistId);
-    try {
-      const response = await fetch("/api/votes/artist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ artistId }),
-      });
-
-      if (!response.ok) throw new Error("Failed to vote");
-      toast.success("Vote submitted successfully!");
-    } catch (error) {
-      toast.error("Failed to submit vote");
-    } finally {
-      setVotingArtist(null);
-    }
+    startTransition(async () => {
+      await addVoteToArtist({ artistId });
+    });
   };
 
   const columns: ColumnDef<(typeof artists)[0]>[] = [
@@ -147,7 +137,9 @@ export function LeaderboardTable({
       accessorKey: "seasonsWon",
       header: toUpperCase("სეზონების მოგება"),
       cell: ({ row }) => {
-        const seasons = row.original.seasonsWon.map(season => season.name);
+        const seasons = row.original.seasonsWon.map(
+          (season: Season) => season.name
+        );
         return (
           <div className="text-success flex flex-col-reverse lg:flex-row  text-center items-center gap-1">
             {toUpperCase(seasons.join(", "))}
@@ -167,18 +159,20 @@ export function LeaderboardTable({
         <Button
           variant="default"
           size="sm"
-          className="text-white"
+          className={cn(
+            "text-white",
+            checkUserVote(row.original.votes, user?.id)
+              ? "bg-destructive"
+              : "bg-success"
+          )}
+          disabled={isPending}
           onClick={() => handleVote(row.original.id)}
-          disabled={
-            votingArtist === row.original.id ||
-            row.original.votes.some(vote => vote.userId === user?.id)
-          }
         >
-          {row.original.votes.some(vote => vote.userId === user?.id)
-            ? "Voted"
-            : votingArtist === row.original.id
-            ? "Voting..."
-            : "Vote"}
+          {checkUserVote(row.original.votes, user?.id) ? (
+            <ThumbsDownIcon className="w-4 h-4" />
+          ) : (
+            <ThumbsUpIcon className="w-4 h-4" />
+          )}
         </Button>
       ),
     },

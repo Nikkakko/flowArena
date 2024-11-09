@@ -1,9 +1,11 @@
-import { Comment, User } from "@prisma/client";
+import { Artist, ArtistVote, Comment, User } from "@prisma/client";
 import {
   addCommentToBattle as addComment,
   deleteComment as deleteBattleComment,
   editComment as editBattleComment,
 } from "../actions/battle-action";
+
+import { addVoteToArtist as addVote } from "@/lib/actions/artist-action";
 
 export const fetcher = (url: string) => fetch(url).then(res => res.json());
 

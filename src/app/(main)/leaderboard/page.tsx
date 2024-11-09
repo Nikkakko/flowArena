@@ -2,7 +2,7 @@ import { Shell } from "@/components/shell";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { getLeaderboardArtists } from "@/lib/db/queries";
 
-import { toUpperCase } from "@/lib/utils";
+import { checkUserVote, toUpperCase } from "@/lib/utils";
 import { SearchParams } from "nuqs";
 import { paginationParamsCache } from "@/hooks/use-pagination-params";
 import SearchField from "@/components/shared/SearchField";
@@ -19,11 +19,17 @@ export default async function LeaderBoardPage({
   const data = await getLeaderboardArtists({
     page,
     limit: per_page,
-
     nickName: queryTransactionsParams,
   });
 
-  if (!data) return null;
+  if (!data)
+    return (
+      <Shell as="section" className="mx-auto container">
+        <div className="flex justify-center items-center h-96">
+          <p className="text-white">{toUpperCase("არტისტები არ მოიძებნა")}</p>
+        </div>
+      </Shell>
+    );
 
   return (
     <main className="container mx-auto py-8 px-4 2xl:px-0">
@@ -39,7 +45,7 @@ export default async function LeaderBoardPage({
           </p>
         </div>
 
-        <section>
+        <>
           <SearchField
             placeholder={toUpperCase("მოძებნეთ არტისტი")}
             className="w-full max-w-xs lg:max-w-sm"
@@ -50,9 +56,8 @@ export default async function LeaderBoardPage({
           <LeaderboardTable
             artists={data.artists}
             totalPages={data.totalPages}
-            currentPage={page}
           />
-        </section>
+        </>
       </div>
     </main>
   );

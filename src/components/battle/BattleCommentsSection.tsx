@@ -31,8 +31,7 @@ import {
   editComment,
   editCommentOptions,
 } from "@/lib/swr";
-import { formatDistance } from "date-fns";
-import { ka } from "date-fns/locale";
+
 import {
   AlertDialog,
   AlertDialogAction,

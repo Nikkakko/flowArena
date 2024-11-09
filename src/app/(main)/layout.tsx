@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import MobileMenu from "@/components/MobileMenu";
 import Footer from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
@@ -18,6 +19,7 @@ export default function DashboardLayout({
           {children}
           <Footer />
         </main>
+        <Toaster />
       </SidebarProvider>
     </>
   );
