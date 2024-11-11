@@ -1,22 +1,18 @@
 import db from "@/lib/db/db";
-import { getUser } from "@/lib/db/queries";
-import rateLimit from "@/lib/rate-limit";
 import { revalidatePath } from "next/cache";
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const battleId = searchParams.get("battleId");
+  if (!battleId) {
+    return NextResponse.json(
+      { error: "Battle ID is required" },
+      { status: 400 }
+    );
+  }
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const battleId = searchParams.get("battleId");
-
-    if (!battleId) {
-      return NextResponse.json(
-        { error: "Battle ID is required" },
-        { status: 400 }
-      );
-    }
-
     const comments = await db.comment.findMany({
       where: {
         battleId,
@@ -34,6 +30,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(comments);
   } catch (error) {
+    if (isDynamicServerError(error)) {
+      throw error;
+    }
     console.error(error);
     return NextResponse.json(
       { error: "Failed to fetch comments" },

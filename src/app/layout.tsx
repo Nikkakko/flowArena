@@ -19,8 +19,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "FlowFlow Magazine - ვიდეო ჟურნალი",
-  description: "ვიდეო ჟურნალი FlowFlow Magazine",
+  title: "Flow Arena - ვიდეო ჟურნალი",
+  description: "Flow Arena - ვიდეო ჟურნალი",
 };
 
 export default function RootLayout({

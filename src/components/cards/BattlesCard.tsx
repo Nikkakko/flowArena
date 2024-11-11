@@ -20,12 +20,13 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
         props.className
       )}
     >
-      <div className="w-full  h-[200px] md:h-[250px] lg:h-auto  lg:aspect-video relative  ">
+      <div className="relative w-full aspect-[16/9]">
         <Image
           src={battle.coverImage}
           alt={battle.title}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          priority
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover grayscale group-hover:grayscale-0 transition-all"
         />
       </div>

@@ -11,6 +11,7 @@ import { sortingParamsCache } from "@/hooks/use-sorting-params";
 import SearchField from "@/components/shared/SearchField";
 import SelectSeason from "@/components/SelectSeason";
 import { seasonParamsCache } from "@/hooks/use-season-params";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BattlesPageProps {
   searchParams: SearchParams;
@@ -51,27 +52,39 @@ const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
           query={"sBattle"}
           defaultValue={queryTransactionsParams}
         />
-        <div className="flex flex-col lg:flex-row gap-2 items-start sm:items-center">
-          <SelectSeason seasons={seasons} />
-          <BattleSorting />
-        </div>
+        <React.Suspense fallback={<Skeleton className="h-10 w-64" />}>
+          <div className="flex flex-col lg:flex-row gap-2 items-start sm:items-center">
+            <SelectSeason seasons={seasons} />
+            <BattleSorting />
+          </div>
+        </React.Suspense>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {checkData ? (
-          battleData.battles.map(battle => (
-            <BattlesCard key={battle.id} battle={battle} />
-          ))
-        ) : (
-          <div className="col-span-full text-center text-gray-500  h-[calc(100vh-20rem)] flex items-center justify-center">
-            {toUpperCase("ბეთლი არ მოიძებნა, სცადეთ სხვა სიტყვა")}
+      <React.Suspense
+        fallback={
+          <div className="grid grid-cols-1 gap-4 sm:gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-[316px] lg:h-[400px]" />
+            ))}
           </div>
-        )}
-      </div>
+        }
+      >
+        <div className="grid grid-cols-1 gap-4 sm:gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {checkData ? (
+            battleData.battles.map(battle => (
+              <BattlesCard key={battle.id} battle={battle} />
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-500  h-[calc(100vh-20rem)] flex items-center justify-center">
+              {toUpperCase("ბეთლი არ მოიძებნა, სცადეთ სხვა სიტყვა")}
+            </div>
+          )}
+        </div>
+      </React.Suspense>
 
       {totalPages > 1 && (
         <div className="flex justify-center mt-6 sm:mt-8">
-          <React.Suspense>
+          <React.Suspense fallback={<Skeleton className="h-10 w-64" />}>
             <PaginationProperties pageCount={totalPages} />
           </React.Suspense>
         </div>

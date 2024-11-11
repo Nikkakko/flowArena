@@ -8,6 +8,7 @@ import { sortingParamsCache } from "@/hooks/use-sorting-params";
 import { getFilteredArtists } from "@/lib/db/queries";
 import { toUpperCase } from "@/lib/utils";
 import { SearchParams } from "nuqs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ArtistsPageProps {
   searchParams: SearchParams;
@@ -43,21 +44,33 @@ const ArtistsPage: React.FC<ArtistsPageProps> = async ({ searchParams }) => {
           defaultValue={queryTransactionsParams}
         />
         {/* <BattleSorting /> */}
-      </div>{" "}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {checkData ? (
-          artistsData.artists.map(artist => (
-            <ArtistCard key={artist.id} artist={artist} />
-          ))
-        ) : (
-          <div className="col-span-full text-center text-gray-500  h-[calc(100vh-20rem)] flex items-center justify-center">
-            {toUpperCase("არტისტი არ მოიძებნა, სცადეთ სხვა სიტყვა")}
-          </div>
-        )}
       </div>
+
+      <React.Suspense
+        fallback={
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-[400px]" />
+            ))}
+          </div>
+        }
+      >
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {checkData ? (
+            artistsData.artists.map(artist => (
+              <ArtistCard key={artist.id} artist={artist} />
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-500  h-[calc(100vh-20rem)] flex items-center justify-center">
+              {toUpperCase("არტისტი არ მოიძებნა, სცადეთ სხვა სიტყვა")}
+            </div>
+          )}
+        </div>
+      </React.Suspense>
+
       {totalPages > 1 && (
         <div className="flex justify-center mt-8">
-          <React.Suspense>
+          <React.Suspense fallback={<Skeleton className="h-10 w-64" />}>
             <PaginationProperties pageCount={totalPages} />
           </React.Suspense>
         </div>

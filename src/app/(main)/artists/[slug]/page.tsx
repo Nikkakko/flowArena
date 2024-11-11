@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import * as React from "react";
 import Image from "next/image";
 import { Icons } from "@/components/shared/Icons";
-import { cn, toUpperCase } from "@/lib/utils";
+import { calculateWinRate, cn, toUpperCase } from "@/lib/utils";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ArtistParticipatedCard from "@/components/cards/ArtistParticipatedCard";
@@ -14,6 +14,7 @@ import { Metadata } from "next";
 import NoBattlesFoundCard from "@/components/cards/NoBattlesFoundCard";
 import { Badge } from "@/components/ui/badge";
 import { TrophyIcon } from "lucide-react";
+import ArtistStatsCard from "@/components/cards/ArtistStatsCard";
 const RandomQuoteList = dynamic(() => import("@/components/RandomQuoteList"), {
   ssr: false,
   loading: () => <Skeleton className="h-12 w-full bg-secondary" />,
@@ -47,13 +48,7 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
   const artist = await getArtistBySlug(slug);
   if (!artist) notFound();
 
-  // Calculate winrate
-  const winRate =
-    artist.loses > 0
-      ? ((artist.wins / (artist.wins + artist.loses)) * 100).toFixed(1)
-      : artist.wins > 0
-      ? "100"
-      : "0";
+  const winRate = calculateWinRate(artist);
 
   const stats = [
     { label: "მოგება", value: artist.wins, valueClass: "text-success" },
@@ -70,8 +65,6 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
     ...social,
     icon: Icons[social.name.toLowerCase() as keyof typeof Icons],
   }));
-
-  //re-render randomquote every 10 seconds
 
   return (
     <Shell className="mx-auto flex-1 space-y-8 px-4 2xl:px-0" as="main">
@@ -123,17 +116,7 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {stats.map(stat => (
-                <div
-                  key={stat.label}
-                  className="bg-secondary/50 p-4 rounded-lg border border-secondary"
-                >
-                  <p className="text-sm text-gray-400">
-                    {toUpperCase(stat.label)}
-                  </p>
-                  <p className={`text-2xl font-bold ${stat.valueClass}`}>
-                    {stat.value}
-                  </p>
-                </div>
+                <ArtistStatsCard key={stat.label} stat={stat} />
               ))}
             </div>
           </div>

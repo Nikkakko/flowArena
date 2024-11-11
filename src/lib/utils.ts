@@ -97,3 +97,15 @@ export const getYouTubeVideoId = (url: string) => {
 
   return url; // Return as-is if no pattern matches
 };
+
+//calculate winrate
+export const calculateWinRate = (artist: Artist) => {
+  const winRate =
+    artist.loses > 0
+      ? ((artist.wins / (artist.wins + artist.loses)) * 100).toFixed(1)
+      : artist.wins > 0
+      ? "100"
+      : "0";
+
+  return winRate;
+};

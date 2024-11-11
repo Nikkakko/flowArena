@@ -41,7 +41,7 @@ const BattleEditPage: React.FC<BattleEditPageProps> = async ({
           type: battle.type,
           status: battle.status,
           artistIds: battle.artists.map(artist => artist.id),
-          seasonId: battle.season.id,
+          seasonId: battle.season?.id || "",
           winnerId: battle?.winner?.id,
           isFeatured: battle.isFeatured,
 
