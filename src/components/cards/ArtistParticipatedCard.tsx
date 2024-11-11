@@ -23,10 +23,10 @@ const ArtistParticipatedCard: React.FC<ArtistParticipatedCardProps> = ({
       prefetch={true}
       href={`/battles/${battle.slug}`}
       key={battle.id}
-      className="bg-secondary/50 p-4 rounded-lg border border-secondary hover:border-primary transition flex justify-between items-center group"
+      className="bg-secondary/50 p-4 rounded-lg border border-secondary hover:border-primary transition flex justify-between items-start lg:items-center group"
     >
       <div className="flex gap-4 items-center">
-        <div className="relative w-32 h-16 rounded-lg overflow-hidden">
+        <div className="hidden lg:block relative w-32 h-16 rounded-lg overflow-hidden">
           <Image
             src={battle.coverImage || "/assets/battle-placeholder.webp"}
             alt={battle.title}
@@ -49,7 +49,7 @@ const ArtistParticipatedCard: React.FC<ArtistParticipatedCardProps> = ({
         </div>
       </div>
 
-      <div className="text-sm">
+      <div className="text-sm ">
         {battle.status === "COMPLETED" ? (
           battle.winnerId === null ? (
             <Badge variant="secondary">{toUpperCase("არ შეფასებულა")}</Badge>

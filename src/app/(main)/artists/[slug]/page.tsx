@@ -74,9 +74,9 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
   //re-render randomquote every 10 seconds
 
   return (
-    <Shell className="mx-auto flex-1 space-y-8" as="main">
+    <Shell className="mx-auto flex-1 space-y-8 px-4 2xl:px-0" as="main">
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 mx-auto">
           <div className="relative w-48 h-48 lg:w-64 lg:h-64">
             <Image
               src={artist.image || "/assets/artist-placeholder.webp"}

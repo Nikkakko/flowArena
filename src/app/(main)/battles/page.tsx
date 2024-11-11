@@ -44,20 +44,20 @@ const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
       variant="default"
       className="container mx-auto px-4 2xl:px-0"
     >
-      <div className="flex items-start justify-between w-full">
+      <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-start sm:justify-between w-full">
         <SearchField
           placeholder={toUpperCase("მოძებნეთ ბეთლები")}
-          className="mb-6 max-w-sm"
+          className="w-full sm:max-w-sm mb-2 sm:mb-6"
           query={"sBattle"}
           defaultValue={queryTransactionsParams}
         />
-        <div className="flex flex-col gap-2 xl:flex-row items-center ">
+        <div className="flex flex-col lg:flex-row gap-2 items-start sm:items-center">
           <SelectSeason seasons={seasons} />
           <BattleSorting />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:gap-3 md:grid-cols-2 xl:grid-cols-3">
         {checkData ? (
           battleData.battles.map(battle => (
             <BattlesCard key={battle.id} battle={battle} />
@@ -70,7 +70,7 @@ const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-6 sm:mt-8">
           <React.Suspense>
             <PaginationProperties pageCount={totalPages} />
           </React.Suspense>

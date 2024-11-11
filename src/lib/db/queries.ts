@@ -364,7 +364,6 @@ export async function getLeaderboardArtists({
         votes: true,
         battlesWon: true,
         seasonsWon: true,
-        
       },
       skip: (page - 1) * limit,
       take: limit,
@@ -380,5 +379,22 @@ export async function getLeaderboardArtists({
   } catch (error) {
     console.error(error);
     return null;
+  }
+}
+
+export async function getLattestBattles() {
+  try {
+    return db.battle.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 3,
+      include: {
+        artists: true,
+        winner: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
   }
 }

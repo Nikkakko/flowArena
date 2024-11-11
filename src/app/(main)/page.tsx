@@ -2,7 +2,11 @@ import BattlesCard from "@/components/cards/BattlesCard";
 import FeaturedArtistsCard from "@/components/cards/FeaturedArtistsCard";
 import LatestBattleCard from "@/components/cards/LatestBattleCard";
 import { Shell } from "@/components/shell";
-import { getFeaturedBattles, getPopularArtists } from "@/lib/db/queries";
+import {
+  getFeaturedBattles,
+  getLattestBattles,
+  getPopularArtists,
+} from "@/lib/db/queries";
 import { toUpperCase } from "@/lib/utils";
 import {
   Carousel,
@@ -17,9 +21,10 @@ import ArtistTooltip from "@/components/artist-tooltip";
 import { siteConfig } from "@/config/site";
 
 export default async function Home() {
-  const [battles, popularArtists] = await Promise.all([
+  const [battles, popularArtists, latestBattles] = await Promise.all([
     getFeaturedBattles(),
     getPopularArtists(),
+    getLattestBattles(),
   ]);
 
   return (
@@ -81,12 +86,12 @@ export default async function Home() {
       </section>
       {/* Latest Battles */}
       <section className="p-4 2xl:px-0">
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className="lg:text-2xl text-lg font-bold mb-6 text-white px-4 2xl:px-0">
           {toUpperCase("უახლესი ბეთლები")}
         </h2>
         <div className="space-y-4">
-          {[1, 2, 3].map(i => (
-            <LatestBattleCard key={i} />
+          {latestBattles?.map(battle => (
+            <LatestBattleCard key={battle.id} battle={battle} />
           ))}
         </div>
       </section>

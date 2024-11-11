@@ -30,7 +30,11 @@ const ArtistsPage: React.FC<ArtistsPageProps> = async ({ searchParams }) => {
     artistsData && artistsData.artists && artistsData.artists.length > 0;
 
   return (
-    <Shell as="section" variant="default" className="container mx-auto ">
+    <Shell
+      as="section"
+      variant="default"
+      className="container mx-auto px-4 2xl:px-0 "
+    >
       <div className="flex items-start justify-between w-full">
         <SearchField
           placeholder={toUpperCase("მოძებნეთ არტისტი")}
