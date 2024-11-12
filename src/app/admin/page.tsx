@@ -10,15 +10,7 @@ import {
 import { paginationParamsCache } from "@/hooks/use-pagination-params";
 import { SearchParams } from "nuqs";
 import SearchField from "@/components/shared/SearchField";
-import { cn, toUpperCase } from "@/lib/utils";
-import Link from "next/link";
-import { AdminNavigation } from "./_components/AdminNavigation";
-
-const navigationItems = [
-  { name: "არტისტები", href: "/admin" },
-  { name: "ბეთლები", href: "/admin/battles" },
-  { name: "სეზონები", href: "/admin/seasons" },
-];
+import { toUpperCase } from "@/lib/utils";
 
 interface AdminPageProps {
   searchParams: SearchParams;

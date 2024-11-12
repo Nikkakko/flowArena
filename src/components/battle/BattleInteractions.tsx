@@ -10,6 +10,12 @@ import { useUser } from "@/lib/auth";
 import { useOptimisticAction } from "next-safe-action/hooks";
 import { Artist } from "@prisma/client";
 import BattleArtistCard from "../cards/BattleArtistCard";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface BattleInteractionsProps {
   votesCount: number;
@@ -83,14 +89,36 @@ export function BattleInteractions({
 
       <div className="flex space-x-4 items-center">
         <div className="justify-start flex items-center space-x-2 my-3">
-          {artists.map(artist => (
-            <BattleArtistCard
-              key={artist.id}
-              artist={artist}
-              winner={artist.id === winnerId}
-            />
-          ))}
+          <TooltipProvider delayDuration={100}>
+            {artists.map(artist => (
+              <Tooltip key={artist.id}>
+                <TooltipTrigger asChild>
+                  <div
+                    className={cn(
+                      "border rounded-full h-10 w-10  hover:grayscale transition overflow-hidden flex items-center justify-center ",
+                      artist.id === winnerId
+                        ? "border-success"
+                        : "border-primary"
+                    )}
+                  >
+                    <BattleArtistCard
+                      artist={artist}
+                      winner={artist.id === winnerId}
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  align="center"
+                  className="bg-primary text-white border-primary px-3 py-1.5"
+                >
+                  {toUpperCase(artist.nickName)}
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </TooltipProvider>
         </div>
+
         <Button
           variant="outline"
           className="flex items-center text-white"

@@ -18,10 +18,7 @@ const BattleArtistCard: React.FC<BattleArtistCardProps> = ({
       href={`/artists/${artist.slug}`}
       prefetch={true}
       aria-label={`გადასვლა ${artist.nickName} გვერდზე`}
-      className={cn(
-        "border rounded-full  hover:grayscale transition",
-        winner ? "border-success" : "border-primary"
-      )}
+      
     >
       <Avatar>
         <AvatarImage src={artist.image || "/assets/artist-placeholder.webp"} />

@@ -15,9 +15,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import BattleArtistCard from "@/components/cards/BattleArtistCard";
 
 interface BattleDetailPageProps {
   params: {
