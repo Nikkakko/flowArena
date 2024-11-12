@@ -31,6 +31,7 @@ const ArtistParticipatedCard: React.FC<ArtistParticipatedCardProps> = ({
             src={battle.coverImage || "/assets/battle-placeholder.webp"}
             alt={battle.title}
             fill
+            sizes="128px"
             className="object-cover"
           />
         </div>

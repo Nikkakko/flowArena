@@ -15,6 +15,8 @@ import NoBattlesFoundCard from "@/components/cards/NoBattlesFoundCard";
 import { Badge } from "@/components/ui/badge";
 import { TrophyIcon } from "lucide-react";
 import ArtistStatsCard from "@/components/cards/ArtistStatsCard";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 const RandomQuoteList = dynamic(() => import("@/components/RandomQuoteList"), {
   ssr: false,
   loading: () => <Skeleton className="h-12 w-full bg-secondary" />,
@@ -75,21 +77,28 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
               src={artist.image || "/assets/artist-placeholder.webp"}
               alt={`Artist ${artist.nickName}`}
               fill
+              sizes="(min-width: 1040px) 256px, 192px"
               className="rounded-xl object-cover grayscale"
             />
           </div>
 
-          <div className="flex">
+          <div className="flex space-x-2">
             {socialMediaList.map(social => (
-              <a
+              <Link
                 key={social.id}
                 href={social.url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-white hover:text-primary p-2"
+                className={cn(
+                  buttonVariants({
+                    variant: "outline",
+                    size: "icon",
+                  }),
+                  "text-white hover:text-primary  "
+                )}
               >
                 {social.icon()}
-              </a>
+              </Link>
             ))}
           </div>
 

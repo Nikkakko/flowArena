@@ -28,6 +28,7 @@ const FeaturedArtistsCard: React.FC<FeaturedArtistsCardProps> = ({
             src={artist.image || "/assets/artist-placeholder.webp"}
             alt={`Artist ${artist.nickName}`}
             fill
+            sizes="(max-width: 640px) 100px, (max-width: 768px) 150px, 200px"
             className="rounded-full object-cover grayscale select-none"
           />
         </div>

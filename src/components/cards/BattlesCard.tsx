@@ -23,7 +23,7 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
           alt={battle.title}
           fill
           priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(min-width: 1540px) 501px, (min-width: 1280px) 405px, (min-width: 1040px) 320px, (min-width: 780px) 736px, (min-width: 680px) 608px, (min-width: 420px) 91.67vw, calc(25vw + 268px)"
           className="object-cover grayscale group-hover:grayscale-0 transition-all"
         />
       </div>

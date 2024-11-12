@@ -20,6 +20,7 @@ const LatestBattleCard: React.FC<LatestBattleCardProps> = ({ battle }) => {
             src={battle.coverImage}
             alt={battle.title}
             fill
+            sizes="98px"
             className=" object-cover"
           />
         </div>
