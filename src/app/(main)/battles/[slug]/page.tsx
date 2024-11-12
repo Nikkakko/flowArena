@@ -52,7 +52,7 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
     : "";
 
   return (
-    <Shell variant="default" className="mx-auto ">
+    <Shell variant="default" className="mx-auto gap-0 ">
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
           <BreadcrumbItem>

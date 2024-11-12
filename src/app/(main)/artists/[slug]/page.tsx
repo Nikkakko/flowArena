@@ -22,6 +22,15 @@ const RandomQuoteList = dynamic(() => import("@/components/RandomQuoteList"), {
   loading: () => <Skeleton className="h-12 w-full bg-secondary" />,
 });
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+
 interface ArtistSlugProps {
   params: {
     slug: string;
@@ -69,7 +78,25 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
   }));
 
   return (
-    <Shell className="mx-auto flex-1 space-y-8 px-4 2xl:px-0" as="main">
+    <Shell className="mx-auto flex-1 space-y-8 px-4 2xl:px-0 gap-0" as="main">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">{toUpperCase("მთავარი")}</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/artists">
+              {toUpperCase("არტისტები")}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{artist.nickName}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         <div className="flex flex-col gap-4 ">
           <div className="relative w-48 h-48 lg:w-64 lg:h-64">
