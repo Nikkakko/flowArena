@@ -1,55 +1,66 @@
 import * as React from "react";
 import { Shell } from "@/components/shell";
-import { getArtists, getBattles, getSeasons, getUser } from "@/lib/db/queries";
+import { getUser, getSeasons } from "@/lib/db/queries";
 import { redirect } from "next/navigation";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ArtistsHandle from "./_components/artists/ArtistsHandle";
-import BattlesHandle from "./_components/battles/BattlesHandle";
-import SeasonsHandle from "./_components/seasons/SeasonsHandle";
+import {
+  getFilteredArtistsAdmin,
+  getFilteredBattlesAdmin,
+} from "./lib/queries";
+import { paginationParamsCache } from "@/hooks/use-pagination-params";
+import { SearchParams } from "nuqs";
+import SearchField from "@/components/shared/SearchField";
+import { cn, toUpperCase } from "@/lib/utils";
+import Link from "next/link";
+import { AdminNavigation } from "./_components/AdminNavigation";
 
-interface AdminPageProps {}
+const navigationItems = [
+  { name: "არტისტები", href: "/admin" },
+  { name: "ბეთლები", href: "/admin/battles" },
+  { name: "სეზონები", href: "/admin/seasons" },
+];
 
-const AdminPage: React.FC<AdminPageProps> = async ({}) => {
+interface AdminPageProps {
+  searchParams: SearchParams;
+}
+
+const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
   const user = await getUser();
+  const { page, per_page } = paginationParamsCache.parse(searchParams);
+  const queryTransactionsParamsArtist =
+    typeof searchParams.sArtist === "string" ? searchParams.sArtist : "";
+  const queryTransactionsParamsBattle =
+    typeof searchParams.sBattle === "string" ? searchParams.sBattle : "";
 
   //promise all
   const [artists, battles, seasons] = await Promise.all([
-    getArtists(),
-    getBattles(),
+    getFilteredArtistsAdmin({
+      limit: per_page,
+      page,
+      nickName: queryTransactionsParamsArtist,
+    }),
+    getFilteredBattlesAdmin({
+      battleName: queryTransactionsParamsBattle,
+      page,
+      limit: per_page,
+    }),
     getSeasons(),
   ]);
 
-  if (!user || user.role !== "ADMIN") {
+  if (user && user.role !== "ADMIN") {
     redirect("/sign-in");
   }
 
   return (
     <Shell className="mx-auto" variant="default">
-      <h1 className="text-4xl font-bold text-white text-center">Admin Panel</h1>
-      <Tabs defaultValue="artists" className="w-full">
-        <TabsList>
-          <TabsTrigger value="artists">Artists</TabsTrigger>
-          <TabsTrigger value="battles">Battles</TabsTrigger>
-          <TabsTrigger value="seasons">Seasons</TabsTrigger>
-        </TabsList>
-        <TabsContent value="artists">
-          <ArtistsHandle
-            artists={artists}
-            battles={battles}
-            seasons={seasons}
-          />
-        </TabsContent>
-        <TabsContent value="battles">
-          <BattlesHandle
-            battles={battles}
-            artists={artists}
-            seasons={seasons}
-          />
-        </TabsContent>
-        <TabsContent value="seasons">
-          <SeasonsHandle seasons={seasons} artists={artists} />
-        </TabsContent>
-      </Tabs>
+      <SearchField
+        placeholder={toUpperCase("მოძებნეთ არტისტი")}
+        className="mb-6 max-w-sm"
+        query={"sArtist"}
+        defaultValue={queryTransactionsParamsArtist}
+      />
+
+      <ArtistsHandle artists={artists} battles={battles} seasons={seasons} />
     </Shell>
   );
 };

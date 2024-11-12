@@ -63,48 +63,6 @@ export async function getArtistBySlug(slug: string) {
   }
 }
 
-export async function getBattles() {
-  try {
-    return db.battle.findMany({
-      include: {
-        winner: true,
-        season: true,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-export async function getArtists() {
-  try {
-    return db.artist.findMany({
-      include: {
-        quotes: true,
-        socialMedia: true,
-        battlesParticipated: true,
-        seasonsWon: true,
-        battlesWon: true,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-export async function getSeasons() {
-  try {
-    return db.season.findMany({
-      include: {
-        winner: true,
-        battles: true,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 export async function getSeasonById(id: string) {
   try {
     return db.season.findFirst({
@@ -172,6 +130,25 @@ export async function getBattleBySlug(slug: string) {
     });
 
     return battle;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getArtists() {
+  try {
+    return db.artist.findMany({
+      orderBy: {
+        wins: "desc",
+      },
+      include: {
+        quotes: true,
+        socialMedia: true,
+        battlesParticipated: true,
+        seasonsWon: true,
+        battlesWon: true,
+      },
+    });
   } catch (error) {
     console.error(error);
   }
@@ -293,6 +270,31 @@ export async function getFilteredBattles({
     });
 
     return { battles, total };
+  } catch (error) {
+    console.error(error);
+  }
+}
+export async function getSeasons() {
+  try {
+    return db.season.findMany({
+      include: {
+        winner: true,
+        battles: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getBattles() {
+  try {
+    return db.battle.findMany({
+      include: {
+        winner: true,
+        season: true,
+      },
+    });
   } catch (error) {
     console.error(error);
   }

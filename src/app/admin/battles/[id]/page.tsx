@@ -27,7 +27,10 @@ const BattleEditPage: React.FC<BattleEditPageProps> = async ({
 
   return (
     <Shell className="mx-auto">
-      <Link href="/admin" className="text-white flex items-center gap-2">
+      <Link
+        href="/admin/battles"
+        className="text-white flex items-center gap-2"
+      >
         <ArrowLeft className="w-6 h-6" />
         {toUpperCase("უკან დაბრუნება")}
       </Link>
