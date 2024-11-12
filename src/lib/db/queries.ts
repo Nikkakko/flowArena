@@ -350,9 +350,9 @@ export async function getFilteredArtists({
 }
 
 export async function getLeaderboardArtists({
-  page = 1,
-  limit = 10,
-  nickName = "",
+  page,
+  limit,
+  nickName,
 }: {
   page: number;
   limit: number;

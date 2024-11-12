@@ -47,7 +47,8 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a
+                      <Link
+                        prefetch={true}
                         href={item.href}
                         className={cn(
                           "flex items-center py-2  rounded-md text-white  px-4 transition-all",
@@ -59,7 +60,7 @@ export function AppSidebar() {
                         <span className={cn("ml-2")}>
                           {toUpperCase(item.title)}
                         </span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );

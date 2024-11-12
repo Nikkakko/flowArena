@@ -1,4 +1,4 @@
-import { cn, toUpperCase } from "@/lib/utils";
+import { cn, getRelativeTime, toUpperCase } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
@@ -28,7 +28,9 @@ const LatestBattleCard: React.FC<LatestBattleCardProps> = ({ battle }) => {
           <h3 className="font-semibold text-white">
             {toUpperCase(battle.title)}
           </h3>
-          <p className="text-sm text-gray-400">2 {toUpperCase("დღის წინ")}</p>
+          <p className="text-sm text-gray-400">
+            {toUpperCase(getRelativeTime(battle.createdAt))}
+          </p>
         </div>
       </div>
       <Link
