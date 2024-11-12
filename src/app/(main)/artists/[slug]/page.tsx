@@ -69,7 +69,7 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
   return (
     <Shell className="mx-auto flex-1 space-y-8 px-4 2xl:px-0" as="main">
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        <div className="flex flex-col gap-4 mx-auto">
+        <div className="flex flex-col gap-4 ">
           <div className="relative w-48 h-48 lg:w-64 lg:h-64">
             <Image
               src={artist.image || "/assets/artist-placeholder.webp"}
@@ -93,7 +93,7 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
             ))}
           </div>
 
-          <RandomQuoteList data={artist.quotes} />
+          <RandomQuoteList data={artist.quotes} refreshInterval={15000} />
         </div>
 
         <div className="flex-1 space-y-6">

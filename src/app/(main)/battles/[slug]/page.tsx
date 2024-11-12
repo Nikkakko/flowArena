@@ -50,6 +50,10 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
   const battle = await getBattleBySlug(slug);
   if (!battle) notFound();
 
+  const battleDescription = battle.description
+    ? battle.description.slice(0, 100)
+    : "";
+
   return (
     <Shell variant="default" className="mx-auto ">
       <Breadcrumb className="mb-6">
@@ -95,6 +99,10 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
                   className="absolute top-0 left-0 w-full h-full rounded-lg"
                 ></iframe>
               </div>
+              <p className="text-gray-400 mb-4">
+                {toUpperCase(battleDescription)}
+              </p>
+
               <BattleInteractions
                 votesCount={battle.votes.length}
                 commentsCount={battle.comments.length}

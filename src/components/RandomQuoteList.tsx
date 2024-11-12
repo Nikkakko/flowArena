@@ -1,13 +1,25 @@
 "use client";
 import { Quote } from "@prisma/client";
 import * as React from "react";
+import { RefreshCcw } from "lucide-react";
 
 interface RandomQuoteListProps {
   data: Quote[];
+  refreshInterval: number;
 }
 
-const RandomQuoteList: React.FC<RandomQuoteListProps> = ({ data }) => {
+const RandomQuoteList: React.FC<RandomQuoteListProps> = ({
+  data,
+  refreshInterval,
+}) => {
   const [randomQuote, setRandomQuote] = React.useState<Quote | null>(null);
+
+  const handleRefresh = React.useCallback(() => {
+    if (data.length > 0) {
+      const newQuote = data[Math.floor(Math.random() * data.length)];
+      setRandomQuote(newQuote);
+    }
+  }, [data]);
 
   React.useEffect(() => {
     // Set initial random quote
@@ -22,15 +34,27 @@ const RandomQuoteList: React.FC<RandomQuoteListProps> = ({ data }) => {
         const newQuote = data[Math.floor(Math.random() * data.length)];
         setRandomQuote(newQuote);
       }
-    }, 10000);
+    }, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [data]);
+  }, [data, refreshInterval]);
 
   return (
-    <p className="text-gray-400 italic text-start text-sm max-w-[256px]">
-      {randomQuote && randomQuote.quote}
-    </p>
+    <div className="flex items-start gap-2">
+      <p className="text-gray-400 italic text-start text-sm min-w-[256px] max-w-[256px]">
+        {randomQuote && randomQuote.quote}
+      </p>
+
+      {randomQuote && (
+        <button
+          onClick={handleRefresh}
+          type="button"
+          className="text-gray-400 hover:text-gray-300 transition-colors ml-auto"
+        >
+          <RefreshCcw size={16} />
+        </button>
+      )}
+    </div>
   );
 };
 

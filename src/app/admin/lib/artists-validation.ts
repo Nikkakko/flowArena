@@ -3,7 +3,7 @@ import { SocialMediaPlatforms, Battle, Season } from "@prisma/client";
 
 export const artistSchema = z.object({
   nickName: z.string().min(2).max(50),
-  image: z.string().url().nullable().optional(),
+  image: z.string().url().optional().nullable(),
   wins: z.string().min(0), // TODO: Change to number
   loses: z.string().min(0), // TODO: Change to number
   bio: z.string().max(500),

@@ -10,9 +10,7 @@ interface BattlesCardProps extends React.HTMLAttributes<HTMLDivElement> {
   battle: Battle;
 }
 const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
-  const battleDescription = battle.description
-    ? battle.description.slice(0, 100)
-    : "";
+  
   return (
     <div
       className={cn(
@@ -34,7 +32,6 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
         <h3 className="text-lg font-semibold mb-2 text-white">
           {toUpperCase(battle.title)}
         </h3>
-        <p className="text-gray-400 mb-4">{toUpperCase(battleDescription)}</p>
         <Link
           prefetch={true}
           className={cn(
