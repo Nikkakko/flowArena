@@ -21,9 +21,10 @@ export function AdminNavigation() {
           <Link
             key={item.href}
             href={item.href}
+            prefetch={true}
             className={cn(
-              "text-white hover:text-gray-300",
-              isActive ? "text-primary" : "text-gray-300"
+              "hover:text-primary transition",
+              isActive ? "text-primary " : "text-gray-300 "
             )}
           >
             {toUpperCase(item.name)}
