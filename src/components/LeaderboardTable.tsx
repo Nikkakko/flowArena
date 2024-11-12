@@ -129,7 +129,22 @@ export function LeaderboardTable({
     },
     {
       accessorKey: "votes",
-      header: toUpperCase("ხმები"),
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="flex items-center gap-1"
+          >
+            {toUpperCase("ხმები")}
+            {column.getIsSorted() === "asc" ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </Button>
+        );
+      },
       cell: ({ row }) => row.original.votes.length,
     },
 
@@ -145,7 +160,7 @@ export function LeaderboardTable({
             {toUpperCase(seasons.join(", "))}
             {/* if winner show trophy */}
             {row.original.seasonsWon.length > 0 && (
-              <TrophyIcon className="w-4 h-4 shrink-0" />
+              <TrophyIcon className="w-4 h-4 shrink-0 " />
             )}
           </div>
         );

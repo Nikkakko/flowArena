@@ -49,9 +49,12 @@ const RandomQuoteList: React.FC<RandomQuoteListProps> = ({
         <button
           onClick={handleRefresh}
           type="button"
-          className="text-gray-400 hover:text-gray-300 transition-colors ml-auto"
+          className="text-gray-400 hover:text-gray-300 transition-colors ml-auto group"
         >
-          <RefreshCcw size={16} />
+          <RefreshCcw
+            size={16}
+            className="transform group-hover:rotate-180 transition-transform"
+          />
         </button>
       )}
     </div>

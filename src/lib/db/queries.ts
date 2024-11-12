@@ -279,6 +279,16 @@ export async function getFilteredBattles({
           contains: battleName,
           mode: "insensitive",
         },
+
+        ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
+        ...(season && {
+          season: {
+            name: {
+              contains: season,
+              mode: "insensitive",
+            },
+          },
+        }),
       },
     });
 
@@ -351,6 +361,11 @@ export async function getLeaderboardArtists({
       orderBy: [
         {
           wins: "desc",
+        },
+        {
+          votes: {
+            _count: "desc",
+          },
         },
       ],
       where: {

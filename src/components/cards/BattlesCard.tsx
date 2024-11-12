@@ -10,7 +10,6 @@ interface BattlesCardProps extends React.HTMLAttributes<HTMLDivElement> {
   battle: Battle;
 }
 const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
-  
   return (
     <div
       className={cn(
