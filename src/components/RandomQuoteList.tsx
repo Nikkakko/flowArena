@@ -5,45 +5,48 @@ import { RefreshCcw } from "lucide-react";
 
 interface RandomQuoteListProps {
   data: Quote[];
-  refreshInterval: number;
 }
 
-const RandomQuoteList: React.FC<RandomQuoteListProps> = ({
-  data,
-  refreshInterval,
-}) => {
+const RandomQuoteList: React.FC<RandomQuoteListProps> = ({ data }) => {
   const [randomQuote, setRandomQuote] = React.useState<Quote | null>(null);
+  const [refreshInterval] = React.useState(15000); // 15000 ms to sec = 15 sec
+  const intervalRef = React.useRef<NodeJS.Timeout>();
 
   const handleRefresh = React.useCallback(() => {
     if (data.length > 0) {
       const newQuote = data[Math.floor(Math.random() * data.length)];
       setRandomQuote(newQuote);
+
+      // Clear and reset interval
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      intervalRef.current = setInterval(() => {
+        if (data.length > 0) {
+          const newQuote = data[Math.floor(Math.random() * data.length)];
+          setRandomQuote(newQuote);
+        }
+      }, refreshInterval);
     }
-  }, [data]);
+  }, [data, refreshInterval]);
 
   React.useEffect(() => {
-    // Set initial random quote
-    if (data.length > 0) {
-      const newQuote = data[Math.floor(Math.random() * data.length)];
-      setRandomQuote(newQuote);
-    }
+    // Set initial random quote and interval
+    handleRefresh();
 
-    // Set up interval for subsequent updates
-    const interval = setInterval(() => {
-      if (data.length > 0) {
-        const newQuote = data[Math.floor(Math.random() * data.length)];
-        setRandomQuote(newQuote);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
       }
-    }, refreshInterval);
-
-    return () => clearInterval(interval);
-  }, [data, refreshInterval]);
+    };
+  }, [handleRefresh]);
 
   return (
     <div className="flex items-start gap-2">
       <p className="text-gray-400 italic text-start text-sm min-w-[256px] max-w-[256px]">
         {randomQuote && randomQuote.quote}
       </p>
+      {/* countdown */}
 
       {randomQuote && (
         <button

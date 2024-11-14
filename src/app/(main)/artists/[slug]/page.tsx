@@ -129,7 +129,7 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
             ))}
           </div>
 
-          <RandomQuoteList data={artist.quotes} refreshInterval={15000} />
+          <RandomQuoteList data={artist.quotes} />
         </div>
 
         <div className="flex-1 space-y-6">

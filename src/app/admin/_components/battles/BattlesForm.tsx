@@ -1,9 +1,7 @@
 "use client";
-
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -70,7 +68,6 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
   );
 
   function onSubmit(values: BattleFormValues) {
-    console.log(values);
     // Handle form submission
     startTransition(async () => {
       try {
@@ -81,7 +78,7 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
             variant: "default",
             duration: 5000,
           });
-          router.push("/admin");
+          router.push("/admin/battles");
         } else {
           await addBattleAction(values);
           toast({
@@ -90,7 +87,7 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
             duration: 5000,
           });
           form.reset();
-          router.push("/admin");
+          router.push("/admin/battles");
         }
       } catch (error) {
         toast({

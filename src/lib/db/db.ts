@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+import { findManyExtension } from "./find-many-extension";
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient().$extends(findManyExtension);
 };
 
 declare const globalThis: {
