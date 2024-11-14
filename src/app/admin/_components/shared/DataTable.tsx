@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import {
   ColumnDef,
@@ -5,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -15,6 +17,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PaginationProperties } from "@/components/shared/Pagination";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useQueryState } from "nuqs";
+import { isFeaturedParams } from "@/hooks/use-featured-params";
+import { toUpperCase } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -32,10 +38,30 @@ export function DataTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
+
+  const [isFeatured, setIsFeatured] = useQueryState(
+    "isFeatured",
+    isFeaturedParams.isFeatured.withOptions({
+      shallow: false,
+      scroll: false,
+    })
+  );
 
   return (
     <div>
+      <div className="flex items-center gap-2 mb-4">
+        <Checkbox
+          id="featuredOnly"
+          checked={isFeatured}
+          onCheckedChange={checked => setIsFeatured(checked ? true : false)}
+        />
+        <label htmlFor="featuredOnly" className="text-white">
+          {toUpperCase("მხოლოდ რჩეულები")}
+        </label>
+      </div>
+
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (

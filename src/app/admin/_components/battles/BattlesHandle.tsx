@@ -14,12 +14,14 @@ interface BattlesHandleProps {
     | undefined;
   artists: Artist[] | undefined;
   seasons: Season[] | undefined;
+  totalPage: number;
 }
 
 const BattlesHandle: React.FC<BattlesHandleProps> = ({
   battles,
   artists,
   seasons,
+  totalPage,
 }) => {
   const [isPending, startTransition] = React.useTransition();
   const router = useRouter();
@@ -28,11 +30,7 @@ const BattlesHandle: React.FC<BattlesHandleProps> = ({
 
   return (
     <div className="space-y-4">
-      <DataTable
-        columns={columns}
-        data={battles ?? []}
-        pageCount={Math.ceil((battles?.length ?? 0) / 10)}
-      />
+      <DataTable columns={columns} data={battles ?? []} pageCount={totalPage} />
       <BattlesForm artists={artists} seasons={seasons} />
     </div>
   );

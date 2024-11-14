@@ -59,7 +59,7 @@ const BattlesForm: React.FC<BattlesFormProps> = ({
       artistIds: initialData?.artistIds || [],
       seasonId: initialData?.seasonId || "",
       winnerId: initialData?.winnerId || undefined,
-      isFeatured: false,
+      isFeatured: initialData?.isFeatured || false,
     },
   });
 

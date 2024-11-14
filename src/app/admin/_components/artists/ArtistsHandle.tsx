@@ -33,12 +33,14 @@ interface ArtistsHandleProps {
   artists: ExtendedArtist[] | undefined;
   battles: Battle[] | undefined;
   seasons: Season[] | undefined;
+  totalPage: number;
 }
 
 const ArtistsHandle: React.FC<ArtistsHandleProps> = ({
   artists,
   battles,
   seasons,
+  totalPage,
 }) => {
   const [isPending, startTransition] = React.useTransition();
 
@@ -119,11 +121,7 @@ const ArtistsHandle: React.FC<ArtistsHandleProps> = ({
 
   return (
     <div className="space-y-4">
-      <DataTable
-        columns={columns}
-        data={artists ?? []}
-        pageCount={Math.ceil((artists?.length ?? 0) / 10)}
-      />
+      <DataTable columns={columns} data={artists ?? []} pageCount={totalPage} />
       <ArtistsForm artists={artists} battles={battles} seasons={seasons} />
     </div>
   );

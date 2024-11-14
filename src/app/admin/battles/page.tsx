@@ -2,14 +2,13 @@ import SearchField from "@/components/shared/SearchField";
 import { Shell } from "@/components/shell";
 import * as React from "react";
 import BattlesHandle from "../_components/battles/BattlesHandle";
-import { getArtists, getSeasons } from "@/lib/db/queries";
+import { getArtists, getBattles, getSeasons } from "@/lib/db/queries";
 import { paginationParamsCache } from "@/hooks/use-pagination-params";
 import { SearchParams } from "nuqs";
-import {
-  getFilteredArtistsAdmin,
-  getFilteredBattlesAdmin,
-} from "../lib/queries";
+import { getFilteredBattlesAdmin } from "../lib/queries";
 import { toUpperCase } from "@/lib/utils";
+import { featuredParamsCache } from "@/hooks/use-featured-params";
+import { notFound } from "next/navigation";
 
 interface BattlesAdminPageProps {
   searchParams: SearchParams;
@@ -19,9 +18,7 @@ const BattlesAdminPage: React.FC<BattlesAdminPageProps> = async ({
   searchParams,
 }) => {
   const { page, per_page } = paginationParamsCache.parse(searchParams);
-
-  const queryTransactionsParamsArtist =
-    typeof searchParams.sArtist === "string" ? searchParams.sArtist : "";
+  const { isFeatured } = featuredParamsCache.parse(searchParams);
 
   const queryTransactionsParamsBattle =
     typeof searchParams.sBattle === "string" ? searchParams.sBattle : "";
@@ -33,9 +30,13 @@ const BattlesAdminPage: React.FC<BattlesAdminPageProps> = async ({
       battleName: queryTransactionsParamsBattle,
       page,
       limit: per_page,
+      isFeatured,
     }),
+
     getSeasons(),
   ]);
+
+  const totalPages = Math.ceil((battles?.total ?? 0) / per_page);
 
   return (
     <Shell className="mx-auto" variant="default">
@@ -46,8 +47,12 @@ const BattlesAdminPage: React.FC<BattlesAdminPageProps> = async ({
         defaultValue={queryTransactionsParamsBattle}
       />
 
-      {/* <ArtistsHandle artists={artists} battles={battles} seasons={seasons} /> */}
-      <BattlesHandle artists={artists} battles={battles} seasons={seasons} />
+      <BattlesHandle
+        artists={artists}
+        battles={battles?.battles ?? []}
+        totalPage={totalPages}
+        seasons={seasons}
+      />
     </Shell>
   );
 };

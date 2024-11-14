@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Shell } from "@/components/shell";
-import { getUser, getSeasons } from "@/lib/db/queries";
+import { getUser, getSeasons, getBattles } from "@/lib/db/queries";
 import { redirect } from "next/navigation";
 import ArtistsHandle from "./_components/artists/ArtistsHandle";
 import {
@@ -11,6 +11,7 @@ import { paginationParamsCache } from "@/hooks/use-pagination-params";
 import { SearchParams } from "nuqs";
 import SearchField from "@/components/shared/SearchField";
 import { toUpperCase } from "@/lib/utils";
+import { featuredParamsCache } from "@/hooks/use-featured-params";
 
 interface AdminPageProps {
   searchParams: SearchParams;
@@ -23,6 +24,7 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
     typeof searchParams.sArtist === "string" ? searchParams.sArtist : "";
   const queryTransactionsParamsBattle =
     typeof searchParams.sBattle === "string" ? searchParams.sBattle : "";
+  const { isFeatured } = featuredParamsCache.parse(searchParams);
 
   //promise all
   const [artists, battles, seasons] = await Promise.all([
@@ -30,14 +32,13 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
       limit: per_page,
       page,
       nickName: queryTransactionsParamsArtist,
+      isFeatured,
     }),
-    getFilteredBattlesAdmin({
-      battleName: queryTransactionsParamsBattle,
-      page,
-      limit: per_page,
-    }),
+    getBattles(),
     getSeasons(),
   ]);
+
+  const totalPages = Math.ceil((artists?.total ?? 0) / per_page);
 
   return (
     <Shell className="mx-auto" variant="default">
@@ -48,7 +49,12 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
         defaultValue={queryTransactionsParamsArtist}
       />
 
-      <ArtistsHandle artists={artists} battles={battles} seasons={seasons} />
+      <ArtistsHandle
+        artists={artists?.artists ?? []}
+        battles={battles}
+        seasons={seasons}
+        totalPage={totalPages}
+      />
     </Shell>
   );
 };
