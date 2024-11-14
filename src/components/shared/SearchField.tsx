@@ -32,7 +32,12 @@ export default function SearchField({
   }, 300);
 
   return (
-    <form className={cn("relative flex flex-1 flex-shrink-0", className)}>
+    <form
+      className={cn("relative flex flex-1 flex-shrink-0", className)}
+      onSubmit={e => {
+        e.preventDefault();
+      }}
+    >
       <Input
         className="peer block w-full rounded-md border  py-[9px] pl-10 text-sm outline-2  text-white/90 h-11"
         placeholder={placeholder}

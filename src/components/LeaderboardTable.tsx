@@ -74,7 +74,7 @@ export function LeaderboardTable({
       cell: ({ row }) => (
         <Link
           href={`/artists/${row.original.slug}`}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 "
         >
           {row.original.image && (
             <Image
@@ -82,7 +82,7 @@ export function LeaderboardTable({
               alt={row.original.nickName}
               width={40}
               height={40}
-              className="rounded-full object-cover w-10 h-10"
+              className="rounded-full object-cover w-10 h-10 grayscale group-hover:grayscale-0 transition-all"
               quality={100}
             />
           )}
@@ -225,6 +225,7 @@ export function LeaderboardTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="group"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>

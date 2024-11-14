@@ -95,7 +95,7 @@ export function BattleInteractions({
                 <TooltipTrigger asChild>
                   <div
                     className={cn(
-                      "border rounded-full h-10 w-10  hover:grayscale transition overflow-hidden flex items-center justify-center",
+                      "border rounded-full h-10 w-10  transition overflow-hidden flex items-center justify-center",
                       winnerId === null
                         ? "border-secondary"
                         : artist.id === winnerId
