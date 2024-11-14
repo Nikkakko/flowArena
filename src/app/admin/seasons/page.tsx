@@ -14,14 +14,10 @@ interface AdminSeasonsPageProps {
 const AdminSeasonsPage: React.FC<AdminSeasonsPageProps> = async ({
   searchParams,
 }) => {
-  const user = await getUser();
   const { page, per_page } = paginationParamsCache.parse(searchParams);
 
   const queryTransactionsParamsArtist =
     typeof searchParams.sArtist === "string" ? searchParams.sArtist : "";
-
-  const queryTransactionsParamsBattle =
-    typeof searchParams.sBattle === "string" ? searchParams.sBattle : "";
 
   //promise all
   const [artists, seasons] = await Promise.all([
@@ -34,9 +30,6 @@ const AdminSeasonsPage: React.FC<AdminSeasonsPageProps> = async ({
     getSeasons(),
   ]);
 
-  if (user && user.role !== "ADMIN") {
-    redirect("/sign-in");
-  }
   return (
     <Shell className="mx-auto" as="main">
       <SeasonsHandle artists={artists} seasons={seasons} />

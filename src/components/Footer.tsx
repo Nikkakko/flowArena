@@ -1,7 +1,8 @@
 import { siteConfig } from "@/config/site";
-import { toUpperCase } from "@/lib/utils";
+import { cn, toUpperCase } from "@/lib/utils";
 import Link from "next/link";
 import * as React from "react";
+import { buttonVariants } from "./ui/button";
 
 interface FooterProps {}
 
@@ -11,9 +12,19 @@ const Footer: React.FC<FooterProps> = ({}) => {
       <p className="text-xs text-muted-foreground text-center">
         {toUpperCase(siteConfig.footer.text)}
       </p>
-      <nav className="sm:ml-auto flex gap-4 sm:gap-6 transition">
+      <nav className="sm:ml-auto flex gap-2 ">
         {siteConfig.footer.socialLinks.map((link, index) => (
-          <Link key={index} href={link.href} className="group">
+          <Link
+            key={index}
+            href={link.href}
+            className={cn(
+              buttonVariants({
+                variant: "outline",
+                size: "icon",
+                className: "text-white hover:text-primary transition",
+              })
+            )}
+          >
             {<link.icon />}
           </Link>
         ))}

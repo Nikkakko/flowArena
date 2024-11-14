@@ -2,7 +2,7 @@
 import * as z from "zod";
 import { actionClient } from "../safe-action";
 import db from "@/lib/db/db";
-import { getUser } from "../db/queries";
+import { getCachedUser } from "../db/queries"; // Changed import
 import { toUpperCase } from "../utils";
 import { revalidatePath } from "next/cache";
 
@@ -14,7 +14,7 @@ export const addVoteToArtist = actionClient
   .schema(voteSchema)
   .action(async ({ parsedInput }) => {
     const { artistId } = parsedInput;
-    const user = await getUser();
+    const user = await getCachedUser(); // Changed to getCachedUser
     const userId = user?.id;
 
     if (!userId) {

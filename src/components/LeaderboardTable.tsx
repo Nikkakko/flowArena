@@ -152,16 +152,11 @@ export function LeaderboardTable({
       accessorKey: "seasonsWon",
       header: toUpperCase("სეზონების მოგება"),
       cell: ({ row }) => {
-        const seasons = row.original.seasonsWon.map(
-          (season: Season) => season.name
-        );
         return (
-          <div className="text-success flex flex-col-reverse lg:flex-row  text-center items-center gap-1">
-            {toUpperCase(seasons.join(", "))}
-            {/* if winner show trophy */}
-            {row.original.seasonsWon.length > 0 && (
-              <TrophyIcon className="w-4 h-4 shrink-0 " />
-            )}
+          <div className="flex flex-col-reverse lg:flex-row text-center items-center gap-1">
+            {row.original.seasonsWon.map((season: Season, index: number) => (
+              <TrophyIcon key={index} className="w-4 h-4 shrink-0 t" />
+            ))}
           </div>
         );
       },

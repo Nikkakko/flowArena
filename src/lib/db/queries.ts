@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth/session";
 import db from "@/lib/db/db";
+import { unstable_cache } from "@/lib/unstable-cache";
 
 export async function getUser() {
   const sessionCookie = cookies().get("session");
@@ -34,6 +35,10 @@ export async function getUser() {
 
   return user[0];
 }
+
+export const getCachedUser = unstable_cache(getUser, ["user"], {
+  revalidate: 60 * 60, // one hour
+});
 
 export async function getArtistBySlug(slug: string) {
   try {
@@ -173,9 +178,9 @@ export async function getArtistById(id: string) {
   }
 }
 
-export async function getPopularArtists() {
-  try {
-    return db.artist.findMany({
+export const getPopularArtists = unstable_cache(
+  () =>
+    db.artist.findMany({
       orderBy: {
         wins: "desc",
       },
@@ -190,15 +195,16 @@ export async function getPopularArtists() {
         socialMedia: true,
       },
       take: 10,
-    });
-  } catch (error) {
-    console.error(error);
+    }),
+  ["popular-artists"],
+  {
+    revalidate: 60 * 60 * 2, // two hours,
   }
-}
+);
 
-export async function getFeaturedBattles() {
-  try {
-    return db.battle.findMany({
+export const getFeaturedBattles = unstable_cache(
+  () =>
+    db.battle.findMany({
       orderBy: {
         createdAt: "desc",
       },
@@ -206,74 +212,100 @@ export async function getFeaturedBattles() {
         isFeatured: true,
       },
       take: 6,
-    });
-  } catch (error) {
-    console.error(error);
+    }),
+  ["featured-battles"],
+  {
+    revalidate: 60 * 60 * 2, // two hours,
   }
-}
+);
 
-export async function getFilteredBattles({
-  battleName,
-  page,
-  limit,
-  sort,
-  season,
-}: {
-  battleName: string;
-  page: number;
-  limit: number;
-  sort: string | null;
-  season: string | undefined;
-}) {
-  try {
-    const battles = await db.battle.findMany({
+export const getLattestBattles = unstable_cache(
+  () =>
+    db.battle.findMany({
       orderBy: {
         createdAt: "desc",
       },
-      where: {
-        title: {
-          contains: battleName,
-          mode: "insensitive",
-        },
-        ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
-        ...(season && {
-          season: {
-            name: {
-              contains: season,
-              mode: "insensitive",
-            },
-          },
-        }),
+      take: 3,
+      include: {
+        artists: true,
+        winner: true,
       },
-
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-
-    const total = await db.battle.count({
-      where: {
-        title: {
-          contains: battleName,
-          mode: "insensitive",
-        },
-
-        ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
-        ...(season && {
-          season: {
-            name: {
-              contains: season,
-              mode: "insensitive",
-            },
-          },
-        }),
-      },
-    });
-
-    return { battles, total };
-  } catch (error) {
-    console.error(error);
+    }),
+  ["latest-battles"],
+  {
+    revalidate: 60 * 60 * 2, // two hours,
   }
-}
+);
+
+export const getFilteredBattles = unstable_cache(
+  async ({
+    battleName,
+    page,
+    limit,
+    sort,
+    season,
+  }: {
+    battleName: string;
+    page: number;
+    limit: number;
+    sort: string | null;
+    season: string | undefined;
+  }) => {
+    try {
+      const [battles, total] = await Promise.all([
+        db.battle.findMany({
+          orderBy: {
+            createdAt: "desc",
+          },
+          where: {
+            title: {
+              contains: battleName,
+              mode: "insensitive",
+            },
+            ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
+            ...(season && {
+              season: {
+                name: {
+                  contains: season,
+                  mode: "insensitive",
+                },
+              },
+            }),
+          },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        db.battle.count({
+          where: {
+            title: {
+              contains: battleName,
+              mode: "insensitive",
+            },
+            ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
+            ...(season && {
+              season: {
+                name: {
+                  contains: season,
+                  mode: "insensitive",
+                },
+              },
+            }),
+          },
+        }),
+      ]);
+
+      return { battles, total };
+    } catch (error) {
+      console.error(error);
+      return { battles: [], total: 0 };
+    }
+  },
+  ["filtered-battles"],
+  {
+    revalidate: 60 * 60 * 2, // two hours,
+  }
+);
+
 export async function getSeasons() {
   try {
     return db.season.findMany({
@@ -300,54 +332,63 @@ export async function getBattles() {
   }
 }
 
-export async function getFilteredArtists({
-  artistName,
-  page,
-  limit,
-  sort,
-}: {
-  artistName: string;
-  page: number;
-  limit: number;
-  sort: string | null;
-}) {
-  try {
-    const artists = await db.artist.findMany({
-      orderBy: [
-        {
-          wins: "desc",
-        },
-      ],
-      where: {
-        nickName: {
-          contains: artistName,
-          mode: "insensitive",
-        },
-        ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
-      },
-      include: {
-        seasonsWon: true,
-        socialMedia: true,
-        quotes: true,
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+export const getFilteredArtists = unstable_cache(
+  async ({
+    artistName,
+    page,
+    limit,
+    sort,
+  }: {
+    artistName: string;
+    page: number;
+    limit: number;
+    sort: string | null;
+  }) => {
+    try {
+      const [artists, total] = await Promise.all([
+        db.artist.findMany({
+          orderBy: [
+            {
+              wins: "desc",
+            },
+          ],
+          where: {
+            nickName: {
+              contains: artistName,
+              mode: "insensitive",
+            },
+            ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
+          },
+          include: {
+            seasonsWon: true,
+            socialMedia: true,
+            quotes: true,
+          },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        db.artist.count({
+          where: {
+            nickName: {
+              contains: artistName,
+              mode: "insensitive",
+            },
+          },
+        }),
+      ]);
 
-    const total = await db.artist.count({
-      where: {
-        nickName: {
-          contains: artistName,
-          mode: "insensitive",
-        },
-      },
-    });
+      return { artists, total };
+    } catch (error) {
+      console.error(error);
+      return { artists: [], total: 0 };
+    }
+  },
 
-    return { artists, total };
-  } catch (error) {
-    console.error(error);
+  ["filtered-artists"],
+  {
+    revalidate: 60 * 60, // one hour
   }
-}
+);
 
 export async function getLeaderboardArtists({
   page,
@@ -396,22 +437,5 @@ export async function getLeaderboardArtists({
   } catch (error) {
     console.error(error);
     return null;
-  }
-}
-
-export async function getLattestBattles() {
-  try {
-    return db.battle.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 3,
-      include: {
-        artists: true,
-        winner: true,
-      },
-    });
-  } catch (error) {
-    console.error(error);
   }
 }

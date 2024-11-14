@@ -26,6 +26,9 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ artist }) => {
             src={artist.image || "/assets/artist-placeholder.webp"}
             alt={`Artist ${artist.nickName}`}
             fill
+            sizes="96px"
+            quality={100}
+            loading="eager"
             className="rounded-full object-cover grayscale select-none"
           />
         </div>

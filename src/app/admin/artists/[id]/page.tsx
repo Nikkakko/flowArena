@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import ArtistsForm from "../../_components/artists/ArtistsForm";
+import { notFound } from "next/navigation";
 
 interface ArtistEditPageProps {
   params: {
@@ -21,9 +22,7 @@ const ArtistEditPage: React.FC<ArtistEditPageProps> = async ({
     getSeasons(),
   ]);
 
-  if (!artist) {
-    return <div>Artist not found</div>;
-  }
+  if (!artist) notFound();
   return (
     <Shell className="mx-auto">
       <Link href="/admin" className="text-white flex items-center gap-2">

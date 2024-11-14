@@ -1,9 +1,10 @@
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { compare, hash } from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const key = new TextEncoder().encode(process.env.AUTH_SECRET);
+
 const SALT_ROUNDS = 10;
 
 export async function hashPassword(password: string) {
@@ -18,23 +19,33 @@ export async function comparePasswords(
 }
 
 type SessionData = {
-  user: { id: string };
+  user: { id: string; role: Role };
   expires: string;
 };
 
 export async function signToken(payload: SessionData) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("1 day from now")
-    .sign(key);
+  try {
+    return await new SignJWT(payload)
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("1 day from now")
+      .sign(key);
+  } catch (error) {
+    console.error("Token signing error:", error);
+    throw error;
+  }
 }
 
 export async function verifyToken(input: string) {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
-  });
-  return payload as SessionData;
+  try {
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ["HS256"],
+    });
+    return payload as SessionData;
+  } catch (error) {
+    console.error("Token verification error:", error);
+    throw error;
+  }
 }
 
 export async function getSession() {
@@ -46,7 +57,7 @@ export async function getSession() {
 export async function setSession(user: User) {
   const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day
   const session: SessionData = {
-    user: { id: user.id! },
+    user: { id: user.id!, role: user.role },
     expires: expiresInOneDay.toISOString(),
   };
   const encryptedSession = await signToken(session);

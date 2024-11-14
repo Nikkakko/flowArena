@@ -1,5 +1,6 @@
 "use client";
 
+import UserMenu from "@/components/UserMenu";
 import { cn, toUpperCase } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

@@ -39,10 +39,6 @@ const AdminPage: React.FC<AdminPageProps> = async ({ searchParams }) => {
     getSeasons(),
   ]);
 
-  if (user && user.role !== "ADMIN") {
-    redirect("/sign-in");
-  }
-
   return (
     <Shell className="mx-auto" variant="default">
       <SearchField

@@ -2,14 +2,13 @@ import SearchField from "@/components/shared/SearchField";
 import { Shell } from "@/components/shell";
 import * as React from "react";
 import BattlesHandle from "../_components/battles/BattlesHandle";
-import { getSeasons, getUser } from "@/lib/db/queries";
+import { getArtists, getSeasons } from "@/lib/db/queries";
 import { paginationParamsCache } from "@/hooks/use-pagination-params";
 import { SearchParams } from "nuqs";
 import {
   getFilteredArtistsAdmin,
   getFilteredBattlesAdmin,
 } from "../lib/queries";
-import { redirect } from "next/navigation";
 import { toUpperCase } from "@/lib/utils";
 
 interface BattlesAdminPageProps {
@@ -19,7 +18,6 @@ interface BattlesAdminPageProps {
 const BattlesAdminPage: React.FC<BattlesAdminPageProps> = async ({
   searchParams,
 }) => {
-  const user = await getUser();
   const { page, per_page } = paginationParamsCache.parse(searchParams);
 
   const queryTransactionsParamsArtist =
@@ -30,11 +28,7 @@ const BattlesAdminPage: React.FC<BattlesAdminPageProps> = async ({
 
   //promise all
   const [artists, battles, seasons] = await Promise.all([
-    getFilteredArtistsAdmin({
-      limit: per_page,
-      page,
-      nickName: queryTransactionsParamsArtist,
-    }),
+    getArtists(),
     getFilteredBattlesAdmin({
       battleName: queryTransactionsParamsBattle,
       page,
@@ -42,10 +36,6 @@ const BattlesAdminPage: React.FC<BattlesAdminPageProps> = async ({
     }),
     getSeasons(),
   ]);
-
-  if (user && user.role !== "ADMIN") {
-    redirect("/sign-in");
-  }
 
   return (
     <Shell className="mx-auto" variant="default">

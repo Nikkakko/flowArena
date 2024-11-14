@@ -15,6 +15,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { battleTypes } from "@/config/constants";
 
 interface BattleDetailPageProps {
   params: {
@@ -51,6 +52,9 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
     ? battle.description.slice(0, 100)
     : "";
 
+  const battleType =
+    battleTypes.find(type => type.value === battle.type)?.label || "სხვა";
+
   return (
     <Shell variant="default" className="mx-auto gap-0 ">
       <Breadcrumb className="mb-6">
@@ -75,8 +79,11 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
         <div className="max-w-4xl mx-auto ">
           <Card className="bg-secondary border-none mb-6">
             <CardHeader>
-              <div className="flex items-center justify-between w-full">
-                <CardTitle className="text-white">{battle.title}</CardTitle>
+              <div className="flex items-start justify-between w-full">
+                <div className="flex flex-col gap-1">
+                  <CardTitle className="text-white">{battle.title}</CardTitle>
+                  <p className="text-gray-400">{toUpperCase(battleType)}</p>
+                </div>
                 <CardTitle className="text-white text-base">
                   {toUpperCase(battle.season?.name || "სეზონი არ მოიძებნა")}
                 </CardTitle>

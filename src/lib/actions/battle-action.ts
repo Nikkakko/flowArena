@@ -4,7 +4,7 @@ import db from "@/lib/db/db";
 import { revalidatePath } from "next/cache";
 import { actionClient } from "@/lib/safe-action";
 import rateLimit from "@/lib/rate-limit";
-import { getUser } from "../db/queries";
+import { getCachedUser } from "../db/queries";
 
 const limiter = rateLimit({
   interval: 60000, // 60 seconds
@@ -36,7 +36,7 @@ export const addVoteToBattle = actionClient
     const { battleId, hasVoted } = parsedInput;
 
     try {
-      const user = await getUser();
+      const user = await getCachedUser();
       const userId = user?.id;
 
       if (!userId) {
@@ -94,7 +94,7 @@ export const addCommentToBattle = actionClient
   .schema(commentSchema)
   .action(async ({ parsedInput }) => {
     const { battleId, content } = parsedInput;
-    const user = await getUser();
+    const user = await getCachedUser();
 
     try {
       if (!battleId || !user || !content) {
@@ -131,7 +131,7 @@ export const deleteComment = actionClient
     const { commentId } = parsedInput;
 
     try {
-      const user = await getUser();
+      const user = await getCachedUser();
 
       if (!commentId || !user) {
         return { error: "Invalid data" };
@@ -173,7 +173,7 @@ export const editComment = actionClient
     const { commentId, content } = parsedInput;
 
     try {
-      const user = await getUser();
+      const user = await getCachedUser();
 
       if (!commentId || !user || !content) {
         return { error: "Invalid data" };
