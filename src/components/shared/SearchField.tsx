@@ -24,11 +24,9 @@ export default function SearchField({
 
   // Inside the Search Component...
   const handleSearch = useDebouncedCallback(term => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(); // Create fresh params instance
     if (term) {
       params.set(query, term);
-    } else {
-      params.delete(query);
     }
     replace(`${pathname}?${params.toString()}`);
   }, 300);

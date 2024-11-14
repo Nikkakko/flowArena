@@ -6,6 +6,7 @@ import { getUser } from "@/lib/db/queries";
 import { UserProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/toaster";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Noto_Sans } from "next/font/google";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,6 +17,13 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+});
+
+const notoSans = Noto_Sans({
+  variable: "--font-noto-sans",
+  weight: ["400", "700"],
+  display: "auto",
+  subsets: ["latin", "cyrillic"],
 });
 
 export const metadata: Metadata = {
@@ -33,8 +41,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          geistSans.variable,
-          geistMono.variable,
+          notoSans.className,
           "antialiased min-h-screen bg-background"
         )}
       >

@@ -4,10 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 import { buttonVariants } from "../ui/button";
-import { Battle } from "@prisma/client";
+import { Battle, Season } from "@prisma/client";
+
+export interface ExtendedBattle extends Battle {
+  season: Season | null;
+}
 
 interface BattlesCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  battle: Battle;
+  battle: ExtendedBattle;
 }
 const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
   return (
@@ -28,9 +32,20 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
         />
       </div>
       <div className="p-4">
-        <h3 className="text-lg font-semibold mb-2 text-white">
-          {toUpperCase(battle.title)}
-        </h3>
+        <div
+          className={cn(
+            "flex items-center justify-between gap-2 mb-2",
+            "text-white"
+          )}
+        >
+          <h3 className="text-lg font-semibold text-white">
+            {toUpperCase(battle.title)}
+          </h3>
+          {/* season name */}
+          <div className="text-xs font-medium text-gray-400">
+            {toUpperCase(battle.season?.name || "სეზონი არ მოიძებნა")}
+          </div>
+        </div>
         <Link
           prefetch={true}
           className={cn(

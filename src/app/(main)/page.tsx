@@ -48,6 +48,7 @@ export default async function Home() {
 
         <Link
           href="/battles"
+          prefetch={true}
           className="text-white font-normal flex items-center justify-end gap-2 mt-4
            group hover:text-primary transition-colors duration-300 ease-in-out 
             "

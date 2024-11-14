@@ -212,7 +212,12 @@ export const getFeaturedBattles = unstable_cache(
         isFeatured: true,
       },
       take: 6,
+
+      include: {
+        season: true,
+      },
     }),
+
   ["featured-battles"],
   {
     revalidate: 60 * 60 * 2, // two hours,
@@ -271,6 +276,10 @@ export const getFilteredBattles = unstable_cache(
                 },
               },
             }),
+          },
+
+          include: {
+            season: true,
           },
           skip: (page - 1) * limit,
           take: limit,
