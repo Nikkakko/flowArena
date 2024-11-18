@@ -1,6 +1,7 @@
-import { Artist, ArtistVote, Comment, User } from "@prisma/client";
+import { Artist, ArtistVote, Comment, CommentLike, User } from "@prisma/client";
 import {
   addCommentToBattle as addComment,
+  addLikeToComment,
   deleteComment as deleteBattleComment,
   editComment as editBattleComment,
 } from "../actions/battle-action";
@@ -11,6 +12,7 @@ export const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 interface CommentWithUser extends Comment {
   user: User;
+  commentLikes: CommentLike[];
 }
 
 export const addCommentToBattle = async (
@@ -100,5 +102,51 @@ export const editCommentOptions = (updatedComment: CommentWithUser) => ({
   rollbackOnError: true,
   populateCache: (updated: CommentWithUser, comments: CommentWithUser[] = []) =>
     comments.map(comment => (comment.id === updated.id ? updated : comment)),
+  revalidate: false,
+});
+
+export const likeComment = async (commentId: string) => {
+  const response = await addLikeToComment({ commentId });
+
+  if (!response?.data?.success) {
+    throw new Error("Failed to add like to comment");
+  }
+
+  return response.data.likesCount;
+};
+
+export const toggleLikeCommentOptions = (
+  commentId: string,
+  userId: string,
+  isLiked: boolean
+) => ({
+  optimisticData: (comments: CommentWithUser[] = []) =>
+    comments.map(comment =>
+      comment.id === commentId
+        ? {
+            ...comment,
+            commentLikes: isLiked
+              ? comment.commentLikes.filter(like => like.userId !== userId)
+              : [...comment.commentLikes, { id: "temp-id", userId }],
+          }
+        : comment
+    ),
+  rollbackOnError: true,
+  populateCache: (
+    result: { success: boolean; likesCount: number },
+    comments: CommentWithUser[] = []
+  ) => {
+    if (!result.success) return comments;
+    return comments.map(comment =>
+      comment.id === commentId
+        ? {
+            ...comment,
+            commentLikes: isLiked
+              ? comment.commentLikes.filter(like => like.userId !== userId)
+              : [...comment.commentLikes, { id: "temp-id", userId }],
+          }
+        : comment
+    );
+  },
   revalidate: false,
 });

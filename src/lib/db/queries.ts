@@ -124,6 +124,7 @@ export async function getBattleBySlug(slug: string) {
         comments: {
           include: {
             user: true,
+            commentLikes: true,
           },
           orderBy: {
             createdAt: "desc",
@@ -219,6 +220,25 @@ export const getFeaturedBattles = unstable_cache(
     }),
 
   ["featured-battles"],
+  {
+    revalidate: 60 * 60 * 2, // two hours,
+  }
+);
+
+export const getRandomBattle = unstable_cache(
+  () =>
+    db.battle.findFirst({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        artists: true,
+        winner: true,
+        season: true,
+      },
+    }),
+
+  ["random-battle"],
   {
     revalidate: 60 * 60 * 2, // two hours,
   }

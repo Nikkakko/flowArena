@@ -4,7 +4,8 @@ import db from "@/lib/db/db";
 import { revalidatePath } from "next/cache";
 import { actionClient } from "@/lib/safe-action";
 import rateLimit from "@/lib/rate-limit";
-import { getCachedUser } from "../db/queries";
+import { getSession } from "../auth/session";
+import { NextResponse } from "next/server";
 
 const limiter = rateLimit({
   interval: 60000, // 60 seconds
@@ -34,11 +35,17 @@ export const addVoteToBattle = actionClient
   .schema(voteSchema)
   .action(async ({ parsedInput }) => {
     const { battleId, hasVoted } = parsedInput;
+    const session = await getSession();
+    if (!session?.user) {
+      return {
+        error: "Unauthorized",
+        status: 401,
+      };
+    }
+    const user = session.user;
+    const userId = user.id;
 
     try {
-      const user = await getCachedUser();
-      const userId = user?.id;
-
       if (!userId) {
         return { error: "You must be logged in to vote" };
       }
@@ -94,7 +101,8 @@ export const addCommentToBattle = actionClient
   .schema(commentSchema)
   .action(async ({ parsedInput }) => {
     const { battleId, content } = parsedInput;
-    const user = await getCachedUser();
+    const session = await getSession();
+    const user = session?.user;
 
     try {
       if (!battleId || !user || !content) {
@@ -112,6 +120,7 @@ export const addCommentToBattle = actionClient
         },
         include: {
           user: true,
+          commentLikes: true,
         },
       });
 
@@ -130,9 +139,16 @@ export const deleteComment = actionClient
   .action(async ({ parsedInput }) => {
     const { commentId } = parsedInput;
 
-    try {
-      const user = await getCachedUser();
+    const session = await getSession();
+    if (!session?.user) {
+      return {
+        error: "Unauthorized",
+        status: 401,
+      };
+    }
+    const user = session.user;
 
+    try {
       if (!commentId || !user) {
         return { error: "Invalid data" };
       }
@@ -171,10 +187,16 @@ export const editComment = actionClient
   .schema(editCommentSchema)
   .action(async ({ parsedInput }) => {
     const { commentId, content } = parsedInput;
+    const session = await getSession();
+    if (!session?.user) {
+      return {
+        error: "Unauthorized",
+        status: 401,
+      };
+    }
+    const user = session.user;
 
     try {
-      const user = await getCachedUser();
-
       if (!commentId || !user || !content) {
         return { error: "Invalid data" };
       }
@@ -214,3 +236,77 @@ export const editComment = actionClient
   });
 
 //add like to comment
+
+const addLikeToCommentInput = z.object({
+  commentId: z.string(),
+});
+
+export const addLikeToComment = actionClient
+  .schema(addLikeToCommentInput)
+  .action(async ({ parsedInput }) => {
+    const { commentId } = parsedInput;
+    const session = await getSession();
+    if (!session?.user) {
+      return {
+        error: "Unauthorized",
+        status: 401,
+      };
+    }
+    const user = session.user;
+
+    try {
+      if (!commentId || !user) {
+        return { error: "Invalid data" };
+      }
+
+      const comment = await db.comment.findUnique({
+        where: {
+          id: commentId,
+        },
+      });
+
+      if (!comment) {
+        return { error: "Comment not found" };
+      }
+
+      const existingLike = await db.commentLike.findUnique({
+        where: {
+          userId_commentId: {
+            userId: user.id,
+            commentId: commentId,
+          },
+        },
+      });
+
+      if (existingLike) {
+        await db.commentLike.delete({
+          where: {
+            userId_commentId: {
+              userId: user.id,
+              commentId: commentId,
+            },
+          },
+        });
+      } else {
+        await db.commentLike.create({
+          data: {
+            userId: user.id,
+            commentId,
+          },
+        });
+      }
+
+      //current count of likes
+      const likesCount = await db.commentLike.count({
+        where: {
+          commentId,
+        },
+      });
+
+      revalidatePath(`/battles`);
+      return { success: true, likesCount };
+    } catch (error) {
+      console.error("Like comment operation failed:", error);
+      return { error: "Failed to like comment" };
+    }
+  });

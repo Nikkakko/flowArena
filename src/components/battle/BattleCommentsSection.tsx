@@ -4,10 +4,10 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Comment, User } from "@prisma/client";
-import { getRelativeTime, toUpperCase } from "@/lib/utils";
+import { Comment, CommentLike, User } from "@prisma/client";
+import { cn, getRelativeTime, toUpperCase } from "@/lib/utils";
 import { AvatarImage } from "@radix-ui/react-avatar";
-import { EditIcon, Trash2Icon } from "lucide-react"; // Add this import for delete icon
+import { EditIcon, Trash2Icon, ThumbsUpIcon } from "lucide-react"; // Add this import for delete icon
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -30,6 +30,8 @@ import {
   addCommentToBattle,
   editComment,
   editCommentOptions,
+  likeComment,
+  toggleLikeCommentOptions,
 } from "@/lib/swr";
 
 import {
@@ -43,9 +45,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { addLikeToComment } from "@/lib/actions/battle-action";
+import { useCommentLikes } from "@/hooks/use-comment-likes";
 
 interface CommentWithUser extends Comment {
   user: User;
+  commentLikes: CommentLike[];
 }
 
 interface BattleCommentsSectionProps {
@@ -61,6 +66,11 @@ export function BattleCommentsSection({
   const { toast } = useToast();
   const [isEditing, setIsEditing] = React.useState<string | null>(null);
   const [editContent, setEditContent] = React.useState("");
+  const { comments, toggleLike, mutate } = useCommentLikes({
+    battleId,
+    userId: user?.id,
+    fallbackData: initialComments,
+  });
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof commentSchema>>({
@@ -69,15 +79,6 @@ export function BattleCommentsSection({
       content: "",
     },
   });
-
-  const { mutate, data: comments } = useSWR(
-    `/api/comments?battleId=${battleId}`,
-    {
-      fetcher,
-      revalidateOnFocus: true,
-      fallbackData: initialComments, // Add this line
-    }
-  );
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof commentSchema>) {
@@ -93,7 +94,7 @@ export function BattleCommentsSection({
       content: values.content,
       createdAt: new Date(),
       battleId,
-      likes: 0,
+      commentLikes: [],
       userId: user.id,
       user: user,
     };
@@ -256,7 +257,30 @@ export function BattleCommentsSection({
                   </div>
                 </div>
               ) : (
-                <p className="mt-1 text-white/50">{comment.content}</p>
+                <div className="space-y-2">
+                  <p className="mt-1 text-white/50">{comment.content}</p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-white/50 hover:text-white flex items-center justify-center hover:bg-primary/10"
+                      // onClick={() => handleLike(comment.id)}
+                      onClick={() => toggleLike(comment.id)}
+                    >
+                      <ThumbsUpIcon
+                        className={cn(
+                          "h-4 w-4 ",
+                          comment.commentLikes?.some(
+                            (like: CommentLike) => like.userId === user?.id
+                          ) && "text-white fill-primary"
+                        )}
+                      />
+                    </Button>
+                    <span className="text-white/50 font-extralight">
+                      {comment.commentLikes?.length}
+                    </span>
+                  </div>
+                </div>
               )}
             </div>
           </div>

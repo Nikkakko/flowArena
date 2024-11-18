@@ -51,6 +51,7 @@ model User {
   battleVotes BattleVote[]
   artistVotes ArtistVote[]
   comments  Comment[]
+  commentLikes CommentLike[]
 
   role        Role @default(USER)
 
@@ -185,9 +186,21 @@ model Comment {
   userId      String
   battleId    String
   content     String
-  likes       Int @default(0)
   createdAt   DateTime @default(now())
 
   user        User @relation(fields: [userId], references: [id])
   battle      Battle @relation(fields: [battleId], references: [id])
+  commentLikes       CommentLike[]
+}
+
+model CommentLike {
+  id          String   @id @default(cuid())
+  userId      String
+  commentId   String
+  createdAt   DateTime @default(now())
+
+  user        User @relation(fields: [userId], references: [id])
+  comment     Comment @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
 }
