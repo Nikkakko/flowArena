@@ -126,9 +126,16 @@ export async function getBattleBySlug(slug: string) {
             user: true,
             commentLikes: true,
           },
-          orderBy: {
-            createdAt: "desc",
-          },
+          orderBy: [
+            {
+              commentLikes: {
+                _count: "desc",
+              },
+            },
+            {
+              createdAt: "asc",
+            },
+          ],
         },
 
         votes: true,
@@ -456,7 +463,14 @@ export async function getLeaderboardArtists({
       take: limit,
     });
 
-    const total = await db.artist.count();
+    const total = await db.artist.count({
+      where: {
+        nickName: {
+          contains: nickName,
+          mode: "insensitive",
+        },
+      },
+    });
 
     return {
       artists,

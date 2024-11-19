@@ -21,9 +21,16 @@ export async function GET(request: NextRequest) {
         user: true,
         commentLikes: true,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: [
+        {
+          commentLikes: {
+            _count: "desc",
+          },
+        },
+        {
+          createdAt: "asc",
+        },
+      ],
     });
 
     //revalidate
