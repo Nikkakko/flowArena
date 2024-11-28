@@ -174,7 +174,9 @@ export function BattleCommentsSection({
         {comments?.map((comment: CommentWithUser) => (
           <div key={comment.id} className="flex space-x-4">
             <Avatar>
-              <AvatarImage src={"/assets/artist-placeholder.webp"} />
+              <AvatarImage
+                src={comment.user.imageUrl || "/assets/artist-placeholder.webp"}
+              />
               <AvatarFallback>{comment.user.name[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1">

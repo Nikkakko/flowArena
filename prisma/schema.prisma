@@ -46,6 +46,7 @@ model User {
   name        String 
   email       String @unique
   passwordHash    String @unique
+  imageUrl   String?
   
   // Relationships
   battleVotes BattleVote[]

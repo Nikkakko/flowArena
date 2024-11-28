@@ -35,7 +35,6 @@ import { PaginationProperties } from "./shared/Pagination";
 import { addVoteToArtist } from "@/lib/actions/artist-action";
 import useSWR from "swr";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface LeaderboardTableProps {
   artists: (Artist & {
@@ -225,54 +224,26 @@ export function LeaderboardTable({
     {
       id: "actions",
       header: toUpperCase("შეფასება"),
-      cell: ({ row }) => {
-        const hasVoted = checkUserVote(row.original.votes, user?.id);
-        return (
-          <Button
-            variant="default"
-            size="sm"
-            className={cn(
-              "text-white relative w-14 h-12",
-              hasVoted
-                ? "bg-destructive hover:bg-destructive/90"
-                : "bg-success hover:bg-success/90"
-            )}
-            onClick={() => handleVote(row.original.id)}
-          >
-            <AnimatePresence initial={false} mode="wait">
-              {hasVoted ? (
-                <motion.div
-                  key={"thumbsDown" + row.original.id}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -20, opacity: 0 }}
-                  transition={{
-                    duration: 0.2,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <ThumbsDownIcon className="w-6 h-6" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={"thumbsUp" + row.original.id}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -20, opacity: 0 }}
-                  transition={{
-                    duration: 0.2,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <ThumbsUpIcon className="w-6 h-6" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Button>
-        );
-      },
+      cell: ({ row }) => (
+        <Button
+          variant="default"
+          size="sm"
+          className={cn(
+            "text-white",
+            checkUserVote(row.original.votes, user?.id)
+              ? "bg-destructive"
+              : "bg-success"
+          )}
+          // disabled={isPending}
+          onClick={() => handleVote(row.original.id)}
+        >
+          {checkUserVote(row.original.votes, user?.id) ? (
+            <ThumbsDownIcon className="w-4 h-4" />
+          ) : (
+            <ThumbsUpIcon className="w-4 h-4" />
+          )}
+        </Button>
+      ),
     },
   ];
 

@@ -2,6 +2,7 @@ import { addLikeToComment } from "@/lib/actions/battle-action";
 import { fetcher } from "@/lib/swr";
 import { Comment, CommentLike, User } from "@prisma/client";
 import { useCallback } from "react";
+import { toast } from "sonner";
 import useSWR from "swr";
 
 interface CommentWithUser extends Comment {
@@ -33,7 +34,9 @@ export function useCommentLikes({
 
   const toggleLike = useCallback(
     async (commentId: string) => {
-      if (!userId || !comments) return;
+      if (!userId || !comments) {
+        return toast.error("გაიარეთ ავტორიზაცია");
+      }
 
       const originalComments = comments;
       const commentIndex = comments.findIndex(

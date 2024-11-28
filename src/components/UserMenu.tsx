@@ -54,12 +54,12 @@ const UserMenu: React.FC<UserMenuProps> = ({}) => {
     );
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className="active:scale-95 ">
         <Avatar className="cursor-pointer size-9">
-          {/* <AvatarImage
+          <AvatarImage
             alt={user.name || "User"}
-            src={"/assets/default-user.png"}
-          /> */}
+            src={user.imageUrl || "/assets/artist-placeholder.webp"}
+          />
           <AvatarFallback className="capitalize bg-primary text-white">
             {user.email
               .split(" ")

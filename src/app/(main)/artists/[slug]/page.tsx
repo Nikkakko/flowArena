@@ -138,16 +138,18 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
               <h1 className="text-4xl font-bold text-white mb-4">
                 {toUpperCase(artist.nickName)}
               </h1>
-              {artist.seasonsWon.length > 0 &&
-                artist.seasonsWon.map(season => (
-                  <Badge
-                    key={season.id}
-                    className={cn("bg-primary text-white")}
-                  >
-                    {toUpperCase(season.name)}
-                    <TrophyIcon className="w-4 h-4 ml-1 inline-block" />
-                  </Badge>
-                ))}
+              <div className="flex items-center gap-2">
+                {artist.seasonsWon.length > 0 &&
+                  artist.seasonsWon.map(season => (
+                    <Badge
+                      key={season.id}
+                      className={cn("bg-primary text-white")}
+                    >
+                      {toUpperCase(season.name)}
+                      <TrophyIcon className="w-4 h-4 ml-1 inline-block" />
+                    </Badge>
+                  ))}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -298,7 +298,7 @@ export const getFilteredBattles = unstable_cache(
             ...(season && {
               season: {
                 name: {
-                  contains: season,
+                  equals: season,
                   mode: "insensitive",
                 },
               },
@@ -338,11 +338,11 @@ export const getFilteredBattles = unstable_cache(
   },
   ["filtered-battles"],
   {
-    revalidate: 60 * 60 * 2, // two hours,
+    revalidate: 60 * 60 * 6, // two hours,
   }
 );
 
-export async function getSeasons() {
+/* export async function getSeasons() {
   try {
     return db.season.findMany({
       include: {
@@ -353,7 +353,22 @@ export async function getSeasons() {
   } catch (error) {
     console.error(error);
   }
-}
+} */
+
+export const getSeasons = unstable_cache(
+  () =>
+    db.season.findMany({
+      include: {
+        winner: true,
+        battles: true,
+      },
+    }),
+  ["seasons"],
+  {
+    //revalidate every 12hrs
+    revalidate: 60 * 60 * 12,
+  }
+);
 
 export async function getBattles() {
   try {
@@ -426,7 +441,7 @@ export const getFilteredArtists = unstable_cache(
   }
 );
 
-export async function getLeaderboardArtists({
+/* export async function getLeaderboardArtists({
   page,
   limit,
   nickName,
@@ -481,4 +496,69 @@ export async function getLeaderboardArtists({
     console.error(error);
     return null;
   }
-}
+} */
+
+export const getLeaderboardArtists = unstable_cache(
+  async ({
+    page,
+    limit,
+    nickName,
+  }: {
+    page: number;
+    limit: number;
+    nickName?: string;
+  }) => {
+    try {
+      const artists = await db.artist.findMany({
+        orderBy: [
+          {
+            wins: "desc",
+          },
+          {
+            votes: {
+              _count: "desc",
+            },
+          },
+        ],
+        where: {
+          nickName: {
+            contains: nickName,
+            mode: "insensitive",
+          },
+        },
+
+        include: {
+          votes: true,
+          battlesWon: true,
+          seasonsWon: true,
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+
+      const total = await db.artist.count({
+        where: {
+          nickName: {
+            contains: nickName,
+            mode: "insensitive",
+          },
+        },
+      });
+
+      return {
+        artists,
+        total,
+        totalPages: Math.ceil(total / limit),
+      };
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  },
+
+  ["leaderboard-artists"],
+  {
+    //revalidate every 6hrs
+    revalidate: 60 * 60 * 6,
+  }
+);
