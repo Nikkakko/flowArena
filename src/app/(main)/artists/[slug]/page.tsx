@@ -133,17 +133,17 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
         </div>
 
         <div className="flex-1 space-y-6">
-          <div>
-            <div className="flex items-center justify-between w-full">
-              <h1 className="text-4xl font-bold text-white mb-4">
+          <>
+            <div className="flex items-start lg:items-center justify-between w-full gap-2">
+              <h1 className="text-xl lg:text-4xl font-bold text-white ">
                 {toUpperCase(artist.nickName)}
               </h1>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col lg:flex-row items-end lg:items-center gap-2">
                 {artist.seasonsWon.length > 0 &&
                   artist.seasonsWon.map(season => (
                     <Badge
                       key={season.id}
-                      className={cn("bg-primary text-white")}
+                      className={cn("bg-primary text-white whitespace-nowrap")}
                     >
                       {toUpperCase(season.name)}
                       <TrophyIcon className="w-4 h-4 ml-1 inline-block" />
@@ -157,11 +157,11 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
                 <ArtistStatsCard key={stat.label} stat={stat} />
               ))}
             </div>
-          </div>
+          </>
 
           {artist.battlesParticipated.length > 0 && (
             <div className="space-y-4">
-              <h2 className="text-2xl font-semibold text-white">
+              <h2 className="text-xl lg:text-2xl font-semibold text-white">
                 {toUpperCase("ბეთლები")}
               </h2>
               <ScrollArea className="h-[500px]  rounded-md border p-4">

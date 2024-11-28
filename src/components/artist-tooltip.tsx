@@ -39,6 +39,7 @@ const ArtistTooltip: React.FC<ArtistTooltipProps> = ({ data, children }) => {
         <TooltipContent
           side="top"
           className="max-w-[300px] bg-primary text-white border-primary"
+          avoidCollisions={false}
         >
           {randomQuote && toUpperCase(randomQuote.quote)}
         </TooltipContent>
