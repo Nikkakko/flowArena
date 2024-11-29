@@ -1,9 +1,9 @@
 "use server";
-import { getUser } from "@/lib/db/queries";
 import prisma from "@/lib/db/db";
 import * as z from "zod";
 import { actionClient } from "../safe-action";
 import { revalidatePath } from "next/cache";
+import { getSession } from "../auth/session";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -14,8 +14,8 @@ export const updateUserAction = actionClient
   .schema(formSchema)
   .action(async ({ parsedInput }) => {
     try {
-      const currentUser = await getUser();
-      if (!currentUser) {
+      const session = await getSession();
+      if (!session?.user) {
         return {
           error: "Unauthorized",
           status: 401,
@@ -26,7 +26,7 @@ export const updateUserAction = actionClient
 
       const updatedUser = await prisma.user.update({
         where: {
-          id: currentUser.id,
+          id: session.user.id,
         },
         data: {
           name,
