@@ -39,6 +39,8 @@ const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
   const checkData =
     battleData && battleData.battles && battleData.battles.length > 0;
 
+  let imageCount = 0;
+
   return (
     <Shell
       as="section"
@@ -72,7 +74,11 @@ const BattlesPage: React.FC<BattlesPageProps> = async ({ searchParams }) => {
         <div className="grid grid-cols-1 gap-4 sm:gap-3 md:grid-cols-2 xl:grid-cols-3">
           {checkData ? (
             battleData.battles.map(battle => (
-              <BattlesCard key={battle.id} battle={battle} />
+              <BattlesCard
+                key={battle.id}
+                battle={battle}
+                loading={imageCount++ < 6 ? "eager" : "lazy"}
+              />
             ))
           ) : (
             <div className="col-span-full text-center text-gray-500  h-[calc(100vh-20rem)] flex items-center justify-center">
