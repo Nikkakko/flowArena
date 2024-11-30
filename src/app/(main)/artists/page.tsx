@@ -30,6 +30,8 @@ const ArtistsPage: React.FC<ArtistsPageProps> = async ({ searchParams }) => {
   const checkData =
     artistsData && artistsData.artists && artistsData.artists.length > 0;
 
+  let imageCount = 0;
+
   return (
     <Shell
       as="section"
@@ -58,7 +60,11 @@ const ArtistsPage: React.FC<ArtistsPageProps> = async ({ searchParams }) => {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {checkData ? (
             artistsData.artists.map(artist => (
-              <ArtistCard key={artist.id} artist={artist} />
+              <ArtistCard
+                key={artist.id}
+                artist={artist}
+                loading={imageCount++ < 6 ? "eager" : "lazy"}
+              />
             ))
           ) : (
             <div className="col-span-full text-center text-gray-500  h-[calc(100vh-20rem)] flex items-center justify-center">

@@ -11,9 +11,10 @@ interface ArtistCardProps {
     quotes: Quote[];
     socialMedia: SocialMedia[];
   };
+  loading?: "eager" | "lazy";
 }
 
-const ArtistCard: React.FC<ArtistCardProps> = ({ artist }) => {
+const ArtistCard: React.FC<ArtistCardProps> = ({ artist, loading }) => {
   const socialMediaList = artist.socialMedia.map(social => ({
     ...social,
     icon: Icons[social.name.toLowerCase() as keyof typeof Icons],
@@ -28,7 +29,8 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ artist }) => {
             fill
             sizes="96px"
             quality={100}
-            loading="eager"
+            loading={loading}
+            decoding="sync"
             className="rounded-full object-cover grayscale select-none"
           />
         </div>

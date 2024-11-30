@@ -19,7 +19,7 @@ import { siteConfig } from "@/config/site";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { isMobile, state, openMobile, setOpenMobile, setOpen } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <Sidebar>
