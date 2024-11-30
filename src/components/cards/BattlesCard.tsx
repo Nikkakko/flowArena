@@ -31,14 +31,14 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
           className="object-cover grayscale group-hover:grayscale-0 transition-all"
         />
       </div>
-      <div className="p-4">
+      <div className="p-2 md:p-4">
         <div
           className={cn(
-            "flex items-center justify-between gap-2 mb-2",
+            "flex flex-col md:flex-row items-center justify-between gap-2 mb-2",
             "text-white"
           )}
         >
-          <h3 className="text-lg font-semibold text-white">
+          <h3 className="text-base md:text-lg font-semibold text-white uppercase">
             {toUpperCase(battle.title)}
           </h3>
           {/* season name */}
@@ -50,7 +50,7 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
           prefetch={true}
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "lg:w-full border-primary text-primary hover:bg-primary hover:text-white"
+            "w-full border-primary text-primary hover:bg-primary hover:text-white"
           )}
           href={`/battles/${battle.slug}`}
         >

@@ -13,11 +13,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { siteConfig } from "@/config/site";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { isMobile, state, openMobile, setOpenMobile, setOpen } = useSidebar();
 
   return (
     <Sidebar>
@@ -55,6 +57,11 @@ export function AppSidebar() {
                           isActive && "bg-primary",
                           !isActive && "hover:bg-primary"
                         )}
+                        onClick={() => {
+                          if (isMobile) {
+                            setOpenMobile(false);
+                          }
+                        }}
                       >
                         <item.icon />
                         <span className={cn("ml-2")}>

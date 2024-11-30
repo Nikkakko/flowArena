@@ -54,8 +54,8 @@ export function BattleInteractions({
   }, [toast]);
 
   return (
-    <div className="flex justify-between items-center">
-      <div className="flex space-x-4">
+    <div className="flex flex-col md:flex-row justify-between items-center">
+      <div className="flex items-center w-full justify-between md:justify-normal  space-x-4">
         <Button
           variant="outline"
           className={cn(
@@ -87,7 +87,7 @@ export function BattleInteractions({
         </div>
       </div>
 
-      <div className="flex space-x-4 items-center">
+      <div className="flex space-x-4 items-center md:justify-end   w-full justify-between ">
         <div className="justify-start flex items-center space-x-2 my-3">
           <TooltipProvider delayDuration={100}>
             {artists.map(artist => (

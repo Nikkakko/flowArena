@@ -57,7 +57,7 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
 
   return (
     <Shell variant="default" className="mx-auto gap-0 ">
-      <Breadcrumb className="mb-6">
+      <Breadcrumb className="mb-6 px-2 lg:px-6 2xl:px-0">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink href="/">{toUpperCase("მთავარი")}</BreadcrumbLink>
@@ -75,11 +75,11 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
         </BreadcrumbList>
       </Breadcrumb>
 
-      <main className="p-6 ">
+      <main className="p-2 lg:p-6">
         <div className="max-w-4xl mx-auto ">
           <Card className="bg-secondary border-none mb-6">
-            <CardHeader>
-              <div className="flex items-start justify-between w-full">
+            <CardHeader className="p-3 lg:p-6">
+              <div className="flex flex-col lg:flex-row items-start justify-between w-full">
                 <div className="flex flex-col gap-1">
                   <CardTitle className="text-white">{battle.title}</CardTitle>
                   <p className="text-gray-400">{toUpperCase(battleType)}</p>
@@ -89,7 +89,7 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 lg:p-6">
               <div className="aspect-video relative mb-4">
                 <iframe
                   src={`https://www.youtube.com/embed/${getYouTubeVideoId(
@@ -100,10 +100,10 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer"
-                  className="absolute top-0 left-0 w-full h-full rounded-lg"
-                ></iframe>
+                  className="absolute top-0 left-0 w-full  h-full rounded-lg"
+                />
               </div>
-              <p className="text-gray-400 mb-4">
+              <p className="text-sm lg:text-base text-gray-400 mb-4">
                 {toUpperCase(battleDescription)}
               </p>
 
@@ -119,12 +119,12 @@ const BattleDetailPage: React.FC<BattleDetailPageProps> = async ({
           </Card>
 
           <Card className="bg-secondary border-none mb-6">
-            <CardHeader>
+            <CardHeader className="p-3 lg:p-6">
               <CardTitle className="text-white">
                 {toUpperCase("კომენტარები")}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 lg:p-6">
               <BattleCommentsSection
                 comments={battle.comments}
                 battleId={battle.id}
