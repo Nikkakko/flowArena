@@ -79,7 +79,7 @@ export function PaginationProperties({
     paginationParams.page.withOptions({
       startTransition,
       shallow: false, // Send updates to the server
-      scroll: false,
+      // scroll: false, // Don't scroll to top
     })
   );
 
