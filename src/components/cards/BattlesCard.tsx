@@ -8,12 +8,18 @@ import { Battle, Season } from "@prisma/client";
 
 export interface ExtendedBattle extends Battle {
   season: Season | null;
+  loading?: "eager" | "lazy";
 }
 
 interface BattlesCardProps extends React.HTMLAttributes<HTMLDivElement> {
   battle: ExtendedBattle;
+  loading?: "eager" | "lazy";
 }
-const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
+const BattlesCard: React.FC<BattlesCardProps> = ({
+  battle,
+  loading,
+  ...props
+}) => {
   return (
     <div
       className={cn(
@@ -26,7 +32,9 @@ const BattlesCard: React.FC<BattlesCardProps> = ({ battle, ...props }) => {
           src={battle.coverImage}
           alt={battle.title}
           fill
-          priority
+          quality={65}
+          loading={loading}
+          decoding="sync"
           sizes="(min-width: 1540px) 501px, (min-width: 1280px) 405px, (min-width: 1040px) 320px, (min-width: 780px) 736px, (min-width: 680px) 608px, (min-width: 420px) 91.67vw, calc(25vw + 268px)"
           className="object-cover grayscale group-hover:grayscale-0 transition-all"
         />

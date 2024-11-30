@@ -27,6 +27,8 @@ export default async function Home() {
     getLattestBattles(),
   ]);
 
+  let imageCount = 0;
+
   return (
     <Shell as="section" className="mx-auto container">
       <section className="mb-12 p-4 2xl:px-0 ">
@@ -37,11 +39,12 @@ export default async function Home() {
           {toUpperCase(siteConfig.description)}
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 container gap-4">
-          {battles?.map(battle => (
+          {battles?.map((battle, i) => (
             <BattlesCard
               key={battle.id}
               battle={battle}
               className="col-span-1 md:col-span-2 lg:col-span-1 "
+              loading={imageCount++ < 8 ? "eager" : "lazy"}
             />
           ))}
         </div>
