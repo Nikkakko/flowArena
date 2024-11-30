@@ -2,8 +2,8 @@ import db from "@/lib/db/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
   try {
-    const searchParams = req.nextUrl.searchParams;
     const artistName = searchParams.get("artistName") || "";
     const page = Math.max(1, Number(searchParams.get("page")) || 1);
     const limit = Math.max(
