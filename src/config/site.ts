@@ -42,11 +42,11 @@ export const siteConfig = {
       icon: TrophyIcon,
       href: "/leaderboard",
     },
-    {
+    /* {
       title: "ჩვენს შესახებ",
       icon: UsersRoundIcon,
       href: "/about",
-    },
+    }, */
   ],
 
   footer: {
