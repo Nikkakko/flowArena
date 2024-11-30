@@ -404,10 +404,13 @@ export const getFilteredArtists = unstable_cache(
             },
           ],
           where: {
-            nickName: {
-              contains: artistName,
-              mode: "insensitive",
-            },
+            // Only apply the nickName filter if artistName is not empty
+            ...(artistName && {
+              nickName: {
+                contains: artistName,
+                mode: "insensitive",
+              },
+            }),
             ...(sort && { type: sort === "acapella" ? "ACAPELLA" : "FLOW" }),
           },
           include: {
@@ -420,10 +423,13 @@ export const getFilteredArtists = unstable_cache(
         }),
         db.artist.count({
           where: {
-            nickName: {
-              contains: artistName,
-              mode: "insensitive",
-            },
+            // Only apply the nickName filter if artistName is not empty
+            ...(artistName && {
+              nickName: {
+                contains: artistName,
+                mode: "insensitive",
+              },
+            }),
           },
         }),
       ]);
@@ -434,7 +440,6 @@ export const getFilteredArtists = unstable_cache(
       return { artists: [], total: 0 };
     }
   },
-
   ["filtered-artists"],
   {
     revalidate: 60 * 60, // one hour

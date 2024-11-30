@@ -62,7 +62,7 @@ const ArtistsPage: React.FC<ArtistsPageProps> = async ({ searchParams }) => {
             ))
           ) : (
             <div className="col-span-full text-center text-gray-500  h-[calc(100vh-20rem)] flex items-center justify-center">
-              {toUpperCase("არტისტი არ მოიძებნა, სცადეთ სხვა სიტყვა")}
+              {toUpperCase("არტისტები არ მოიძებნა, სცადეთ სხვა სიტყვა")}
             </div>
           )}
         </div>

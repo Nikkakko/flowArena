@@ -35,7 +35,10 @@ export function AppSidebar() {
                 className={cn(
                   "object-cover hover:opacity-80 transition-all hover:scale-105 "
                 )}
-                quality={100}
+                quality={80}
+                loading="eager"
+                priority
+                decoding="sync"
               />
               {/* <h1 className="text-white text-2xl font-bold">
                 {siteConfig.name}
