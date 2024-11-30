@@ -44,7 +44,7 @@ export default async function Home() {
               key={battle.id}
               battle={battle}
               className="col-span-1 md:col-span-2 lg:col-span-1 "
-              loading={imageCount++ < 8 ? "eager" : "lazy"}
+              loading={imageCount++ < 6 ? "eager" : "lazy"}
             />
           ))}
         </div>

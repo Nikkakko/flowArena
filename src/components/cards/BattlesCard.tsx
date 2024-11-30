@@ -32,7 +32,7 @@ const BattlesCard: React.FC<BattlesCardProps> = ({
           src={battle.coverImage}
           alt={battle.title}
           fill
-          quality={65}
+          quality={80}
           loading={loading}
           decoding="sync"
           sizes="(min-width: 1540px) 501px, (min-width: 1280px) 405px, (min-width: 1040px) 320px, (min-width: 780px) 736px, (min-width: 680px) 608px, (min-width: 420px) 91.67vw, calc(25vw + 268px)"
