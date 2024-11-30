@@ -78,9 +78,22 @@ export function PaginationProperties({
     "page",
     paginationParams.page.withOptions({
       startTransition,
-      shallow: false, // Send updates to the server
-      // scroll: false, // Don't scroll to top
+      shallow: false,
+      scroll: false, // Changed to false to handle scrolling manually
     })
+  );
+
+  const smoothScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePageChange = React.useCallback(
+    (newPage: number) => {
+      setPage(newPage).then(() => {
+        smoothScrollToTop();
+      });
+    },
+    [setPage]
   );
 
   const getPageNumbers = () => {
@@ -103,7 +116,7 @@ export function PaginationProperties({
         <PaginationItem>
           <PaginationArrow
             direction="left"
-            onClick={() => setPage(p => Math.max(1, p - 1))}
+            onClick={() => handlePageChange(Math.max(1, page - 1))}
             disabled={page <= 1 || isLoading}
           />
         </PaginationItem>
@@ -116,7 +129,7 @@ export function PaginationProperties({
             <PaginationButton
               pageNumber={1}
               isActive={page === 1}
-              onClick={() => setPage(1)}
+              onClick={() => handlePageChange(1)}
               disabled={page === 1 || isLoading}
             />
             <span>...</span>
@@ -129,7 +142,7 @@ export function PaginationProperties({
               key={pageNumber}
               pageNumber={pageNumber}
               isActive={page === pageNumber}
-              onClick={() => setPage(pageNumber)}
+              onClick={() => handlePageChange(pageNumber)}
               disabled={pageNumber === page || isLoading}
             />
           ))}
@@ -141,7 +154,7 @@ export function PaginationProperties({
               <PaginationButton
                 pageNumber={pageCount}
                 isActive={page === pageCount}
-                onClick={() => setPage(pageCount)}
+                onClick={() => handlePageChange(pageCount)}
                 disabled={page === pageCount || isLoading}
               />
             </>
@@ -150,7 +163,7 @@ export function PaginationProperties({
         <PaginationItem>
           <PaginationArrow
             direction="right"
-            onClick={() => setPage(p => Math.min(pageCount, p + 1))}
+            onClick={() => handlePageChange(Math.min(pageCount, page + 1))}
             disabled={page >= pageCount || isLoading}
           />
         </PaginationItem>
