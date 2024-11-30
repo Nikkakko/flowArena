@@ -1,9 +1,10 @@
 import Header from "@/components/Header";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import MobileMenu from "@/components/MobileMenu";
+
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { Metadata } from "next";
 
 export default function DashboardLayout({
   children, // will be a page or nested layout

@@ -29,6 +29,29 @@ const notoSans = Noto_Sans({
 export const metadata: Metadata = {
   title: "Flow Arena - ვიდეო ჟურნალი",
   description: "Flow Arena - ვიდეო ჟურნალი",
+  openGraph: {
+    title: "Flow Arena - ვიდეო ჟურნალი",
+    description: "Flow Arena - ვიდეო ჟურნალი",
+    url: "https://flowarena.vercel.app/",
+    siteName: "Flow Arena",
+    images: [
+      {
+        url: "https://utfs.io/f/VceiTwSJdQ3PrLtUGtZimIZ9LUWO7wM4jQqs0Cl2zDfuEbTS",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Flow Arena - ვიდეო ჟურნალი",
+    description: "Flow Arena - ვიდეო ჟურნალი",
+    images: [
+      "https://utfs.io/f/VceiTwSJdQ3PrLtUGtZimIZ9LUWO7wM4jQqs0Cl2zDfuEbTS",
+    ],
+  },
 };
 
 export default function RootLayout({
