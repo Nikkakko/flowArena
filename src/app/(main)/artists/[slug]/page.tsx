@@ -132,7 +132,7 @@ const ArtistSlug: React.FC<ArtistSlugProps> = async ({ params: { slug } }) => {
           <RandomQuoteList data={artist.quotes} />
         </div>
 
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 space-y-6 w-full">
           <>
             <div className="flex items-start lg:items-center justify-between w-full gap-2">
               <h1 className="text-xl lg:text-4xl font-bold text-white ">
