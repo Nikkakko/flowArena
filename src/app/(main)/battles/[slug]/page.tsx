@@ -36,8 +36,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: battle.title,
-
+    title: `Flow Arena - ${battle.title}`,
     description: `${toUpperCase("ნახე და შეაფასე ")} ${battle.title}`,
   };
 }

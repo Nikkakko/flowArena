@@ -44,13 +44,13 @@ export async function generateMetadata({
 
   if (!artist) {
     return {
-      title: `${toUpperCase("ბეთლი ვერ მოიძებნა")}`,
-      description: `${toUpperCase("ბეთლი ვერ მოიძებნა")}`,
+      title: `${toUpperCase("არტისტი ვერ მოიძებნა")}`,
+      description: `${toUpperCase("არტისტი ვერ მოიძებნა")}`,
     };
   }
 
   return {
-    title: artist.nickName,
+    title: `Flow Arena - ${artist.nickName}`,
     description: `${toUpperCase("ნახე და შეაფასე ")} ${artist.nickName}`,
   };
 }
